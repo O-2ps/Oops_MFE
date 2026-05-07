@@ -1,0 +1,35 @@
+<svg width="402" height="874" viewBox="0 0 402 874" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_22_4889)">
+<rect width="402" height="874" fill="url(#paint0_linear_22_4889)"/>
+<g opacity="0.4">
+<rect width="402" height="25" transform="translate(0 34)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 99)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 164)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 229)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 294)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 359)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 424)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 489)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 554)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 619)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 684)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 749)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="402" height="25" transform="translate(0 814)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="889" height="25" transform="matrix(0 -1 1 0 26 881)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="889" height="25" transform="matrix(0 -1 1 0 91 881)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="889" height="25" transform="matrix(0 -1 1 0 156 881)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="889" height="25" transform="matrix(0 -1 1 0 221 881)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="889" height="25" transform="matrix(0 -1 1 0 286 881)" fill="#F8DFE8" fill-opacity="0.3"/>
+<rect width="889" height="25" transform="matrix(0 -1 1 0 351 881)" fill="#F8DFE8" fill-opacity="0.3"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_22_4889" x1="201" y1="0" x2="201" y2="874" gradientUnits="userSpaceOnUse">
+<stop stop-color="#EEFFFF"/>
+<stop offset="1" stop-color="#F8ABC7"/>
+</linearGradient>
+<clipPath id="clip0_22_4889">
+<rect width="402" height="874" fill="white"/>
+</clipPath>
+</defs>
+</svg>
