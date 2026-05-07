@@ -1,0 +1,104 @@
+import styled from 'styled-components/native';
+import { Dimensions, View } from 'react-native';
+
+const { width } = Dimensions.get('window');
+
+const PIXEL_FONT = 'DOSIyagiBoldface';
+const OUTLINE_COLOR = '#FF5C8D'; 
+
+export const Container = styled.View`
+  flex: 1;
+  background-color: #ffffff;
+`;
+
+export const GreenBox = styled.View`
+  height: 20px;
+  background-color: #B5E650; 
+  width: 100%;
+`;
+
+export const MainContent = styled.View`
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  align-items: center; 
+  width: 100%;
+`;
+
+interface StarProps {
+  $top?: number;
+  $right?: number;
+  $size?: number;
+  $rotate?: string;
+}
+
+export const StarContainer = styled(View)<StarProps>`
+  position: absolute;
+  top: ${(props: StarProps) => props.$top ?? 0}px;
+  right: ${(props: StarProps) => props.$right ?? 0}px;
+  width: ${(props: StarProps) => props.$size ?? 100}px;
+  height: ${(props: StarProps) => props.$size ?? 100}px;
+  z-index: 1;
+  opacity: 0.15;
+`;
+
+export const Notice = styled.Text`
+  margin-top: 55px;
+  width: 100%;
+  text-align: center;
+  font-size: 12px; 
+  color: #FF5C8D;
+  font-family: ${PIXEL_FONT};
+  z-index: 10;
+`;
+
+export const CenterSection = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-horizontal: 20px;
+  margin-top: -50px; 
+`;
+
+export const Logo = styled.View`
+  margin-bottom: 25px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+`;
+
+export const SubTitle = styled.Text`
+  font-size: 24px; 
+  color: #ffffff;
+  line-height: 32px;
+  text-align: center;
+  font-family: ${PIXEL_FONT};
+  text-shadow-color: ${OUTLINE_COLOR};
+  text-shadow-offset: 0px 0px;
+  text-shadow-radius: 2px;
+  width: 100%;
+`;
+
+export const ButtonSection = styled.View`
+  padding-horizontal: 20px;
+  padding-bottom: 60px;
+  gap: 15px;
+  width: 100%;
+  align-items: center;
+`;
+
+export const LoginButton = styled.TouchableOpacity`
+  padding-vertical: 8px;
+  align-items: center;
+  width: 100%;
+`;
+
+export const LoginButtonText = styled.Text`
+  font-size: 20px; 
+  color: #ffffff;
+  font-family: ${PIXEL_FONT};
+  text-shadow-color: ${OUTLINE_COLOR};
+  text-shadow-offset: 0px 0px;
+  text-shadow-radius: 2px;
+`;

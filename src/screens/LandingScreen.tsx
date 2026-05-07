@@ -1,16 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Animated,
-  Dimensions,
-  ImageBackground,
-} from 'react-native';
+import { Animated, Dimensions, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
 import Logo from '../../assets/icons/logo.svg';
 import Star from '../../assets/icons/star.svg';
@@ -30,9 +23,10 @@ interface StarItemProps {
   size: number;
   rotate: string;
   delay: number;
+  duration?: number;
 }
 
-function AnimatedStar({ top, right, size, rotate, delay }: StarItemProps) {
+function AnimatedStar({ top, right, size, rotate, delay, duration = 6000 }: StarItemProps) {
   const floatAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -40,41 +34,38 @@ function AnimatedStar({ top, right, size, rotate, delay }: StarItemProps) {
       Animated.sequence([
         Animated.timing(floatAnim, {
           toValue: 1,
-          duration: 3000,
+          duration,
           delay,
           useNativeDriver: true,
         }),
         Animated.timing(floatAnim, {
           toValue: 0,
-          duration: 3000,
+          duration,
           useNativeDriver: true,
         }),
       ])
     );
     animation.start();
     return () => animation.stop();
-  }, [floatAnim, delay]);
+  }, [floatAnim, delay, duration]);
 
   const translateY = floatAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -12],
+    outputRange: [0, -20],
   });
 
   return (
-    <Animated.View
-      style={[
-        styles.starWrapper,
-        {
-          top,
-          right,
-          width: size,
-          height: size,
-          transform: [{ translateY }, { rotate }],
-        },
-      ]}
+    <S.StarContainer
+      $top={top}
+      $right={right}
+      $size={size}
+      $rotate={rotate}
+      as={Animated.View}
+      style={{ transform: [{ translateY }, { rotate }] }}
+      pointerEvents="none"
     >
-      <Star width={size} height={size} />
-    </Animated.View>
+      <Star width={size} height={size} fill="#FFD1E3" />
+    </S.StarContainer>
   );
 }
 
@@ -86,101 +77,72 @@ export default function LandingScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* BG SVG as full-screen background */}
+    <S.Container>
       <BG
         width={width}
         height={height}
-        style={StyleSheet.absoluteFill}
+        style={{ position: 'absolute' }}
         preserveAspectRatio="xMidYMid slice"
       />
+      
+      <S.GreenBox />
+      
+      <S.MainContent>
+        <AnimatedStar
+          top={-40}
+          right={-100}
+          size={400}
+          rotate="15deg"
+          delay={0}
+          duration={5000}
+        />
+        <AnimatedStar
+          top={height * 0.3}
+          right={width * 0.5}
+          size={250}
+          rotate="-20deg"
+          delay={1500}
+          duration={7000}
+        />
+        <AnimatedStar
+          top={height * 0.6}
+          right={width * 0.1}
+          size={350}
+          rotate="10deg"
+          delay={3000}
+          duration={6000}
+        />
+        <AnimatedStar
+          top={height * 0.15}
+          right={width * 0.2}
+          size={150}
+          rotate="45deg"
+          delay={1000}
+          duration={8000}
+        />
 
-      {/* Notice */}
-      <View style={styles.noticeContainer}>
-        <Text style={styles.noticeText}>마이페이지는 로그인 후 이용 가능합니다.</Text>
-      </View>
+        <S.Notice>마이페이지는 로그인 후 이용 가능합니다.</S.Notice>
 
-      {/* Floating Stars */}
-      <AnimatedStar top={-60} right={-10} size={120} rotate="24deg" delay={0} />
-      <AnimatedStar top={200} right={12} size={65} rotate="0deg" delay={500} />
-      <AnimatedStar top={390} right={60} size={130} rotate="-10deg" delay={1000} />
+        <S.CenterSection>
+          <View style={{ marginBottom: 25, alignItems: 'center' }}>
+            <Logo width={width * 0.6} height={(width * 0.6) * (122 / 245)} />
+          </View>
+          <S.SubTitle>
+            {'내 피부를 위한\n가장 정교한 선택'}
+          </S.SubTitle>
+        </S.CenterSection>
 
-      {/* Center: Logo + Subtitle */}
-      <View style={styles.centerSection}>
-        <Logo width={160} height={60} />
-        <Text style={styles.subtitle}>
-          내 피부를 위한{'\n'}가장 정교한 선택
-        </Text>
-      </View>
+        <S.ButtonSection>
+          <S.LoginButton>
+            <S.LoginButtonText>[ 카카오톡 로그인 ]</S.LoginButtonText>
+          </S.LoginButton>
+          <S.LoginButton onPress={handleGuestLogin}>
+            <S.LoginButtonText>[ 비회원 로그인 ]</S.LoginButtonText>
+          </S.LoginButton>
+        </S.ButtonSection>
+      </S.MainContent>
 
-      {/* Buttons */}
-      <View style={styles.buttonSection}>
-        <TouchableOpacity style={styles.loginButton}>
-          <Text style={styles.loginButtonText}>[ 카카오톡 로그인 ]</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.loginButton} onPress={handleGuestLogin}>
-          <Text style={styles.loginButtonText}>[ 비회원 로그인 ]</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      <S.GreenBox />
+    </S.Container>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    overflow: 'hidden',
-  },
-  noticeContainer: {
-    position: 'absolute',
-    top: 52,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  noticeText: {
-    fontSize: 11,
-    color: '#999',
-    letterSpacing: 0.2,
-  },
-  starWrapper: {
-    position: 'absolute',
-    zIndex: 5,
-  },
-  centerSection: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    paddingHorizontal: 36,
-    paddingTop: 40,
-    gap: 16,
-  },
-  subtitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#333',
-    lineHeight: 32,
-    letterSpacing: -0.5,
-    marginTop: 12,
-  },
-  buttonSection: {
-    paddingHorizontal: 32,
-    paddingBottom: 56,
-    gap: 12,
-  },
-  loginButton: {
-    borderWidth: 1.5,
-    borderColor: '#333',
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderRadius: 2,
-    backgroundColor: 'transparent',
-  },
-  loginButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#333',
-    letterSpacing: 1,
-  },
-});
