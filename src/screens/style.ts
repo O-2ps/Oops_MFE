@@ -46,9 +46,12 @@ export const Notice = styled.Text`
   margin-top: 55px;
   width: 100%;
   text-align: center;
-  font-size: 12px; 
+  font-size: 14px; 
   color: #FF5C8D;
   font-family: ${PIXEL_FONT};
+  text-shadow-color: #ffffff;
+  text-shadow-offset: 0px 0px;
+  text-shadow-radius: 1.5px;
   z-index: 10;
 `;
 
@@ -69,14 +72,14 @@ export const Logo = styled.View`
 `;
 
 export const SubTitle = styled.Text`
-  font-size: 24px; 
+  font-size: 32px; 
   color: #ffffff;
-  line-height: 32px;
+  line-height: 42px;
   text-align: center;
   font-family: ${PIXEL_FONT};
   text-shadow-color: ${OUTLINE_COLOR};
-  text-shadow-offset: 0px 0px;
-  text-shadow-radius: 2px;
+  text-shadow-offset: 1px 1px;
+  text-shadow-radius: 0.5px;
   width: 100%;
 `;
 
@@ -95,10 +98,10 @@ export const LoginButton = styled.TouchableOpacity`
 `;
 
 export const LoginButtonText = styled.Text`
-  font-size: 20px; 
+  font-size: 24px; 
   color: #ffffff;
   font-family: ${PIXEL_FONT};
   text-shadow-color: ${OUTLINE_COLOR};
-  text-shadow-offset: 0px 0px;
-  text-shadow-radius: 2px;
+  text-shadow-offset: 1px 1px;
+  text-shadow-radius: 0.5px;
 `;
