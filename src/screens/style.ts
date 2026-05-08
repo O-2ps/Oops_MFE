@@ -4,7 +4,7 @@ import { Dimensions, View } from 'react-native';
 const { width } = Dimensions.get('window');
 
 const PIXEL_FONT = 'DOSIyagiBoldface';
-const OUTLINE_COLOR = '#FF5C8D'; 
+const OUTLINE_COLOR = '#FF5C8D';
 
 export const Container = styled.View`
   flex: 1;
@@ -13,7 +13,7 @@ export const Container = styled.View`
 
 export const GreenBox = styled.View`
   height: 20px;
-  background-color: #B5E650; 
+  background-color: #C6EB8D;
   width: 100%;
 `;
 
@@ -32,7 +32,7 @@ interface StarProps {
   $rotate?: string;
 }
 
-export const StarContainer = styled(View)<StarProps>`
+export const StarContainer = styled(View) <StarProps>`
   position: absolute;
   top: ${(props: StarProps) => props.$top ?? 0}px;
   right: ${(props: StarProps) => props.$right ?? 0}px;
@@ -72,8 +72,8 @@ export const Logo = styled.View`
 `;
 
 export const SubTitle = styled.Text`
-  font-size: 32px; 
-  color: #ffffff;
+  font-size: 20px; 
+  color: #fafafa;
   line-height: 42px;
   text-align: center;
   font-family: ${PIXEL_FONT};
