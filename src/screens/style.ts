@@ -24,6 +24,7 @@ export const MainContent = styled.View`
   align-items: center; 
   justify-content: center;
   width: 100%;
+  padding-bottom: 30px;
 `;
 
 interface StarProps {
@@ -125,7 +126,6 @@ export const Title = styled.Text`
   font-size: 24px;
   color: #FF8CB6;
   font-family: ${PIXEL_FONT};
-  margin-bottom: 40px;
 `;
 
 export const WheelSection = styled.View`
@@ -134,7 +134,7 @@ export const WheelSection = styled.View`
   justify-content: space-between;
   width: 100%;
   padding-horizontal: 40px;
-  margin-top: 50px;
+  margin-vertical: 10px;
 `;
 
 export const ArrowButton = styled.TouchableOpacity`
@@ -148,8 +148,7 @@ export const ArrowText = styled.Text`
 `;
 
 export const FooterAction = styled.TouchableOpacity`
-  position: absolute;
-  bottom: 140px;
+  margin-top: 20px;
   align-items: center;
   width: 100%;
 `;

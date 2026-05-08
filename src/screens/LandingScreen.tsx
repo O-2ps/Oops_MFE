@@ -112,20 +112,28 @@ export default function LandingScreen() {
     <S.Container>
       <S.MainContent>
         <AnimatedStar
-          top={height * 0.1}
-          right={-width * 0.2}
-          size={width * 1.4}
-          rotate="15deg"
+          top={-height * 0.15}
+          right={-width * 0.1}
+          size={width * 1.2}
+          rotate="24deg"
           delay={0}
           duration={8000}
         />
         <AnimatedStar
-          top={height * 0.6}
-          right={width * 0.5}
-          size={width * 0.8}
-          rotate="-25deg"
-          delay={2000}
+          top={height * 0.25}
+          right={width * 0.1}
+          size={width * 0.6}
+          rotate="0deg"
+          delay={1000}
           duration={7000}
+        />
+        <AnimatedStar
+          top={height * 0.55}
+          right={width * 0.4}
+          size={width * 1.1}
+          rotate="-10deg"
+          delay={2000}
+          duration={9000}
         />
 
         <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.noticeText}>

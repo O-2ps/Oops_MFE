@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -17,6 +17,14 @@ const { width, height } = Dimensions.get('window');
 SplashScreen.preventAutoHideAsync();
 
 const Stack = createNativeStackNavigator();
+
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: 'transparent',
+  },
+};
 
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({
@@ -38,31 +46,33 @@ export default function App() {
   }
 
   return (
-    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+    <View style={{ flex: 1, backgroundColor: '#ffffff' }} onLayout={onLayoutRootView}>
       <BG
         width={width}
         height={height}
         style={{ position: 'absolute' }}
         preserveAspectRatio="xMidYMid slice"
       />
-      <S.GreenBox />
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Landing"
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: 'transparent' },
-            animation: 'slide_from_right',
-          }}
-        >
-          <Stack.Screen name="Landing" component={LandingScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Skin" component={SkinScreen} />
-          <Stack.Screen name="MyPage" component={MyPageScreen} />
-          <Stack.Screen name="LastCheck" component={LastCheckScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-      <S.GreenBox />
+      <View style={{ flex: 1 }}>
+        <S.GreenBox />
+        <NavigationContainer theme={MyTheme}>
+          <Stack.Navigator
+            initialRouteName="Landing"
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: 'transparent' },
+              animation: 'slide_from_right',
+            }}
+          >
+            <Stack.Screen name="Landing" component={LandingScreen} />
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Skin" component={SkinScreen} />
+            <Stack.Screen name="MyPage" component={MyPageScreen} />
+            <Stack.Screen name="LastCheck" component={LastCheckScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+        <S.GreenBox />
+      </View>
       <StatusBar style="auto" />
     </View>
   );

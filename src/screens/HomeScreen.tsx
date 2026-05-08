@@ -82,7 +82,7 @@ export default function HomeScreen() {
           </S.ArrowButton>
 
           <Animated.View style={{ transform: [{ translateY: floatAnim }, { rotate: spin }] }}>
-            <ColorsSvg width={width * 0.72} height={width * 0.72} />
+            <ColorsSvg width={width * 0.7} height={width * 0.7} />
           </Animated.View>
 
           <S.ArrowButton onPress={() => navigation.navigate('Skin')}>
@@ -113,7 +113,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#FF8CB6',
     fontFamily: 'DOSIyagiBoldface',
-    marginBottom: 40,
   },
   arrowText: {
     fontSize: 30,

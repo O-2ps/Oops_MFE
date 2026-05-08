@@ -66,7 +66,7 @@ export default function SkinScreen() {
           </S.ArrowButton>
           
           <Animated.View style={{ transform: [{ translateY: floatAnim }] }}>
-            <MaskSvg width={width * 0.6} height={width * 0.6} />
+            <MaskSvg width={width * 0.7} height={width * 0.7} />
           </Animated.View>
           
           <S.ArrowButton onPress={() => navigation.navigate('MyPage')}>
