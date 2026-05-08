@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Dimensions, View } from 'react-native';
+import { Animated, Dimensions, View, Text, StyleSheet, StyleProp, TextStyle } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
 import Logo from '../../assets/icons/logo.svg';
@@ -16,6 +15,39 @@ type RootStackParamList = {
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Landing'>;
+
+interface StrokedTextProps {
+  children: React.ReactNode;
+  strokeColor: string;
+  strokeWidth: number;
+  style?: StyleProp<TextStyle>;
+}
+
+function StrokedText({ children, strokeColor, strokeWidth, style }: StrokedTextProps) {
+  const createShadow = (dx: number, dy: number): TextStyle => ({
+    position: 'absolute',
+    top: dy,
+    left: dx,
+    color: strokeColor,
+    textShadowColor: strokeColor,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 0,
+  });
+
+  return (
+    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <Text style={[style, createShadow(strokeWidth, 0)]}>{children}</Text>
+      <Text style={[style, createShadow(-strokeWidth, 0)]}>{children}</Text>
+      <Text style={[style, createShadow(0, strokeWidth)]}>{children}</Text>
+      <Text style={[style, createShadow(0, -strokeWidth)]}>{children}</Text>
+      <Text style={[style, createShadow(strokeWidth, strokeWidth)]}>{children}</Text>
+      <Text style={[style, createShadow(-strokeWidth, -strokeWidth)]}>{children}</Text>
+      <Text style={[style, createShadow(strokeWidth, -strokeWidth)]}>{children}</Text>
+      <Text style={[style, createShadow(-strokeWidth, strokeWidth)]}>{children}</Text>
+      <Text style={style}>{children}</Text>
+    </View>
+  );
+}
 
 interface StarItemProps {
   top: number;
@@ -51,7 +83,7 @@ function AnimatedStar({ top, right, size, rotate, delay, duration = 6000 }: Star
 
   const translateY = floatAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -20],
+    outputRange: [0, -15],
   });
 
   return (
@@ -84,60 +116,51 @@ export default function LandingScreen() {
         style={{ position: 'absolute' }}
         preserveAspectRatio="xMidYMid slice"
       />
-      
+
       <S.GreenBox />
-      
+
       <S.MainContent>
         <AnimatedStar
-          top={-40}
-          right={-100}
-          size={400}
+          top={height * 0.1}
+          right={-width * 0.2}
+          size={width * 1.4}
           rotate="15deg"
           delay={0}
-          duration={5000}
-        />
-        <AnimatedStar
-          top={height * 0.3}
-          right={width * 0.5}
-          size={250}
-          rotate="-20deg"
-          delay={1500}
-          duration={7000}
+          duration={8000}
         />
         <AnimatedStar
           top={height * 0.6}
-          right={width * 0.1}
-          size={350}
-          rotate="10deg"
-          delay={3000}
-          duration={6000}
-        />
-        <AnimatedStar
-          top={height * 0.15}
-          right={width * 0.2}
-          size={150}
-          rotate="45deg"
-          delay={1000}
-          duration={8000}
+          right={width * 0.5}
+          size={width * 0.8}
+          rotate="-25deg"
+          delay={2000}
+          duration={7000}
         />
 
-        <S.Notice>마이페이지는 로그인 후 이용 가능합니다.</S.Notice>
+        <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.noticeText}>
+          마이페이지는 로그인 후 이용 가능합니다.
+        </StrokedText>
 
         <S.CenterSection>
           <View style={{ marginBottom: 25, alignItems: 'center' }}>
             <Logo width={width * 0.6} height={(width * 0.6) * (122 / 245)} />
           </View>
-          <S.SubTitle>
+
+          <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.subTitleText}>
             {'내 피부를 위한\n가장 정교한 선택'}
-          </S.SubTitle>
+          </StrokedText>
         </S.CenterSection>
 
         <S.ButtonSection>
           <S.LoginButton>
-            <S.LoginButtonText>[ 카카오톡 로그인 ]</S.LoginButtonText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.buttonText}>
+              [ 카카오톡 로그인 ]
+            </StrokedText>
           </S.LoginButton>
           <S.LoginButton onPress={handleGuestLogin}>
-            <S.LoginButtonText>[ 비회원 로그인 ]</S.LoginButtonText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.buttonText}>
+              [ 비회원 로그인 ]
+            </StrokedText>
           </S.LoginButton>
         </S.ButtonSection>
       </S.MainContent>
@@ -146,3 +169,27 @@ export default function LandingScreen() {
     </S.Container>
   );
 }
+
+const styles = StyleSheet.create({
+  noticeText: {
+    marginTop: 55,
+    width: '100%',
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#FF5C8D',
+    fontFamily: 'DOSIyagiBoldface',
+    zIndex: 10,
+  },
+  subTitleText: {
+    fontSize: 20,
+    color: '#FF5C8D',
+    lineHeight: 32,
+    textAlign: 'center',
+    fontFamily: 'DOSIyagiBoldface',
+  },
+  buttonText: {
+    fontSize: 20,
+    color: '#FF5C8D',
+    fontFamily: 'DOSIyagiBoldface',
+  }
+});
