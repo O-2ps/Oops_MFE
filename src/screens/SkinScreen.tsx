@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, Dimensions, StyleSheet } from 'react-native';
+import { Animated, Easing, Dimensions, View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
-import ColorsSvg from '../../assets/icons/colors.svg';
+import MaskSvg from '../../assets/icons/mask.svg';
 import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
 
@@ -17,12 +17,11 @@ type RootStackParamList = {
   Skin: undefined;
 };
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Skin'>;
 
-export default function HomeScreen() {
+export default function SkinScreen() {
   const navigation = useNavigation<NavigationProp>();
   const floatAnim = useRef(new Animated.Value(0)).current;
-  const rotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.loop(
@@ -41,25 +40,10 @@ export default function HomeScreen() {
         }),
       ])
     ).start();
-
-    Animated.loop(
-      Animated.timing(rotateAnim, {
-        toValue: 1,
-        duration: 40000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      })
-    ).start();
-  }, [floatAnim, rotateAnim]);
-
-  const spin = rotateAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
+  }, [floatAnim]);
 
   const handleStartAnalysis = () => {
-    // Navigate to LastCheck screen
-    navigation.navigate('LastCheck', { from: 'color' });
+    navigation.navigate('LastCheck', { from: 'skin' });
   };
 
   return (
@@ -67,25 +51,25 @@ export default function HomeScreen() {
       <S.MainContent>
         <S.Header>
           <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.stepText}>
-            1.
+            2.
           </StrokedText>
-          <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={[styles.titleText]}>
-            퍼스널 컬러 분석하기
+          <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.titleText}>
+            피부 타입 분석하기
           </StrokedText>
         </S.Header>
 
         <S.WheelSection>
-          <S.ArrowButton onPress={() => navigation.navigate('MyPage')}>
+          <S.ArrowButton onPress={() => navigation.navigate('Home')}>
             <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.arrowText}>
               &lt;
             </StrokedText>
           </S.ArrowButton>
-
-          <Animated.View style={{ transform: [{ translateY: floatAnim }, { rotate: spin }] }}>
-            <ColorsSvg width={width * 0.72} height={width * 0.72} />
+          
+          <Animated.View style={{ transform: [{ translateY: floatAnim }] }}>
+            <MaskSvg width={width * 0.6} height={width * 0.6} />
           </Animated.View>
-
-          <S.ArrowButton onPress={() => navigation.navigate('Skin')}>
+          
+          <S.ArrowButton onPress={() => navigation.navigate('MyPage')}>
             <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.arrowText}>
               &gt;
             </StrokedText>
@@ -98,7 +82,7 @@ export default function HomeScreen() {
           </StrokedText>
         </S.FooterAction>
       </S.MainContent>
-    </S.Container >
+    </S.Container>
   );
 }
 
@@ -113,7 +97,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#FF8CB6',
     fontFamily: 'DOSIyagiBoldface',
-    marginBottom: 40,
   },
   arrowText: {
     fontSize: 30,

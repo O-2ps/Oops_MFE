@@ -110,15 +110,6 @@ export default function LandingScreen() {
 
   return (
     <S.Container>
-      <BG
-        width={width}
-        height={height}
-        style={{ position: 'absolute' }}
-        preserveAspectRatio="xMidYMid slice"
-      />
-
-      <S.GreenBox />
-
       <S.MainContent>
         <AnimatedStar
           top={height * 0.1}
@@ -165,7 +156,7 @@ export default function LandingScreen() {
         </S.ButtonSection>
       </S.MainContent>
 
-      <S.GreenBox />
+
     </S.Container>
   );
 }

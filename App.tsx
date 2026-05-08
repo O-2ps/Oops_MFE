@@ -3,11 +3,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Dimensions } from 'react-native';
 import LandingScreen from './src/screens/LandingScreen';
 import HomeScreen from './src/screens/HomeScreen';
+import SkinScreen from './src/screens/SkinScreen';
+import MyPageScreen from './src/screens/MyPageScreen';
+import LastCheckScreen from './src/screens/LastCheckScreen';
 import { StatusBar } from 'expo-status-bar';
+import BG from './assets/icons/BG.svg';
+import * as S from './src/screens/style';
 
+const { width, height } = Dimensions.get('window');
 SplashScreen.preventAutoHideAsync();
 
 const Stack = createNativeStackNavigator();
@@ -33,21 +39,31 @@ export default function App() {
 
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <BG
+        width={width}
+        height={height}
+        style={{ position: 'absolute' }}
+        preserveAspectRatio="xMidYMid slice"
+      />
+      <S.GreenBox />
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Landing">
-          <Stack.Screen
-            name="Landing"
-            component={LandingScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ headerShown: false }}
-          />
+        <Stack.Navigator
+          initialRouteName="Landing"
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: 'transparent' },
+            animation: 'slide_from_right',
+          }}
+        >
+          <Stack.Screen name="Landing" component={LandingScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Skin" component={SkinScreen} />
+          <Stack.Screen name="MyPage" component={MyPageScreen} />
+          <Stack.Screen name="LastCheck" component={LastCheckScreen} />
         </Stack.Navigator>
-        <StatusBar style="auto" />
       </NavigationContainer>
+      <S.GreenBox />
+      <StatusBar style="auto" />
     </View>
   );
 }

@@ -8,7 +8,7 @@ const OUTLINE_COLOR = '#FF5C8D';
 
 export const Container = styled.View`
   flex: 1;
-  background-color: #ffffff;
+  background-color: transparent;
 `;
 
 export const GreenBox = styled.View`
