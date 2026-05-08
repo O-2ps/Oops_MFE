@@ -171,8 +171,8 @@ export default function LandingScreen() {
 
 const styles = StyleSheet.create({
   noticeText: {
-    marginTop: 55,
-    width: '100%',
+    marginTop: 90,
+    paddingHorizontal: 20,
     textAlign: 'center',
     fontSize: 14,
     color: '#FF8CB6',

@@ -58,7 +58,6 @@ export default function HomeScreen() {
   });
 
   const handleStartAnalysis = () => {
-    // Navigate to LastCheck screen
     navigation.navigate('LastCheck', { from: 'color' });
   };
 
