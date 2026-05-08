@@ -43,7 +43,7 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={HomeScreen}
-            options={{ title: 'Oops!' }}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
         <StatusBar style="auto" />

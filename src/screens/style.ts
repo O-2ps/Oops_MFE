@@ -22,6 +22,7 @@ export const MainContent = styled.View`
   position: relative;
   overflow: hidden;
   align-items: center; 
+  justify-content: center;
   width: 100%;
 `;
 
@@ -104,4 +105,57 @@ export const LoginButtonText = styled.Text`
   text-shadow-color: ${OUTLINE_COLOR};
   text-shadow-offset: 1px 1px;
   text-shadow-radius: 0.5px;
+`;
+
+// --- Home Screen Styles ---
+
+export const Header = styled.View`
+  align-items: center;
+  width: 100%;
+`;
+
+export const StepNumber = styled.Text`
+  font-size: 20px;
+  color: #FF8CB6;
+  font-family: ${PIXEL_FONT};
+  margin-bottom: 15px;
+`;
+
+export const Title = styled.Text`
+  font-size: 24px;
+  color: #FF8CB6;
+  font-family: ${PIXEL_FONT};
+  margin-bottom: 40px;
+`;
+
+export const WheelSection = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-horizontal: 40px;
+  margin-top: 50px;
+`;
+
+export const ArrowButton = styled.TouchableOpacity`
+  padding: 10px;
+`;
+
+export const ArrowText = styled.Text`
+  font-size: 30px;
+  color: #FF8CB6;
+  font-family: ${PIXEL_FONT};
+`;
+
+export const FooterAction = styled.TouchableOpacity`
+  position: absolute;
+  bottom: 140px;
+  align-items: center;
+  width: 100%;
+`;
+
+export const FooterActionText = styled.Text`
+  font-size: 20px;
+  color: #FF8CB6;
+  font-family: ${PIXEL_FONT};
 `;
