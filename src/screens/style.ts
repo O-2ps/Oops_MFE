@@ -12,7 +12,7 @@ export const Container = styled.View`
 `;
 
 export const GreenBox = styled.View`
-  height: 20px;
+  height: 40px;
   background-color: #C6EB8D;
   width: 100%;
 `;
@@ -134,7 +134,7 @@ export const WheelSection = styled.View`
   justify-content: space-between;
   width: 100%;
   padding-horizontal: 40px;
-  margin-vertical: 10px;
+  margin-vertical: 40px;
 `;
 
 export const ArrowButton = styled.TouchableOpacity`
