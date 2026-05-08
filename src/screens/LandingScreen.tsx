@@ -176,20 +176,20 @@ const styles = StyleSheet.create({
     width: '100%',
     textAlign: 'center',
     fontSize: 14,
-    color: '#FF5C8D',
+    color: '#FF8CB6',
     fontFamily: 'DOSIyagiBoldface',
     zIndex: 10,
   },
   subTitleText: {
     fontSize: 20,
-    color: '#FF5C8D',
+    color: '#FF8CB6',
     lineHeight: 32,
     textAlign: 'center',
     fontFamily: 'DOSIyagiBoldface',
   },
   buttonText: {
     fontSize: 20,
-    color: '#FF5C8D',
+    color: '#FF8CB6',
     fontFamily: 'DOSIyagiBoldface',
   }
 });
