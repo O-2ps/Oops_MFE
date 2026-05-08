@@ -8,52 +8,25 @@ interface StrokedTextProps {
   style?: StyleProp<TextStyle>;
 }
 
-import { StyleSheet } from 'react-native';
-
 export default function StrokedText({ children, strokeColor, strokeWidth, style }: StrokedTextProps) {
-  const flattenedStyle = StyleSheet.flatten(style) || {};
-
-  const {
-    marginTop,
-    marginBottom,
-    marginLeft,
-    marginRight,
-    margin,
-    position,
-    top,
-    bottom,
-    left,
-    right,
-    zIndex,
-    width,
-    height,
-    flex,
-    ...textStyle
-  } = flattenedStyle as any;
-
-  const containerStyle = {
-    marginTop, marginBottom, marginLeft, marginRight, margin,
-    position, top, bottom, left, right, zIndex, width, height, flex,
-    justifyContent: 'center', alignItems: 'center',
-  } as any;
-
   const createShadow = (dx: number, dy: number): TextStyle => ({
     position: 'absolute',
-    transform: [{ translateX: dx }, { translateY: dy }],
+    top: dy,
+    left: dx,
     color: strokeColor,
   });
 
   return (
-    <View style={containerStyle}>
-      <Text style={[textStyle, createShadow(strokeWidth, 0)]}>{children}</Text>
-      <Text style={[textStyle, createShadow(-strokeWidth, 0)]}>{children}</Text>
-      <Text style={[textStyle, createShadow(0, strokeWidth)]}>{children}</Text>
-      <Text style={[textStyle, createShadow(0, -strokeWidth)]}>{children}</Text>
-      <Text style={[textStyle, createShadow(strokeWidth, strokeWidth)]}>{children}</Text>
-      <Text style={[textStyle, createShadow(-strokeWidth, -strokeWidth)]}>{children}</Text>
-      <Text style={[textStyle, createShadow(strokeWidth, -strokeWidth)]}>{children}</Text>
-      <Text style={[textStyle, createShadow(-strokeWidth, strokeWidth)]}>{children}</Text>
-      <Text style={textStyle}>{children}</Text>
+    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <Text style={[style, createShadow(strokeWidth, 0)]}>{children}</Text>
+      <Text style={[style, createShadow(-strokeWidth, 0)]}>{children}</Text>
+      <Text style={[style, createShadow(0, strokeWidth)]}>{children}</Text>
+      <Text style={[style, createShadow(0, -strokeWidth)]}>{children}</Text>
+      <Text style={[style, createShadow(strokeWidth, strokeWidth)]}>{children}</Text>
+      <Text style={[style, createShadow(-strokeWidth, -strokeWidth)]}>{children}</Text>
+      <Text style={[style, createShadow(strokeWidth, -strokeWidth)]}>{children}</Text>
+      <Text style={[style, createShadow(-strokeWidth, strokeWidth)]}>{children}</Text>
+      <Text style={style}>{children}</Text>
     </View>
   );
 }
