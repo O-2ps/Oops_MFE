@@ -131,9 +131,8 @@ export const Title = styled.Text`
 export const WheelSection = styled.View`
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
-  padding-horizontal: 40px;
   margin-vertical: 40px;
 `;
 

@@ -54,21 +54,9 @@ export default function MyPageScreen() {
         </S.Header>
 
         <S.WheelSection>
-          <S.ArrowButton onPress={() => navigation.navigate('Skin')}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.arrowText}>
-              &lt;
-            </StrokedText>
-          </S.ArrowButton>
-          
           <Animated.View style={{ transform: [{ translateY: floatAnim }] }}>
             <MyPageSvg width={width * 0.7} height={width * 0.7} />
           </Animated.View>
-          
-          <S.ArrowButton onPress={() => navigation.navigate('Home')}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.arrowText}>
-              &gt;
-            </StrokedText>
-          </S.ArrowButton>
         </S.WheelSection>
 
         <S.FooterAction onPress={() => {}}>

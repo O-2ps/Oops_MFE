@@ -59,21 +59,9 @@ export default function SkinScreen() {
         </S.Header>
 
         <S.WheelSection>
-          <S.ArrowButton onPress={() => navigation.navigate('Home')}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.arrowText}>
-              &lt;
-            </StrokedText>
-          </S.ArrowButton>
-          
           <Animated.View style={{ transform: [{ translateY: floatAnim }] }}>
             <MaskSvg width={width * 0.7} height={width * 0.7} />
           </Animated.View>
-          
-          <S.ArrowButton onPress={() => navigation.navigate('MyPage')}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.arrowText}>
-              &gt;
-            </StrokedText>
-          </S.ArrowButton>
         </S.WheelSection>
 
         <S.FooterAction onPress={handleStartAnalysis}>
