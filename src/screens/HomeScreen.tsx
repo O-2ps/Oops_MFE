@@ -65,10 +65,10 @@ export default function HomeScreen() {
     <S.Container>
       <S.MainContent>
         <S.Header>
-          <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.stepText}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.stepText}>
             1.
           </StrokedText>
-          <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={[styles.titleText]}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={[styles.titleText]}>
             퍼스널 컬러 분석하기
           </StrokedText>
         </S.Header>
