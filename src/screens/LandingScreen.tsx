@@ -110,30 +110,62 @@ export default function LandingScreen() {
 
   return (
     <S.Container>
+      <View style={StyleSheet.absoluteFill}>
+        <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
+      </View>
       <S.MainContent>
         <AnimatedStar
-          top={-height * 0.15}
-          right={-width * 0.1}
-          size={width * 1.2}
-          rotate="24deg"
+          top={-height * 0.18}
+          right={width * 0.78}
+          size={width * 1.0}
+          rotate="18deg"
           delay={0}
-          duration={8000}
+          duration={8200}
         />
+
         <AnimatedStar
-          top={height * 0.25}
-          right={width * 0.1}
+          top={height * 0.12}
+          right={width * 0.38}
+          size={width * 0.55}
+          rotate="-6deg"
+          delay={900}
+          duration={7600}
+        />
+
+        <AnimatedStar
+          top={height * 0.32}
+          right={width * 0.82}
+          size={width * 0.7}
+          rotate="10deg"
+          delay={1800}
+          duration={8800}
+        />
+
+        <AnimatedStar
+          top={height * 0.48}
+          right={width * 0.45}
           size={width * 0.6}
           rotate="0deg"
-          delay={1000}
-          duration={7000}
+          delay={2700}
+          duration={7900}
         />
+
         <AnimatedStar
-          top={height * 0.55}
-          right={width * 0.4}
-          size={width * 1.1}
-          rotate="-10deg"
-          delay={2000}
-          duration={9000}
+          top={height * 0.64}
+          right={width * 0.18}
+          size={width * 0.85}
+          rotate="-14deg"
+          delay={3600}
+          duration={9100}
+        />
+
+        <AnimatedStar
+          top={height * 0.84}
+          right={-width * 0.08}
+          size={width * 1.05}
+          rotate="14deg"
+          delay={4500}
+          duration={8600}
         />
 
         <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.noticeText}>
