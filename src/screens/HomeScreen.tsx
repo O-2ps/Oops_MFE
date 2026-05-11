@@ -1,15 +1,16 @@
 import React from 'react';
-import { Animated, Dimensions } from 'react-native';
+import { Animated, Dimensions, View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
 import ColorsSvg from '../../assets/icons/colors.svg';
+import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
 import { useHomeAnimations } from '../hooks/useHomeAnimations';
 import { RootStackParamList } from '../types/navigation';
 import { COLORS } from '../constants/theme';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -23,12 +24,15 @@ export default function HomeScreen() {
 
   return (
     <S.Container>
+      <View style={StyleSheet.absoluteFill}>
+        <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
+      </View>
       <S.MainContent>
         <S.Header>
-          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={{ fontSize: 20, color: COLORS.PRIMARY, marginBottom: 25 }}>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={{ fontSize: 20, color: COLORS.PRIMARY, marginBottom: 25, fontFamily: 'DOSIyagiBoldface' }}>
             1.
           </StrokedText>
-          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={{ fontSize: 24, color: COLORS.PRIMARY }}>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={{ fontSize: 24, color: COLORS.PRIMARY, fontFamily: 'DOSIyagiBoldface' }}>
             퍼스널 컬러 분석하기
           </StrokedText>
         </S.Header>
@@ -40,7 +44,7 @@ export default function HomeScreen() {
         </S.WheelSection>
 
         <S.FooterAction onPress={handleStartAnalysis}>
-          <StrokedText strokeColor={COLORS.WHITE} strokeWidth={2} style={{ fontSize: 20, color: COLORS.PRIMARY }}>
+          <StrokedText strokeColor={COLORS.WHITE} strokeWidth={2} style={{ fontSize: 20, color: COLORS.PRIMARY, fontFamily: 'DOSIyagiBoldface' }}>
             [ 분석 시작하기 ]
           </StrokedText>
         </S.FooterAction>

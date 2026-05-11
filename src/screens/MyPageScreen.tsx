@@ -1,12 +1,13 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, Dimensions, StyleSheet } from 'react-native';
+import { Animated, Easing, Dimensions, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
 import MyPageSvg from '../../assets/icons/mypage.svg';
+import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 type RootStackParamList = {
   Landing: undefined;
@@ -43,6 +44,9 @@ export default function MyPageScreen() {
 
   return (
     <S.Container>
+      <View style={StyleSheet.absoluteFill}>
+        <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
+      </View>
       <S.MainContent>
         <S.Header>
           <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.stepText}>

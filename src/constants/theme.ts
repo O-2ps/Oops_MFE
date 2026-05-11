@@ -4,7 +4,7 @@ export const COLORS = {
   ACCENT: '#FF5C8D',
   WHITE: '#ffffff',
   OFF_WHITE: '#fafafa',
-  BACKGROUND: 'transparent',
+  BACKGROUND: '#ffffff',
 };
 
 export const FONTS = {

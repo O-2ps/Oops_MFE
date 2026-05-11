@@ -48,6 +48,9 @@ export default function SkinScreen() {
 
   return (
     <S.Container>
+      <View style={StyleSheet.absoluteFill}>
+        <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
+      </View>
       <S.MainContent>
         <S.Header>
           <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.stepText}>
