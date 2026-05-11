@@ -35,6 +35,7 @@ const NAV_ORDER: (keyof RootStackParamList)[] = ['Home', 'Skin', 'MyPage'];
 export default function App() {
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
   const [currentRoute, setCurrentRoute] = useState<string>('Landing');
+  const [animationType, setAnimationType] = useState<'slide_from_right' | 'slide_from_left'>('slide_from_right');
 
   const [fontsLoaded, fontError] = useFonts({
     [FONTS.PIXEL]: require('./assets/fonts/DOSIyagiBoldface.ttf'),
@@ -53,12 +54,17 @@ export default function App() {
     let nextIndex;
     if (direction === 'next') {
       nextIndex = (currentIndex + 1) % NAV_ORDER.length;
+      setAnimationType('slide_from_right');
     } else {
       nextIndex = (currentIndex - 1 + NAV_ORDER.length) % NAV_ORDER.length;
+      setAnimationType('slide_from_left');
     }
 
     const nextRoute = NAV_ORDER[nextIndex];
-    navigationRef.navigate(nextRoute as any);
+    // 잠시 대기 후 이동하여 애니메이션 방향이 먼저 반영되도록 함
+    setTimeout(() => {
+      navigationRef.navigate(nextRoute as any);
+    }, 0);
   };
 
   if (!fontsLoaded && !fontError) {
@@ -73,12 +79,6 @@ export default function App() {
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.WHITE }} onLayout={onLayoutRootView}>
-      <BG
-        width={width}
-        height={height}
-        style={{ position: 'absolute' }}
-        preserveAspectRatio="xMidYMid slice"
-      />
       <View style={{ flex: 1 }}>
         <S.GreenBox />
         <View style={{ flex: 1, position: 'relative' }}>
@@ -95,7 +95,7 @@ export default function App() {
               screenOptions={{
                 headerShown: false,
                 contentStyle: { backgroundColor: COLORS.BACKGROUND },
-                animation: 'slide_from_right',
+                animation: animationType,
               }}
             >
               <Stack.Screen name="Landing" component={LandingScreen} />
