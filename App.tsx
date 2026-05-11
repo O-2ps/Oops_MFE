@@ -1,48 +1,43 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { NavigationContainer, DefaultTheme, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { View, ActivityIndicator, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+
 import LandingScreen from './src/screens/LandingScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import SkinScreen from './src/screens/SkinScreen';
 import MyPageScreen from './src/screens/MyPageScreen';
 import LastCheckScreen from './src/screens/LastCheckScreen';
-import { StatusBar } from 'expo-status-bar';
 import BG from './assets/icons/BG.svg';
 import * as S from './src/screens/style';
 import StrokedText from './src/components/StrokedText';
+import { RootStackParamList } from './src/types/navigation';
+import { COLORS, FONTS } from './src/constants/theme';
 
 const { width, height } = Dimensions.get('window');
 SplashScreen.preventAutoHideAsync();
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const MyTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: 'transparent',
+    background: COLORS.BACKGROUND,
   },
 };
 
-type RootStackParamList = {
-  Landing: undefined;
-  Home: undefined;
-  Skin: undefined;
-  MyPage: undefined;
-  LastCheck: { from: string };
-};
-
-const NAV_ORDER = ['Home', 'Skin', 'MyPage'];
+const NAV_ORDER: (keyof RootStackParamList)[] = ['Home', 'Skin', 'MyPage'];
 
 export default function App() {
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
-  const [currentRoute, setCurrentRoute] = useState('Landing');
+  const [currentRoute, setCurrentRoute] = useState<string>('Landing');
 
   const [fontsLoaded, fontError] = useFonts({
-    'DOSIyagiBoldface': require('./assets/fonts/DOSIyagiBoldface.ttf'),
+    [FONTS.PIXEL]: require('./assets/fonts/DOSIyagiBoldface.ttf'),
   });
 
   const onLayoutRootView = useCallback(async () => {
@@ -52,7 +47,7 @@ export default function App() {
   }, [fontsLoaded, fontError]);
 
   const handleNavigate = (direction: 'next' | 'prev') => {
-    const currentIndex = NAV_ORDER.indexOf(currentRoute);
+    const currentIndex = NAV_ORDER.indexOf(currentRoute as any);
     if (currentIndex === -1) return;
 
     let nextIndex;
@@ -68,16 +63,16 @@ export default function App() {
 
   if (!fontsLoaded && !fontError) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
-        <ActivityIndicator size="large" color="#C6EB8D" />
-      </View>
+      <S.Container style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.WHITE }}>
+        <ActivityIndicator size="large" color={COLORS.SECONDARY} />
+      </S.Container>
     );
   }
 
-  const showArrows = NAV_ORDER.includes(currentRoute);
+  const showArrows = NAV_ORDER.includes(currentRoute as any);
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#ffffff' }} onLayout={onLayoutRootView}>
+    <View style={{ flex: 1, backgroundColor: COLORS.WHITE }} onLayout={onLayoutRootView}>
       <BG
         width={width}
         height={height}
@@ -99,7 +94,7 @@ export default function App() {
               initialRouteName="Landing"
               screenOptions={{
                 headerShown: false,
-                contentStyle: { backgroundColor: 'transparent' },
+                contentStyle: { backgroundColor: COLORS.BACKGROUND },
                 animation: 'slide_from_right',
               }}
             >
@@ -114,12 +109,12 @@ export default function App() {
           {showArrows && (
             <View style={styles.arrowOverlay} pointerEvents="box-none">
               <TouchableOpacity style={styles.arrowButton} onPress={() => handleNavigate('prev')}>
-                <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.arrowText}>
+                <StrokedText strokeColor={COLORS.WHITE} strokeWidth={2.5} style={styles.arrowText}>
                   &lt;
                 </StrokedText>
               </TouchableOpacity>
               <TouchableOpacity style={styles.arrowButton} onPress={() => handleNavigate('next')}>
-                <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.arrowText}>
+                <StrokedText strokeColor={COLORS.WHITE} strokeWidth={2.5} style={styles.arrowText}>
                   &gt;
                 </StrokedText>
               </TouchableOpacity>
@@ -151,7 +146,7 @@ const styles = StyleSheet.create({
   },
   arrowText: {
     fontSize: 30,
-    color: '#FF8CB6',
-    fontFamily: 'DOSIyagiBoldface',
+    color: COLORS.PRIMARY,
+    fontFamily: FONTS.PIXEL,
   }
 });

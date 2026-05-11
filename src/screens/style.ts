@@ -1,19 +1,17 @@
 import styled from 'styled-components/native';
 import { Dimensions, View } from 'react-native';
+import { COLORS, FONTS } from '../constants/theme';
 
 const { width } = Dimensions.get('window');
 
-const PIXEL_FONT = 'DOSIyagiBoldface';
-const OUTLINE_COLOR = '#FF5C8D';
-
 export const Container = styled.View`
   flex: 1;
-  background-color: transparent;
+  background-color: ${COLORS.BACKGROUND};
 `;
 
 export const GreenBox = styled.View`
   height: 40px;
-  background-color: #C6EB8D;
+  background-color: ${COLORS.SECONDARY};
   width: 100%;
 `;
 
@@ -49,9 +47,9 @@ export const Notice = styled.Text`
   width: 100%;
   text-align: center;
   font-size: 14px; 
-  color: #FF5C8D;
-  font-family: ${PIXEL_FONT};
-  text-shadow-color: #ffffff;
+  color: ${COLORS.ACCENT};
+  font-family: ${FONTS.PIXEL};
+  text-shadow-color: ${COLORS.WHITE};
   text-shadow-offset: 0px 0px;
   text-shadow-radius: 1.5px;
   z-index: 10;
@@ -75,11 +73,11 @@ export const Logo = styled.View`
 
 export const SubTitle = styled.Text`
   font-size: 20px; 
-  color: #fafafa;
+  color: ${COLORS.OFF_WHITE};
   line-height: 42px;
   text-align: center;
-  font-family: ${PIXEL_FONT};
-  text-shadow-color: ${OUTLINE_COLOR};
+  font-family: ${FONTS.PIXEL};
+  text-shadow-color: ${COLORS.ACCENT};
   text-shadow-offset: 1px 1px;
   text-shadow-radius: 0.5px;
   width: 100%;
@@ -101,14 +99,14 @@ export const LoginButton = styled.TouchableOpacity`
 
 export const LoginButtonText = styled.Text`
   font-size: 24px; 
-  color: #ffffff;
-  font-family: ${PIXEL_FONT};
-  text-shadow-color: ${OUTLINE_COLOR};
+  color: ${COLORS.WHITE};
+  font-family: ${FONTS.PIXEL};
+  text-shadow-color: ${COLORS.ACCENT};
   text-shadow-offset: 1px 1px;
   text-shadow-radius: 0.5px;
 `;
 
-// --- Home Screen Styles ---
+// --- Shared & Screen Specific Styles ---
 
 export const Header = styled.View`
   align-items: center;
@@ -117,15 +115,15 @@ export const Header = styled.View`
 
 export const StepNumber = styled.Text`
   font-size: 20px;
-  color: #FF8CB6;
-  font-family: ${PIXEL_FONT};
-  margin-bottom: 15px;
+  color: ${COLORS.PRIMARY};
+  font-family: ${FONTS.PIXEL};
+  margin-bottom: 25px;
 `;
 
 export const Title = styled.Text`
   font-size: 24px;
-  color: #FF8CB6;
-  font-family: ${PIXEL_FONT};
+  color: ${COLORS.PRIMARY};
+  font-family: ${FONTS.PIXEL};
 `;
 
 export const WheelSection = styled.View`
@@ -142,8 +140,8 @@ export const ArrowButton = styled.TouchableOpacity`
 
 export const ArrowText = styled.Text`
   font-size: 30px;
-  color: #FF8CB6;
-  font-family: ${PIXEL_FONT};
+  color: ${COLORS.PRIMARY};
+  font-family: ${FONTS.PIXEL};
 `;
 
 export const FooterAction = styled.TouchableOpacity`
@@ -154,6 +152,6 @@ export const FooterAction = styled.TouchableOpacity`
 
 export const FooterActionText = styled.Text`
   font-size: 20px;
-  color: #FF8CB6;
-  font-family: ${PIXEL_FONT};
+  color: ${COLORS.PRIMARY};
+  font-family: ${FONTS.PIXEL};
 `;

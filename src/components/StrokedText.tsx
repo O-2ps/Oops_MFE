@@ -9,23 +9,31 @@ interface StrokedTextProps {
 }
 
 export default function StrokedText({ children, strokeColor, strokeWidth, style }: StrokedTextProps) {
-  const createShadow = (dx: number, dy: number): TextStyle => ({
+  const shadowStyle = (dx: number, dy: number): TextStyle => ({
     position: 'absolute',
     top: dy,
     left: dx,
     color: strokeColor,
   });
 
+  const offsets = [
+    { dx: strokeWidth, dy: 0 },
+    { dx: -strokeWidth, dy: 0 },
+    { dx: 0, dy: strokeWidth },
+    { dx: 0, dy: -strokeWidth },
+    { dx: strokeWidth, dy: strokeWidth },
+    { dx: -strokeWidth, dy: -strokeWidth },
+    { dx: strokeWidth, dy: -strokeWidth },
+    { dx: -strokeWidth, dy: strokeWidth },
+  ];
+
   return (
     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={[style, createShadow(strokeWidth, 0)]}>{children}</Text>
-      <Text style={[style, createShadow(-strokeWidth, 0)]}>{children}</Text>
-      <Text style={[style, createShadow(0, strokeWidth)]}>{children}</Text>
-      <Text style={[style, createShadow(0, -strokeWidth)]}>{children}</Text>
-      <Text style={[style, createShadow(strokeWidth, strokeWidth)]}>{children}</Text>
-      <Text style={[style, createShadow(-strokeWidth, -strokeWidth)]}>{children}</Text>
-      <Text style={[style, createShadow(strokeWidth, -strokeWidth)]}>{children}</Text>
-      <Text style={[style, createShadow(-strokeWidth, strokeWidth)]}>{children}</Text>
+      {offsets.map((offset, index) => (
+        <Text key={index} style={[style, shadowStyle(offset.dx, offset.dy)]}>
+          {children}
+        </Text>
+      ))}
       <Text style={style}>{children}</Text>
     </View>
   );
