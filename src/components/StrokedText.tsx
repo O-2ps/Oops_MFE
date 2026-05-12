@@ -1,21 +1,17 @@
 import React from 'react';
-import { View, Text, TextStyle, StyleProp } from 'react-native';
+import { View, Text, TextStyle, StyleProp, StyleSheet } from 'react-native';
 
 interface StrokedTextProps {
   children: React.ReactNode;
   strokeColor: string;
   strokeWidth: number;
   style?: StyleProp<TextStyle>;
+  numberOfLines?: number;
 }
 
-export default function StrokedText({ children, strokeColor, strokeWidth, style }: StrokedTextProps) {
-  const shadowStyle = (dx: number, dy: number): TextStyle => ({
-    position: 'absolute',
-    top: dy,
-    left: dx,
-    color: strokeColor,
-  });
-
+export default function StrokedText({ children, strokeColor, strokeWidth, style, numberOfLines }: StrokedTextProps) {
+  const flattenedStyle = StyleSheet.flatten(style) || {};
+  
   const offsets = [];
   const points = 12;
   for (let i = 0; i < points; i++) {
@@ -27,13 +23,47 @@ export default function StrokedText({ children, strokeColor, strokeWidth, style 
   }
 
   return (
-    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-      {offsets.map((offset, index) => (
-        <Text key={index} style={[style, shadowStyle(offset.dx, offset.dy)]}>
+    <View style={style}>
+      <View>
+        {/* Base text to reserve space */}
+        <Text 
+          style={[flattenedStyle, { opacity: 0 }]} 
+          numberOfLines={numberOfLines}
+          ellipsizeMode="tail"
+        >
           {children}
         </Text>
-      ))}
-      <Text style={style}>{children}</Text>
+        
+        {/* Stroke layers */}
+        {offsets.map((offset, index) => (
+          <Text 
+            key={index} 
+            style={[
+              flattenedStyle, 
+              { 
+                position: 'absolute', 
+                top: offset.dy, 
+                left: offset.dx, 
+                color: strokeColor,
+                zIndex: 1
+              }
+            ]}
+            numberOfLines={numberOfLines}
+            ellipsizeMode="tail"
+          >
+            {children}
+          </Text>
+        ))}
+        
+        {/* Main text layer */}
+        <Text 
+          style={[flattenedStyle, { position: 'absolute', top: 0, left: 0, zIndex: 2 }]} 
+          numberOfLines={numberOfLines}
+          ellipsizeMode="tail"
+        >
+          {children}
+        </Text>
+      </View>
     </View>
   );
 }

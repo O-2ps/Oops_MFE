@@ -76,7 +76,7 @@ export default function App() {
     );
   }
 
-  const showArrows = NAV_ORDER.includes(currentRoute as any);
+  const showArrows = currentRoute === 'Home';
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.WHITE }} onLayout={onLayoutRootView}>
