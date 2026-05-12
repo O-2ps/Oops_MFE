@@ -122,8 +122,8 @@ export default function ResultScreen() {
           </S.ComparisonRow>
         </S.ComparisonContainer>
 
-        <View style={{ marginTop: 40, alignItems: 'center' }}>
-          <S.FooterAction style={{ marginBottom: 15 }}>
+        <View style={{ marginTop: 30, alignItems: 'center' }}>
+          <S.FooterAction style={{ marginBottom: 30 }}>
             <StrokedText strokeColor="#ffffff" strokeWidth={5} style={styles.footerText}>
               [ 어울리는 화장품 보러가기 ]
             </StrokedText>
