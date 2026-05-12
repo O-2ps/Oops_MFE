@@ -23,7 +23,7 @@ export default function ResultScreen() {
   const isSkin = type === 'skin';
 
   const handleBack = () => {
-    navigation.goBack();
+    navigation.navigate('Home');
   };
 
   return (

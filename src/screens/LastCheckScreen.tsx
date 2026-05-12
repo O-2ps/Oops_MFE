@@ -27,7 +27,7 @@ export default function LastCheckScreen() {
   };
 
   const handleBack = () => {
-    navigation.goBack();
+    navigation.navigate('Home');
   };
 
   return (
