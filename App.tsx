@@ -53,19 +53,19 @@ export default function App() {
     const currentIndex = NAV_ORDER.indexOf(currentRoute as any);
     if (currentIndex === -1) return;
 
+    let nextIndex;
     if (direction === 'next') {
-      const nextIndex = (currentIndex + 1) % NAV_ORDER.length;
+      nextIndex = (currentIndex + 1) % NAV_ORDER.length;
       setAnimationType('slide_from_right');
-      const nextRoute = NAV_ORDER[nextIndex];
-      setTimeout(() => {
-        navigationRef.navigate(nextRoute as any);
-      }, 0);
     } else {
+      nextIndex = (currentIndex - 1 + NAV_ORDER.length) % NAV_ORDER.length;
       setAnimationType('slide_from_left');
-      setTimeout(() => {
-        navigationRef.navigate('Home' as any);
-      }, 0);
     }
+
+    const nextRoute = NAV_ORDER[nextIndex];
+    setTimeout(() => {
+      navigationRef.navigate(nextRoute as any);
+    }, 0);
   };
 
   if (!fontsLoaded && !fontError) {
@@ -76,7 +76,7 @@ export default function App() {
     );
   }
 
-  const showArrows = currentRoute === 'Home';
+  const showArrows = NAV_ORDER.includes(currentRoute as any);
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.WHITE }} onLayout={onLayoutRootView}>
