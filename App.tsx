@@ -53,20 +53,19 @@ export default function App() {
     const currentIndex = NAV_ORDER.indexOf(currentRoute as any);
     if (currentIndex === -1) return;
 
-    let nextIndex;
     if (direction === 'next') {
-      nextIndex = (currentIndex + 1) % NAV_ORDER.length;
+      const nextIndex = (currentIndex + 1) % NAV_ORDER.length;
       setAnimationType('slide_from_right');
+      const nextRoute = NAV_ORDER[nextIndex];
+      setTimeout(() => {
+        navigationRef.navigate(nextRoute as any);
+      }, 0);
     } else {
-      nextIndex = (currentIndex - 1 + NAV_ORDER.length) % NAV_ORDER.length;
       setAnimationType('slide_from_left');
+      setTimeout(() => {
+        navigationRef.navigate('Home' as any);
+      }, 0);
     }
-
-    const nextRoute = NAV_ORDER[nextIndex];
-    // 잠시 대기 후 이동하여 애니메이션 방향이 먼저 반영되도록 함
-    setTimeout(() => {
-      navigationRef.navigate(nextRoute as any);
-    }, 0);
   };
 
   if (!fontsLoaded && !fontError) {
