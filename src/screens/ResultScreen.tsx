@@ -174,7 +174,7 @@ export default function ResultScreen() {
         </S.ComparisonContainer>
 
         <View style={{ marginTop: isSkin ? 20 : 30, alignItems: 'center' }}>
-          <S.FooterAction style={{ marginBottom: 30 }}>
+          <S.FooterAction style={{ marginBottom: 15 }}>
             <StrokedText strokeColor="#ffffff" strokeWidth={5} style={styles.footerText}>
               [ 어울리는 화장품 보러가기 ]
             </StrokedText>
