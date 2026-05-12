@@ -59,7 +59,7 @@ export default function SurveyScreen() {
           })
         ]).start();
       } else {
-        navigation.navigate('Home');
+        navigation.navigate('Result', { type: 'skin' });
       }
     });
   };

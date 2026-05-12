@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
 import DownloadSvg from '../../assets/icons/download.svg';
@@ -17,6 +17,10 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Result'>;
 
 export default function ResultScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<RouteProp<RootStackParamList, 'Result'>>();
+  const { type } = route.params || { type: 'spring' };
+
+  const isSkin = type === 'skin';
 
   const handleBack = () => {
     navigation.goBack();
@@ -27,102 +31,149 @@ export default function ResultScreen() {
       <View style={StyleSheet.absoluteFill}>
         <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
       </View>
-      
-      
+
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', paddingTop: 30 }}>
+        {isSkin && (
+          <View style={styles.skinHeader}>
+            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.saveInfoText}>
+              * 결과는 마이페이지에 저장됩니다.
+            </StrokedText>
+          </View>
+        )}
+
         <View style={styles.topAction}>
           <TouchableOpacity style={{ padding: 5 }}>
             <DownloadSvg width={18} height={18} fill="#666666" />
           </TouchableOpacity>
         </View>
 
-        <S.ResultImageContainer style={styles.imageContainer}>
-          <SpringWarmBrightSvg width="100%" height="100%" />
-        </S.ResultImageContainer>
+        {!isSkin && (
+          <S.ResultImageContainer style={styles.imageContainer}>
+            <SpringWarmBrightSvg width="100%" height="100%" />
+          </S.ResultImageContainer>
+        )}
 
-        <View style={{ marginTop: 20, marginBottom: 20 }}>
-          <StrokedText strokeColor="#ffffff" strokeWidth={5} style={styles.title}>
-            [ 봄 웜 라이트 ]
+        <View style={{ marginTop: isSkin ? 60 : 20, marginBottom: 20 }}>
+          <StrokedText strokeColor="#ffffff" strokeWidth={5} style={[styles.title, isSkin && { color: '#333333' }]}>
+            {isSkin ? '[ 건성 피부 ]' : '[ 봄 웜 라이트 ]'}
           </StrokedText>
         </View>
 
-        <View style={{ marginBottom: 20 }}>
-          <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
-            고명도, 저채도의 밝고 따뜻한 파스텔톤이{"\n"}가장 잘 어울리는 유형입니다.
-          </StrokedText>
+        <View style={{ marginBottom: isSkin ? 40 : 20 }}>
+          {isSkin ? (
+            <View style={{ alignItems: 'center' }}>
+              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
+                당신의 피부 나이는
+              </StrokedText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+                <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.skinAgeText}>
+                  [ 27살 ]
+                </StrokedText>
+                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
+                  {' '}입니다.
+                </StrokedText>
+              </View>
+            </View>
+          ) : (
+            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
+              고명도, 저채도의 밝고 따뜻한 파스텔톤이{"\n"}가장 잘 어울리는 유형입니다.
+            </StrokedText>
+          )}
         </View>
 
-        <S.StatContainer style={{ marginTop: 10, paddingHorizontal: 40 }}>
-          <S.StatItem>
-            <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>64%</StrokedText>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>웜톤</StrokedText>
-          </S.StatItem>
-          <View style={styles.statDivider} />
-          <S.StatItem>
-            <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>71%</StrokedText>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>봄</StrokedText>
-          </S.StatItem>
-          <View style={styles.statDivider} />
-          <S.StatItem>
-            <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>88%</StrokedText>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>라이트</StrokedText>
-          </S.StatItem>
-        </S.StatContainer>
+        {!isSkin && (
+          <S.StatContainer style={{ marginTop: 10, paddingHorizontal: 40 }}>
+            <S.StatItem>
+              <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>64%</StrokedText>
+              <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>웜톤</StrokedText>
+            </S.StatItem>
+            <View style={styles.statDivider} />
+            <S.StatItem>
+              <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>71%</StrokedText>
+              <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>봄</StrokedText>
+            </S.StatItem>
+            <View style={styles.statDivider} />
+            <S.StatItem>
+              <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>88%</StrokedText>
+              <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>라이트</StrokedText>
+            </S.StatItem>
+          </S.StatContainer>
+        )}
 
-        <S.ComparisonContainer style={{ marginTop: 30 }}>
-          {/* 웜 / 쿨 */}
-          <S.ComparisonRow style={{ marginBottom: 12 }}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>웜</StrokedText>
-            <S.BarContainer style={styles.barContainerWithBorder}>
-              <LinearGradient 
-                colors={['#FFD54F', '#FFB74D']} 
-                start={{x: 0, y: 0}} end={{x: 1, y: 0}} 
-                style={{ flex: 0.64, height: '100%' }} 
-              />
-              <View style={styles.barGap} />
-              <View style={{ width: 14, height: '100%', backgroundColor: '#FFB74D' }} />
-              <View style={styles.barGap} />
-              <View style={{ flex: 0.36, height: '100%', backgroundColor: '#E0E0E0' }} />
-            </S.BarContainer>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>쿨</StrokedText>
-          </S.ComparisonRow>
-
-          {/* 봄 / 가을 */}
-          <S.ComparisonRow style={{ marginBottom: 12 }}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>봄</StrokedText>
-            <S.BarContainer style={styles.barContainerWithBorder}>
-              <LinearGradient 
-                colors={['#FFB74D', '#F57C00']} 
-                start={{x: 0, y: 0}} end={{x: 1, y: 0}} 
-                style={{ flex: 0.71, height: '100%' }} 
-              />
-              <View style={styles.barGap} />
-              <View style={{ width: 14, height: '100%', backgroundColor: '#F57C00' }} />
-              <View style={styles.barGap} />
-              <View style={{ flex: 0.29, height: '100%', backgroundColor: '#E0E0E0' }} />
-            </S.BarContainer>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>가을</StrokedText>
-          </S.ComparisonRow>
-
-          {/* 라이트 / 딥 */}
-          <S.ComparisonRow>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>라이트</StrokedText>
-            <S.BarContainer style={styles.barContainerWithBorder}>
-              <LinearGradient 
-                colors={['#FFF176', '#FFD54F']} 
-                start={{x: 0, y: 0}} end={{x: 1, y: 0}} 
-                style={{ flex: 0.88, height: '100%' }} 
-              />
-              <View style={styles.barGap} />
-              <View style={{ width: 14, height: '100%', backgroundColor: '#FFD54F' }} />
-              <View style={styles.barGap} />
-              <View style={{ flex: 0.12, height: '100%', backgroundColor: '#E0E0E0' }} />
-            </S.BarContainer>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>딥</StrokedText>
-          </S.ComparisonRow>
+        <S.ComparisonContainer style={{ marginTop: isSkin ? 0 : 30 }}>
+          {isSkin ? (
+            <>
+              {[
+                { label: '모공', left: '많다', right: '적다', flex: 0.7, color: '#90FDFF' },
+                { label: '수분', left: '많다', right: '적다', flex: 0.9, color: '#90FDFF' },
+                { label: '유분', left: '많다', right: '적다', flex: 0.8, color: '#90FDFF' },
+                { label: '트러블', left: '많다', right: '적다', flex: 0.4, color: '#90FDFF' }
+              ].map((item, idx) => (
+                <View key={idx} style={{ marginBottom: 12, width: width - 40, alignItems: 'flex-start' }}>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.indicatorLabel}>{item.label}</StrokedText>
+                  <S.ComparisonRow style={{ marginTop: 2 }}>
+                    <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.barSideLabel}>{item.left}</StrokedText>
+                    <S.BarContainer style={styles.barContainerWithBorder}>
+                      <LinearGradient
+                        colors={['#FFD54F', item.color]}
+                        start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                        style={{ flex: item.flex, height: '100%' }}
+                      />
+                      <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
+                      <View style={{ flex: 1 - item.flex, height: '100%', backgroundColor: '#E0E0E0' }} />
+                    </S.BarContainer>
+                    <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.barSideLabel}>{item.right}</StrokedText>
+                  </S.ComparisonRow>
+                </View>
+              ))}
+            </>
+          ) : (
+            <>
+              {/* Personal Color Bars (Warm/Cool, Spring/Fall, Light/Deep) */}
+              <S.ComparisonRow style={{ marginBottom: 12 }}>
+                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>웜</StrokedText>
+                <S.BarContainer style={styles.barContainerWithBorder}>
+                  <LinearGradient
+                    colors={['#FFD54F', '#FFB74D']}
+                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                    style={{ flex: 0.64, height: '100%' }}
+                  />
+                  <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
+                  <View style={{ flex: 0.36, height: '100%', backgroundColor: '#E0E0E0' }} />
+                </S.BarContainer>
+                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>쿨</StrokedText>
+              </S.ComparisonRow>
+              <S.ComparisonRow style={{ marginBottom: 12 }}>
+                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>봄</StrokedText>
+                <S.BarContainer style={styles.barContainerWithBorder}>
+                  <LinearGradient
+                    colors={['#FFB74D', '#F57C00']}
+                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                    style={{ flex: 0.71, height: '100%' }}
+                  />
+                  <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
+                  <View style={{ flex: 0.29, height: '100%', backgroundColor: '#E0E0E0' }} />
+                </S.BarContainer>
+                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>가을</StrokedText>
+              </S.ComparisonRow>
+              <S.ComparisonRow>
+                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>라이트</StrokedText>
+                <S.BarContainer style={styles.barContainerWithBorder}>
+                  <LinearGradient
+                    colors={['#FFF176', '#FFD54F']}
+                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                    style={{ flex: 0.88, height: '100%' }}
+                  />
+                  <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
+                  <View style={{ flex: 0.12, height: '100%', backgroundColor: '#E0E0E0' }} />
+                </S.BarContainer>
+                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>딥</StrokedText>
+              </S.ComparisonRow>
+            </>
+          )}
         </S.ComparisonContainer>
 
-        <View style={{ marginTop: 30, alignItems: 'center' }}>
+        <View style={{ marginTop: isSkin ? 20 : 30, alignItems: 'center' }}>
           <S.FooterAction style={{ marginBottom: 30 }}>
             <StrokedText strokeColor="#ffffff" strokeWidth={5} style={styles.footerText}>
               [ 어울리는 화장품 보러가기 ]
@@ -181,7 +232,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   barSideLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#A0A0A0',
     fontFamily: 'DOSIyagiBoldface',
     width: 45,
@@ -218,5 +269,29 @@ const styles = StyleSheet.create({
     width: 4,
     height: '100%',
     backgroundColor: '#ffffff',
+  },
+  skinHeader: {
+    position: 'absolute',
+    top: 20,
+    width: '100%',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  saveInfoText: {
+    fontSize: 12,
+    color: COLORS.PRIMARY,
+    fontFamily: 'DOSIyagiBoldface',
+    opacity: 0.8,
+  },
+  skinAgeText: {
+    fontSize: 22,
+    color: COLORS.PRIMARY,
+    fontFamily: 'DOSIyagiBoldface',
+  },
+  indicatorLabel: {
+    fontSize: 13,
+    color: '#666666',
+    fontFamily: 'DOSIyagiBoldface',
+    marginLeft: 10,
   }
 });
