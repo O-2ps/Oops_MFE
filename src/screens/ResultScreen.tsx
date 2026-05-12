@@ -9,6 +9,7 @@ import StrokedText from '../components/StrokedText';
 import { COLORS } from '../constants/theme';
 import { RootStackParamList } from '../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
@@ -39,13 +40,13 @@ export default function ResultScreen() {
           <SpringWarmBrightSvg width="100%" height="100%" />
         </S.ResultImageContainer>
 
-        <View style={{ marginTop: 25, marginBottom: 10 }}>
+        <View style={{ marginTop: 20, marginBottom: 20 }}>
           <StrokedText strokeColor="#ffffff" strokeWidth={5} style={styles.title}>
             [ 봄 웜 라이트 ]
           </StrokedText>
         </View>
 
-        <View style={{ marginBottom: 25 }}>
+        <View style={{ marginBottom: 20 }}>
           <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
             고명도, 저채도의 밝고 따뜻한 파스텔톤이{"\n"}가장 잘 어울리는 유형입니다.
           </StrokedText>
@@ -69,34 +70,53 @@ export default function ResultScreen() {
         </S.StatContainer>
 
         <S.ComparisonContainer style={{ marginTop: 30 }}>
-          <S.ComparisonRow style={{ marginBottom: 10 }}>
+          {/* 웜 / 쿨 */}
+          <S.ComparisonRow style={{ marginBottom: 12 }}>
             <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>웜</StrokedText>
             <S.BarContainer style={styles.barContainerWithBorder}>
-              <S.BarFill $color="#FFD700" $flex={0.64} />
-              <View style={{ width: 4, backgroundColor: '#ffffff' }} />
-              <S.BarFill $color="#C1FFF0" $flex={0.36} />
+              <LinearGradient 
+                colors={['#FFD54F', '#FFB74D']} 
+                start={{x: 0, y: 0}} end={{x: 1, y: 0}} 
+                style={{ flex: 0.64, height: '100%' }} 
+              />
+              <View style={styles.barGap} />
+              <View style={{ width: 14, height: '100%', backgroundColor: '#FFB74D' }} />
+              <View style={styles.barGap} />
+              <View style={{ flex: 0.36, height: '100%', backgroundColor: '#E0E0E0' }} />
             </S.BarContainer>
             <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>쿨</StrokedText>
           </S.ComparisonRow>
 
-          <S.ComparisonRow style={{ marginBottom: 10 }}>
+          {/* 봄 / 가을 */}
+          <S.ComparisonRow style={{ marginBottom: 12 }}>
             <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>봄</StrokedText>
             <S.BarContainer style={styles.barContainerWithBorder}>
-              <S.BarFill $color="#FF9800" $flex={0.71} />
-              <View style={{ width: 4, backgroundColor: '#ffffff' }} />
-              <S.BarFill $color="#A1887F" $flex={0.29} />
+              <LinearGradient 
+                colors={['#FFB74D', '#F57C00']} 
+                start={{x: 0, y: 0}} end={{x: 1, y: 0}} 
+                style={{ flex: 0.71, height: '100%' }} 
+              />
+              <View style={styles.barGap} />
+              <View style={{ width: 14, height: '100%', backgroundColor: '#F57C00' }} />
+              <View style={styles.barGap} />
+              <View style={{ flex: 0.29, height: '100%', backgroundColor: '#E0E0E0' }} />
             </S.BarContainer>
             <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>가을</StrokedText>
           </S.ComparisonRow>
 
+          {/* 라이트 / 딥 */}
           <S.ComparisonRow>
             <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>라이트</StrokedText>
             <S.BarContainer style={styles.barContainerWithBorder}>
-              <View style={{ width: 10, height: '100%', backgroundColor: '#FFD54F', borderRadius: 2 }} />
-              <View style={{ width: 4, backgroundColor: '#ffffff' }} />
-              <S.BarFill $color="#FFD54F" $flex={0.78} />
-              <View style={{ width: 4, backgroundColor: '#ffffff' }} />
-              <S.BarFill $color="#FF4081" $flex={0.12} />
+              <LinearGradient 
+                colors={['#FFF176', '#FFD54F']} 
+                start={{x: 0, y: 0}} end={{x: 1, y: 0}} 
+                style={{ flex: 0.88, height: '100%' }} 
+              />
+              <View style={styles.barGap} />
+              <View style={{ width: 14, height: '100%', backgroundColor: '#FFD54F' }} />
+              <View style={styles.barGap} />
+              <View style={{ flex: 0.12, height: '100%', backgroundColor: '#E0E0E0' }} />
             </S.BarContainer>
             <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>딥</StrokedText>
           </S.ComparisonRow>
@@ -193,5 +213,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'DOSIyagiBoldface',
     opacity: 0.9,
+  },
+  barGap: {
+    width: 4,
+    height: '100%',
+    backgroundColor: '#ffffff',
   }
 });
