@@ -5,4 +5,5 @@ export type RootStackParamList = {
   MyPage: undefined;
   LastCheck: { from: string };
   Result: { type: string };
+  Survey: undefined;
 };

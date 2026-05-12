@@ -54,17 +54,17 @@ export default function ResultScreen() {
 
         <S.StatContainer style={{ marginTop: 10, paddingHorizontal: 40 }}>
           <S.StatItem>
-            <StrokedText strokeColor="#ffffff" strokeWidth={3} style={styles.statValue}>64%</StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>64%</StrokedText>
             <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>웜톤</StrokedText>
           </S.StatItem>
           <View style={styles.statDivider} />
           <S.StatItem>
-            <StrokedText strokeColor="#ffffff" strokeWidth={3} style={styles.statValue}>71%</StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>71%</StrokedText>
             <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>봄</StrokedText>
           </S.StatItem>
           <View style={styles.statDivider} />
           <S.StatItem>
-            <StrokedText strokeColor="#ffffff" strokeWidth={3} style={styles.statValue}>88%</StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>88%</StrokedText>
             <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>라이트</StrokedText>
           </S.StatItem>
         </S.StatContainer>
@@ -170,15 +170,15 @@ const styles = StyleSheet.create({
     fontFamily: 'DOSIyagiBoldface',
   },
   statValue: {
-    fontSize: 28,
+    fontSize: 34,
     color: '#000000',
     fontFamily: 'DOSIyagiBoldface',
   },
   statLabel: {
-    fontSize: 17,
+    fontSize: 19,
     color: '#A0A0A0',
     fontFamily: 'DOSIyagiBoldface',
-    marginTop: 10,
+    marginTop: 14,
   },
   barSideLabel: {
     fontSize: 12,

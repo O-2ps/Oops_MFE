@@ -19,7 +19,11 @@ export default function LastCheckScreen() {
   const { from } = route.params || { from: 'unknown' };
 
   const handleStart = () => {
-    navigation.navigate('Result', { type: from === 'color' ? 'spring' : 'skin' });
+    if (from === 'skin') {
+      navigation.navigate('Survey');
+    } else {
+      navigation.navigate('Result', { type: 'spring' });
+    }
   };
 
   const handleBack = () => {
