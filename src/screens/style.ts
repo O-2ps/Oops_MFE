@@ -155,3 +155,29 @@ export const FooterActionText = styled.Text`
   color: ${COLORS.PRIMARY};
   font-family: ${FONTS.PIXEL};
 `;
+export const InstructionContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin-vertical: 30px;
+  gap: 15px;
+`;
+
+export const InstructionText = styled.Text`
+  font-size: 16px;
+  color: ${COLORS.PRIMARY};
+  font-family: ${FONTS.PIXEL};
+  text-align: center;
+  line-height: 24px;
+`;
+
+export const BackButton = styled.TouchableOpacity`
+  margin-top: 15px;
+  padding: 10px;
+`;
+
+export const BackButtonText = styled.Text`
+  font-size: 16px;
+  color: ${COLORS.PRIMARY};
+  font-family: ${FONTS.PIXEL};
+  opacity: 0.7;
+`;
