@@ -27,9 +27,8 @@ export default function ResultScreen() {
         <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
       </View>
       
-      <S.GreenBox />
       
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 10 }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', paddingTop: 30 }}>
         <View style={styles.topAction}>
           <TouchableOpacity style={{ padding: 5 }}>
             <DownloadSvg width={18} height={18} fill="#666666" />
@@ -40,13 +39,13 @@ export default function ResultScreen() {
           <SpringWarmBrightSvg width="100%" height="100%" />
         </S.ResultImageContainer>
 
-        <View style={{ marginTop: 20, marginBottom: 10 }}>
+        <View style={{ marginTop: 25, marginBottom: 10 }}>
           <StrokedText strokeColor="#ffffff" strokeWidth={5} style={styles.title}>
             [ 봄 웜 라이트 ]
           </StrokedText>
         </View>
 
-        <View style={{ marginBottom: 20 }}>
+        <View style={{ marginBottom: 25 }}>
           <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
             고명도, 저채도의 밝고 따뜻한 파스텔톤이{"\n"}가장 잘 어울리는 유형입니다.
           </StrokedText>
@@ -54,18 +53,18 @@ export default function ResultScreen() {
 
         <S.StatContainer style={{ marginTop: 10, paddingHorizontal: 40 }}>
           <S.StatItem>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.statValue}>64%</StrokedText>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.statLabel}>웜톤</StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={3} style={styles.statValue}>64%</StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>웜톤</StrokedText>
           </S.StatItem>
           <View style={styles.statDivider} />
           <S.StatItem>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.statValue}>71%</StrokedText>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.statLabel}>봄</StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={3} style={styles.statValue}>71%</StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>봄</StrokedText>
           </S.StatItem>
           <View style={styles.statDivider} />
           <S.StatItem>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.statValue}>88%</StrokedText>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.statLabel}>라이트</StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={3} style={styles.statValue}>88%</StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>라이트</StrokedText>
           </S.StatItem>
         </S.StatContainer>
 
@@ -104,7 +103,7 @@ export default function ResultScreen() {
         </S.ComparisonContainer>
 
         <View style={{ marginTop: 40, alignItems: 'center' }}>
-          <S.FooterAction style={{ marginBottom: 10 }}>
+          <S.FooterAction style={{ marginBottom: 15 }}>
             <StrokedText strokeColor="#ffffff" strokeWidth={5} style={styles.footerText}>
               [ 어울리는 화장품 보러가기 ]
             </StrokedText>
@@ -116,7 +115,6 @@ export default function ResultScreen() {
         </View>
       </View>
 
-      <S.GreenBox />
     </S.Container>
   );
 }
@@ -145,21 +143,22 @@ const styles = StyleSheet.create({
     fontFamily: 'DOSIyagiBoldface',
   },
   description: {
-    fontSize: 12,
+    fontSize: 15,
     color: '#A0A0A0',
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 22,
     fontFamily: 'DOSIyagiBoldface',
   },
   statValue: {
-    fontSize: 20,
+    fontSize: 28,
     color: '#000000',
     fontFamily: 'DOSIyagiBoldface',
   },
   statLabel: {
-    fontSize: 14,
+    fontSize: 17,
     color: '#A0A0A0',
     fontFamily: 'DOSIyagiBoldface',
+    marginTop: 10,
   },
   barSideLabel: {
     fontSize: 12,
