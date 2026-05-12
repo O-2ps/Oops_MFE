@@ -17,7 +17,52 @@ const { width, height } = Dimensions.get('window');
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Result'>;
 
-const RECOMMENDED_PRODUCTS = [
+const SKIN_PRODUCTS = [
+  {
+    id: 1,
+    title: '[화잘먹수분선] 웰라쥬 리얼 히알루로닉 블루 선크림 50ml 1+1 기획',
+    price: '29,300원',
+    store: '올리브영',
+    color: '#E3F2FD',
+  },
+  {
+    id: 2,
+    title: '[전문가추천/SNS대란템] 로벡틴 히알루론산 에센스 180ml 리필기획(+리필 120ml)',
+    price: '18,820원',
+    store: '올리브영',
+    color: '#BBDEFB',
+  },
+  {
+    id: 3,
+    title: '[경품증정]바이오더마 센시비오 디펜시브 세럼 30ml 기획(+센시비오 디펜시브 40ml 증정)',
+    price: '22,900원',
+    store: '올리브영',
+    color: '#FFEBEE',
+  },
+  {
+    id: 4,
+    title: '[워터젤리/수분에센스]닥터자르트 바이탈 하이드라 솔루션 하이드로 플럼프 트리트먼트 에센스 150ml',
+    price: '15,120원',
+    store: '올리브영',
+    color: '#E1F5FE',
+  },
+  {
+    id: 5,
+    title: '[수분폭탄] 토리든 다이브인 저분자 히알루론산 세럼',
+    price: '18,000원',
+    store: '올리브영',
+    color: '#E0F7FA',
+  },
+  {
+    id: 6,
+    title: '[민감진정] 아누아 어성초 77 수딩 토너',
+    price: '21,000원',
+    store: '올리브영',
+    color: '#F1F8E9',
+  },
+];
+
+const PERSONAL_PRODUCTS = [
   {
     id: 1,
     title: '[스테디셀러특가/NEW한정기획] 홀리카홀리카 마이페이브 무드 아이 팔레트',
@@ -83,6 +128,12 @@ export default function ResultScreen() {
   const [showProducts, setShowProducts] = useState(false);
 
   const isSkin = type === 'skin';
+  const currentProducts = isSkin ? SKIN_PRODUCTS : PERSONAL_PRODUCTS;
+  const analysisTitle = isSkin ? '건성 피부' : '봄 웜 라이트';
+  const highlightColor = isSkin ? '#81D4FA' : '#FF8A65';
+  
+  const buttonText = isSkin ? '[ 어울리는 피부 화장품 추천 ]' : '[ 어울리는 화장품 보러가기 ]';
+  const recommendMessage = isSkin ? '피부 화장품 추천' : '제품을 추천합니다.';
 
   const handleBack = () => {
     if (showProducts) {
@@ -97,7 +148,6 @@ export default function ResultScreen() {
   };
 
   const handleShowProducts = () => {
-    console.log('Show products clicked');
     setShowProducts(true);
   };
 
@@ -121,15 +171,15 @@ export default function ResultScreen() {
           <View style={styles.recommendationTitleContainer}>
             <View style={styles.recommendTitleRow}>
               <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleBracket}>[ </StrokedText>
-              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleHighlight}>봄 웜 라이트</StrokedText>
+              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={[styles.recommendTitleHighlight, { color: highlightColor }]}>{analysisTitle}</StrokedText>
               <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleBracket}> ] </StrokedText>
               <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleMain}>에 어울리는</StrokedText>
             </View>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleMain}>제품을 추천합니다.</StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleMain}>{recommendMessage}</StrokedText>
           </View>
 
           <View style={styles.productGrid}>
-            {RECOMMENDED_PRODUCTS.map((item) => (
+            {currentProducts.map((item) => (
               <View key={item.id} style={styles.productCard}>
                 <View style={[styles.productImageContainer, { backgroundColor: item.color }]} />
                 <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.productTitle} numberOfLines={3}>
@@ -289,20 +339,30 @@ export default function ResultScreen() {
               )}
             </S.ComparisonContainer>
 
-            <View style={{ marginTop: isSkin ? 20 : 30, alignItems: 'center', width: '100%', zIndex: 100 }}>
+            <View style={{ marginTop: isSkin ? 20 : 30, alignItems: 'center', width: '100%', paddingBottom: 40, zIndex: 9999 }}>
               <TouchableOpacity
-                onPress={handleShowProducts}
-                style={{ marginBottom: 15, width: '80%', alignItems: 'center' }}
-                activeOpacity={0.7}
+                onPress={() => {
+                  console.log('--- SHOW PRODUCTS CLICKED ---');
+                  handleShowProducts();
+                }}
+                style={{ marginBottom: 15, width: '90%', alignItems: 'center', zIndex: 10000 }}
+                activeOpacity={0.6}
+                hitSlop={{ top: 20, bottom: 20, left: 30, right: 30 }}
               >
-                <S.FooterAction>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={5} style={styles.footerText}>
-                    [ 어울리는 화장품 보러가기 ]
-                  </StrokedText>
-                </S.FooterAction>
+                <View pointerEvents="none" style={{ alignItems: 'center', width: '100%' }}>
+                  <S.FooterAction>
+                    <StrokedText strokeColor="#ffffff" strokeWidth={5} style={styles.footerText}>
+                      {buttonText}
+                    </StrokedText>
+                  </S.FooterAction>
+                </View>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={handleBack}>
+              <TouchableOpacity 
+                onPress={handleBack} 
+                hitSlop={{ top: 10, bottom: 10, left: 20, right: 20 }}
+                style={{ zIndex: 10000 }}
+              >
                 <S.BackButtonText style={styles.backButtonText}>뒤로가기</S.BackButtonText>
               </TouchableOpacity>
             </View>
