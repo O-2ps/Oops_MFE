@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { StyleSheet, View, Dimensions, TouchableOpacity, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
@@ -24,14 +24,44 @@ const QUESTIONS = [
 export default function SurveyScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [currentStep, setCurrentStep] = useState(0);
+  
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
 
   const handleSelect = () => {
-    if (currentStep < QUESTIONS.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      // Finished all questions
-      navigation.navigate('Home');
-    }
+    // Fade out
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: -20,
+        duration: 200,
+        useNativeDriver: true,
+      })
+    ]).start(() => {
+      if (currentStep < QUESTIONS.length - 1) {
+        setCurrentStep(currentStep + 1);
+        // Reset and Fade in
+        slideAnim.setValue(20);
+        Animated.parallel([
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(slideAnim, {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: true,
+          })
+        ]).start();
+      } else {
+        navigation.navigate('Home');
+      }
+    });
   };
 
   return (
@@ -40,7 +70,14 @@ export default function SurveyScreen() {
         <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
       </View>
 
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', paddingTop: 150 }}>
+      <Animated.View style={{ 
+        flex: 1, 
+        alignItems: 'center', 
+        justifyContent: 'flex-start', 
+        paddingTop: 150,
+        opacity: fadeAnim,
+        transform: [{ translateY: slideAnim }]
+      }}>
         <View style={{ marginBottom: 40 }}>
           <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.qNumber}>
             Q{currentStep + 1}.
@@ -54,7 +91,11 @@ export default function SurveyScreen() {
         </View>
 
         <View style={styles.cardContainer}>
-          <TouchableOpacity style={styles.card} onPress={handleSelect}>
+          <TouchableOpacity 
+            style={styles.card} 
+            onPress={handleSelect}
+            activeOpacity={0.7}
+          >
             <View style={styles.iconWrapper}>
               <NoSvg width={80} height={80} />
             </View>
@@ -63,7 +104,11 @@ export default function SurveyScreen() {
             </StrokedText>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.card} onPress={handleSelect}>
+          <TouchableOpacity 
+            style={styles.card} 
+            onPress={handleSelect}
+            activeOpacity={0.7}
+          >
             <View style={styles.iconWrapper}>
               <YesSvg width={80} height={80} />
             </View>
@@ -72,7 +117,7 @@ export default function SurveyScreen() {
             </StrokedText>
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
     </S.Container>
   );
 }
