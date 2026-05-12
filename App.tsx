@@ -38,6 +38,7 @@ export default function App() {
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
   const [currentRoute, setCurrentRoute] = useState<string>('Landing');
   const [animationType, setAnimationType] = useState<'slide_from_right' | 'slide_from_left'>('slide_from_right');
+  const [hideArrows, setHideArrows] = useState(false);
 
   const [fontsLoaded, fontError] = useFonts({
     [FONTS.PIXEL]: require('./assets/fonts/DOSIyagiBoldface.ttf'),
@@ -76,7 +77,7 @@ export default function App() {
     );
   }
 
-  const showArrows = NAV_ORDER.includes(currentRoute as any);
+  const showArrows = NAV_ORDER.includes(currentRoute as any) && !hideArrows;
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.WHITE }} onLayout={onLayoutRootView}>
@@ -88,7 +89,10 @@ export default function App() {
             theme={MyTheme}
             onStateChange={() => {
               const route = navigationRef.getCurrentRoute();
-              if (route) setCurrentRoute(route.name);
+              if (route) {
+                setCurrentRoute(route.name);
+                setHideArrows((route.params as any)?.hideArrows === true);
+              }
             }}
           >
             <Stack.Navigator

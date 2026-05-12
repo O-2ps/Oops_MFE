@@ -1,9 +1,10 @@
-import React from 'react';
-import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Image, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
 import HomeSvg from '../../assets/icons/home.svg';
+import MyPageSvg from '../../assets/icons/mypage.svg';
 import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
 import { RootStackParamList } from '../types/navigation';
@@ -39,9 +40,38 @@ const WISH_LIST = [
 
 export default function MyPageScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const [isEntered, setIsEntered] = useState(false);
+  const floatAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, {
+          toValue: -15,
+          duration: 3000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatAnim, {
+          toValue: 0,
+          duration: 3000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [floatAnim]);
 
   const handleHome = () => {
     navigation.navigate('Home');
+  };
+
+  useEffect(() => {
+    navigation.setParams({ hideArrows: isEntered } as any);
+  }, [isEntered]);
+
+  const handleEnter = () => {
+    setIsEntered(true);
   };
 
   return (
@@ -50,73 +80,114 @@ export default function MyPageScreen() {
         <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
       </View>
       
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={handleHome}>
-            <HomeSvg width={28} height={28} fill="#333333" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.greetingSection}>
-          <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.greetText}>
-            안녕하세요
-          </StrokedText>
-          <View style={styles.nicknameRow}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={4} style={styles.nicknameSticker}>
-              [ 감자를 캐자 ]
+      {!isEntered ? (
+        <S.MainContent>
+          <S.Header>
+            <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.stepText}>
+              3.
             </StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.introTitleText}>
+              마이페이지
+            </StrokedText>
+          </S.Header>
+
+          <S.WheelSection>
+            <Animated.View style={{ transform: [{ translateY: floatAnim }] }}>
+              <MyPageSvg width={width * 0.7} height={width * 0.7} />
+            </Animated.View>
+          </S.WheelSection>
+
+          <S.FooterAction onPress={handleEnter}>
+            <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.introFooterText}>
+              [ 들어가기 ]
+            </StrokedText>
+          </S.FooterAction>
+        </S.MainContent>
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={handleHome}>
+              <HomeSvg width={28} height={28} fill="#333333" />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.greetingSection}>
             <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.greetText}>
-              {' '}님
+              안녕하세요
             </StrokedText>
+            <View style={styles.nicknameRow}>
+              <StrokedText strokeColor="#ffffff" strokeWidth={4} style={styles.nicknameSticker}>
+                [ 감자를 캐자 ]
+              </StrokedText>
+              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.greetText}>
+                {' '}님
+              </StrokedText>
+            </View>
           </View>
-        </View>
 
-        <View style={styles.section}>
-          <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.sectionTitle}>
-            최근 검사 결과 조회
-          </StrokedText>
-          <View style={styles.listContainer}>
-            {RECENT_RESULTS.map((item, idx) => (
-              <TouchableOpacity key={idx} style={styles.listItem}>
-                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.listItemText}>
-                  {item.date} {item.title}  {'>'}
-                </StrokedText>
-              </TouchableOpacity>
-            ))}
+          <View style={styles.section}>
+            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.sectionTitle}>
+              최근 검사 결과 조회
+            </StrokedText>
+            <View style={styles.listContainer}>
+              {RECENT_RESULTS.map((item, idx) => (
+                <TouchableOpacity key={idx} style={styles.listItem}>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.listItemText}>
+                    {item.date} {item.title}  {'>'}
+                  </StrokedText>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
 
-        <View style={styles.section}>
-          <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.sectionTitle}>
-            찜 해둔 상품
-          </StrokedText>
-          <View style={styles.productGrid}>
-            {WISH_LIST.map((item) => (
-              <View key={item.id} style={styles.productCard}>
-                <View style={styles.productImageContainer}>
-                  <Image source={item.image} style={styles.productImage} resizeMode="cover" />
-                </View>
-                <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.productTitle} numberOfLines={3}>
-                  {item.title}
-                </StrokedText>
-                <View style={styles.tagRow}>
-                  <View style={styles.priceTag}>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
+          <View style={styles.section}>
+            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.sectionTitle}>
+              찜 해둔 상품
+            </StrokedText>
+            <View style={styles.productGrid}>
+              {WISH_LIST.map((item) => (
+                <View key={item.id} style={styles.productCard}>
+                  <View style={styles.productImageContainer}>
+                    <Image source={item.image} style={styles.productImage} resizeMode="cover" />
                   </View>
-                  <View style={styles.storeTag}>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.tagText}>{item.store}</StrokedText>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.productTitle} numberOfLines={3}>
+                    {item.title}
+                  </StrokedText>
+                  <View style={styles.tagRow}>
+                    <View style={styles.priceTag}>
+                      <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
+                    </View>
+                    <View style={styles.storeTag}>
+                      <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.tagText}>{item.store}</StrokedText>
+                    </View>
                   </View>
                 </View>
-              </View>
-            ))}
+              ))}
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
     </S.Container>
   );
 }
 
 const styles = StyleSheet.create({
+  stepText: {
+    fontSize: 20,
+    color: '#FF8CB6',
+    fontFamily: 'DOSIyagiBoldface',
+    marginBottom: 25,
+  },
+  introTitleText: {
+    fontSize: 24,
+    color: '#FF8CB6',
+    fontFamily: 'DOSIyagiBoldface',
+  },
+  introFooterText: {
+    fontSize: 20,
+    color: '#FF8CB6',
+    fontFamily: 'DOSIyagiBoldface',
+  },
   header: {
     paddingHorizontal: 20,
     paddingTop: 50,
