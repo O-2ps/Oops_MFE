@@ -16,16 +16,15 @@ export default function StrokedText({ children, strokeColor, strokeWidth, style 
     color: strokeColor,
   });
 
-  const offsets = [
-    { dx: strokeWidth, dy: 0 },
-    { dx: -strokeWidth, dy: 0 },
-    { dx: 0, dy: strokeWidth },
-    { dx: 0, dy: -strokeWidth },
-    { dx: strokeWidth, dy: strokeWidth },
-    { dx: -strokeWidth, dy: -strokeWidth },
-    { dx: strokeWidth, dy: -strokeWidth },
-    { dx: -strokeWidth, dy: strokeWidth },
-  ];
+  const offsets = [];
+  const points = 12;
+  for (let i = 0; i < points; i++) {
+    const angle = (i * 2 * Math.PI) / points;
+    offsets.push({
+      dx: Math.cos(angle) * strokeWidth,
+      dy: Math.sin(angle) * strokeWidth,
+    });
+  }
 
   return (
     <View style={{ justifyContent: 'center', alignItems: 'center' }}>

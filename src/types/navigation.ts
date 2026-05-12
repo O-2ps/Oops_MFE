@@ -4,4 +4,5 @@ export type RootStackParamList = {
   Skin: undefined;
   MyPage: undefined;
   LastCheck: { from: string };
+  Result: { type: string };
 };

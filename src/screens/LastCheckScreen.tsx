@@ -6,21 +6,20 @@ import BG from '../../assets/icons/BG.svg';
 import LightSvg from '../../assets/icons/light.svg';
 import StrokedText from '../components/StrokedText';
 import { COLORS } from '../constants/theme';
+import { RootStackParamList } from '../types/navigation';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const { width, height } = Dimensions.get('window');
 
-type RootStackParamList = {
-  LastCheck: { from: string };
-};
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'LastCheck'>;
 
 export default function LastCheckScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteProp<RootStackParamList, 'LastCheck'>>();
   const { from } = route.params || { from: 'unknown' };
 
   const handleStart = () => {
-    // Navigate to actual analysis or next step
-    console.log(`Starting analysis for ${from}`);
+    navigation.navigate('Result', { type: from === 'color' ? 'spring' : 'skin' });
   };
 
   const handleBack = () => {
@@ -29,7 +28,6 @@ export default function LastCheckScreen() {
 
   return (
     <S.Container>
-      <S.GreenBox />
       <View style={StyleSheet.absoluteFill}>
         <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
       </View>
@@ -69,7 +67,6 @@ export default function LastCheckScreen() {
           </S.BackButton>
         </View>
       </S.MainContent>
-      <S.GreenBox />
     </S.Container>
   );
 }

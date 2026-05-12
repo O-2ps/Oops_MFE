@@ -11,6 +11,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import SkinScreen from './src/screens/SkinScreen';
 import MyPageScreen from './src/screens/MyPageScreen';
 import LastCheckScreen from './src/screens/LastCheckScreen';
+import ResultScreen from './src/screens/ResultScreen';
 import BG from './assets/icons/BG.svg';
 import * as S from './src/screens/style';
 import StrokedText from './src/components/StrokedText';
@@ -103,6 +104,8 @@ export default function App() {
               <Stack.Screen name="Skin" component={SkinScreen} />
               <Stack.Screen name="MyPage" component={MyPageScreen} />
               <Stack.Screen name="LastCheck" component={LastCheckScreen} />
+              {/* Result Screen for Analysis Results */}
+              <Stack.Screen name="Result" component={ResultScreen} />
             </Stack.Navigator>
           </NavigationContainer>
 

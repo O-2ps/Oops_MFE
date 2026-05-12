@@ -10,9 +10,10 @@ export const Container = styled.View`
 `;
 
 export const GreenBox = styled.View`
-  height: 40px;
+  height: 44px;
   background-color: ${COLORS.SECONDARY};
   width: 100%;
+  z-index: 100;
 `;
 
 export const MainContent = styled.View`
@@ -180,4 +181,89 @@ export const BackButtonText = styled.Text`
   color: ${COLORS.PRIMARY};
   font-family: ${FONTS.PIXEL};
   opacity: 0.7;
+`;
+
+export const ResultImageContainer = styled.View`
+  width: ${width * 0.8}px;
+  height: ${width * 0.6}px;
+  margin-vertical: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+export const StatContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  margin-vertical: 20px;
+  padding-horizontal: 20px;
+`;
+
+export const StatItem = styled.View`
+  align-items: center;
+`;
+
+export const StatValue = styled.Text`
+  font-size: 24px;
+  color: #333333;
+  font-family: ${FONTS.PIXEL};
+`;
+
+export const StatLabel = styled.Text`
+  font-size: 14px;
+  color: ${COLORS.PRIMARY};
+  font-family: ${FONTS.PIXEL};
+  margin-top: 5px;
+`;
+
+export const ComparisonContainer = styled.View`
+  width: 100%;
+  padding-horizontal: 30px;
+  gap: 12px;
+  margin-vertical: 15px;
+`;
+
+export const ComparisonRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const ComparisonLabel = styled.Text`
+  font-size: 12px;
+  color: ${COLORS.PRIMARY};
+  font-family: ${FONTS.PIXEL};
+  width: 40px;
+  text-align: center;
+`;
+
+export const BarContainer = styled.View`
+  flex: 1;
+  height: 12px;
+  background-color: #E0E0E0;
+  border-radius: 6px;
+  margin-horizontal: 10px;
+  overflow: hidden;
+  flex-direction: row;
+`;
+
+interface BarFillProps {
+  $color: string;
+  $flex: number;
+}
+
+export const BarFill = styled.View<BarFillProps>`
+  flex: ${(props: BarFillProps) => props.$flex};
+  height: 100%;
+  background-color: ${(props: BarFillProps) => props.$color};
+`;
+
+export const BarMarker = styled.View`
+  width: 4px;
+  height: 100%;
+  background-color: #ffffff;
+  position: absolute;
+  left: ${(props: { $position: number }) => props.$position * 100}%;
+  transform: translateX(-2px);
+  z-index: 2;
 `;
