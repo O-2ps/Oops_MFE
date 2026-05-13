@@ -22,7 +22,7 @@ export default function LastCheckScreen() {
     if (from === 'skin') {
       navigation.navigate('Survey');
     } else {
-      navigation.navigate('Result', { type: 'spring' });
+      navigation.navigate('PhotoUpload');
     }
   };
 

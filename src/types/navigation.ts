@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Skin: undefined;
   MyPage: undefined;
   LastCheck: { from: string };
-  Result: { type: string };
+  PhotoUpload: undefined;
+  Result: { type: string; analysisData?: any };
   Survey: undefined;
 };

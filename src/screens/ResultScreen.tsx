@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image, Text } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
@@ -12,6 +12,7 @@ import { COLORS } from '../constants/theme';
 import { RootStackParamList } from '../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
+import { fetchSeasons, SeasonInfo } from '../api/personalColor';
 
 const { width, height } = Dimensions.get('window');
 
@@ -124,16 +125,31 @@ const PERSONAL_PRODUCTS = [
 export default function ResultScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteProp<RootStackParamList, 'Result'>>();
-  const { type } = route.params || { type: 'spring' };
+  const { type, analysisData } = route.params || { type: 'spring', analysisData: null };
   const [showProducts, setShowProducts] = useState(false);
+  const [seasonInfo, setSeasonInfo] = useState<SeasonInfo | null>(null);
+
+  useEffect(() => {
+    if (type !== 'skin') {
+      fetchSeasons().then(seasons => {
+        const found = seasons.find(s => s.type === type);
+        if (found) setSeasonInfo(found);
+      });
+    }
+  }, [type]);
 
   const isSkin = type === 'skin';
   const currentProducts = isSkin ? SKIN_PRODUCTS : PERSONAL_PRODUCTS;
-  const analysisTitle = isSkin ? '건성 피부' : '봄 웜 라이트';
+  
+  const analysisTitle = isSkin ? '건성 피부' : (seasonInfo?.name || '봄 웜 라이트');
   const highlightColor = isSkin ? '#81D4FA' : '#FF8A65';
   
   const buttonText = isSkin ? '[ 어울리는 피부 화장품 추천 ]' : '[ 어울리는 화장품 보러가기 ]';
   const recommendMessage = isSkin ? '피부 화장품 추천' : '제품을 추천합니다.';
+
+  const warmScore = analysisData?.matchScore?.warm || 64;
+  const springScore = analysisData?.matchScore?.spring || 71;
+  const lightScore = analysisData?.matchScore?.light || 88;
 
   const handleBack = () => {
     if (showProducts) {
@@ -222,7 +238,7 @@ export default function ResultScreen() {
 
             <View style={{ marginTop: isSkin ? 60 : 20, marginBottom: 20 }}>
               <StrokedText strokeColor="#ffffff" strokeWidth={5} style={[styles.title, isSkin && { color: '#333333' }]}>
-                {isSkin ? '[ 건성 피부 ]' : '[ 봄 웜 라이트 ]'}
+                {isSkin ? '[ 건성 피부 ]' : `[ ${seasonInfo?.name || '봄 웜 라이트'} ]`}
               </StrokedText>
             </View>
 
@@ -243,7 +259,14 @@ export default function ResultScreen() {
                 </View>
               ) : (
                 <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
-                  고명도, 저채도의 밝고 따뜻한 파스텔톤이{"\n"}가장 잘 어울리는 유형입니다.
+                  {seasonInfo?.description ? seasonInfo.description.split('\\n').map((line, i) => (
+                    <React.Fragment key={i}>
+                      {line}
+                      {i !== seasonInfo.description.split('\\n').length - 1 && <Text>{"\\n"}</Text>}
+                    </React.Fragment>
+                  )) : (
+                    <>고명도, 저채도의 밝고 따뜻한 파스텔톤이{"\n"}가장 잘 어울리는 유형입니다.</>
+                  )}
                 </StrokedText>
               )}
             </View>
@@ -251,17 +274,17 @@ export default function ResultScreen() {
             {!isSkin && (
               <S.StatContainer style={{ marginTop: 10, paddingHorizontal: 40 }}>
                 <S.StatItem>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>64%</StrokedText>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>{warmScore}%</StrokedText>
                   <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>웜톤</StrokedText>
                 </S.StatItem>
                 <View style={styles.statDivider} />
                 <S.StatItem>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>71%</StrokedText>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>{springScore}%</StrokedText>
                   <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>봄</StrokedText>
                 </S.StatItem>
                 <View style={styles.statDivider} />
                 <S.StatItem>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>88%</StrokedText>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>{lightScore}%</StrokedText>
                   <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>라이트</StrokedText>
                 </S.StatItem>
               </S.StatContainer>
