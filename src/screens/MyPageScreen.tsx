@@ -9,6 +9,7 @@ import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
 import { RootStackParamList } from '../types/navigation';
 import { COLORS } from '../constants/theme';
+import { getKakaoProfile } from '../api/kakaoAuth';
 
 const { width, height } = Dimensions.get('window');
 
@@ -41,7 +42,18 @@ const WISH_LIST = [
 export default function MyPageScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [isEntered, setIsEntered] = useState(false);
+  const [nickname, setNickname] = useState('로그인 해주세요');
   const floatAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profile = await getKakaoProfile();
+      if (profile && profile.nickname) {
+        setNickname(profile.nickname);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   useEffect(() => {
     Animated.loop(
@@ -79,7 +91,7 @@ export default function MyPageScreen() {
       <View style={StyleSheet.absoluteFill}>
         <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
       </View>
-      
+
       {!isEntered ? (
         <S.MainContent>
           <S.Header>
@@ -117,7 +129,7 @@ export default function MyPageScreen() {
             </StrokedText>
             <View style={styles.nicknameRow}>
               <StrokedText strokeColor="#ffffff" strokeWidth={4} style={styles.nicknameSticker}>
-                [ 감자를 캐자 ]
+                [ {nickname} ]
               </StrokedText>
               <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.greetText}>
                 {' '}님
