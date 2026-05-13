@@ -1,13 +1,35 @@
 import { login, logout, getProfile, KakaoOAuthToken, KakaoProfile } from '@react-native-seoul/kakao-login';
 
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
+
 /**
- * 카카오 로그인을 실행합니다.
- * @returns {Promise<KakaoOAuthToken | null>} 카카오 인증 토큰
+ * 카카오 로그인을 실행하고 백엔드 서버에 토큰을 전송합니다.
+ * @returns {Promise<{token: KakaoOAuthToken, user: any} | null>} 성공 시 토큰과 백엔드 유저 정보
  */
-export const loginWithKakao = async (): Promise<KakaoOAuthToken | null> => {
+export const loginWithKakao = async (): Promise<any | null> => {
   try {
     const token = await login();
-    return token;
+
+    if (!token) return null;
+
+    const response = await fetch(`${API_BASE_URL}/api/auth/kakao/token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ accessToken: token.accessToken })
+    });
+
+    if (!response.ok) {
+      throw new Error('Backend login failed');
+    }
+
+    const userData = await response.json();
+
+    return {
+      kakaoToken: token,
+      user: userData
+    };
   } catch (err: any) {
     if (err.code === 'E_CANCELLED_OPERATION') {
       console.log('Login Cancelled');
