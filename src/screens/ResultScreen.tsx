@@ -7,6 +7,9 @@ import DownloadSvg from '../../assets/icons/download.svg';
 import HomeSvg from '../../assets/icons/home.svg';
 import RepeatSvg from '../../assets/icons/Repeat.svg';
 import SpringWarmBrightSvg from '../../assets/personal/spring warm bright.svg';
+import SummerCoolTrueSvg from '../../assets/personal/summer cool true.svg';
+import AutumnWarmMuteSvg from '../../assets/personal/autumn warm mute.svg';
+import WinterCoolTrueSvg from '../../assets/personal/winter cool true.svg';
 import StrokedText from '../components/StrokedText';
 import { COLORS } from '../constants/theme';
 import { RootStackParamList } from '../types/navigation';
@@ -131,19 +134,23 @@ export default function ResultScreen() {
 
   useEffect(() => {
     if (type !== 'skin') {
-      fetchSeasons().then(seasons => {
-        const found = seasons.find(s => s.type === type);
-        if (found) setSeasonInfo(found);
-      });
+      fetchSeasons()
+        .then(seasons => {
+          const found = seasons.find(s => s.season === type);
+          if (found) setSeasonInfo(found);
+        })
+        .catch(err => {
+          console.error('ResultScreen fetchSeasons error:', err);
+        });
     }
   }, [type]);
 
   const isSkin = type === 'skin';
   const currentProducts = isSkin ? SKIN_PRODUCTS : PERSONAL_PRODUCTS;
-  
-  const analysisTitle = isSkin ? '건성 피부' : (seasonInfo?.name || '봄 웜 라이트');
+
+  const analysisTitle = isSkin ? '건성 피부' : (seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트');
   const highlightColor = isSkin ? '#81D4FA' : '#FF8A65';
-  
+
   const buttonText = isSkin ? '[ 어울리는 피부 화장품 추천 ]' : '[ 어울리는 화장품 보러가기 ]';
   const recommendMessage = isSkin ? '피부 화장품 추천' : '제품을 추천합니다.';
 
@@ -232,13 +239,16 @@ export default function ResultScreen() {
 
             {!isSkin && (
               <S.ResultImageContainer style={styles.imageContainer}>
-                <SpringWarmBrightSvg width="100%" height="100%" />
+                {type === 'summer' ? <SummerCoolTrueSvg width="100%" height="100%" /> :
+                  type === 'autumn' ? <AutumnWarmMuteSvg width="100%" height="100%" /> :
+                    type === 'winter' ? <WinterCoolTrueSvg width="100%" height="100%" /> :
+                      <SpringWarmBrightSvg width="100%" height="100%" />}
               </S.ResultImageContainer>
             )}
 
             <View style={{ marginTop: isSkin ? 60 : 20, marginBottom: 20 }}>
               <StrokedText strokeColor="#ffffff" strokeWidth={5} style={[styles.title, isSkin && { color: '#333333' }]}>
-                {isSkin ? '[ 건성 피부 ]' : `[ ${seasonInfo?.name || '봄 웜 라이트'} ]`}
+                {isSkin ? '[ 건성 피부 ]' : `[ ${seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트'} ]`}
               </StrokedText>
             </View>
 
@@ -258,34 +268,37 @@ export default function ResultScreen() {
                   </View>
                 </View>
               ) : (
-                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
-                  {seasonInfo?.description ? seasonInfo.description.split('\\n').map((line, i) => (
-                    <React.Fragment key={i}>
-                      {line}
-                      {i !== seasonInfo.description.split('\\n').length - 1 && <Text>{"\\n"}</Text>}
-                    </React.Fragment>
-                  )) : (
-                    <>고명도, 저채도의 밝고 따뜻한 파스텔톤이{"\n"}가장 잘 어울리는 유형입니다.</>
-                  )}
-                </StrokedText>
+                <View style={{ alignItems: 'center', paddingHorizontal: 20 }}>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
+                    {seasonInfo?.characteristics?.join(' · ') || '밝고 선명한 따뜻한 색조'}
+                  </StrokedText>
+                </View>
               )}
             </View>
 
             {!isSkin && (
               <S.StatContainer style={{ marginTop: 10, paddingHorizontal: 40 }}>
                 <S.StatItem>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>{warmScore}%</StrokedText>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>웜톤</StrokedText>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>
+                    {analysisData?.analysis?.isWarm ? '78%' : '22%'}
+                  </StrokedText>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>
+                    {analysisData?.analysis?.isWarm ? '웜톤' : '쿨톤'}
+                  </StrokedText>
                 </S.StatItem>
                 <View style={styles.statDivider} />
                 <S.StatItem>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>{springScore}%</StrokedText>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>봄</StrokedText>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>
+                    {analysisData?.analysis?.isBright ? '82%' : '18%'}
+                  </StrokedText>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>
+                    {analysisData?.analysis?.isBright ? '라이트' : '뮤트'}
+                  </StrokedText>
                 </S.StatItem>
                 <View style={styles.statDivider} />
                 <S.StatItem>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>{lightScore}%</StrokedText>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>라이트</StrokedText>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>91%</StrokedText>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>일치도</StrokedText>
                 </S.StatItem>
               </S.StatContainer>
             )}
@@ -381,8 +394,8 @@ export default function ResultScreen() {
                 </View>
               </TouchableOpacity>
 
-              <TouchableOpacity 
-                onPress={handleBack} 
+              <TouchableOpacity
+                onPress={handleBack}
                 hitSlop={{ top: 10, bottom: 10, left: 20, right: 20 }}
                 style={{ zIndex: 10000 }}
               >

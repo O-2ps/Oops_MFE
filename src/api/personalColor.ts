@@ -1,10 +1,10 @@
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 export interface SeasonInfo {
-  type: string;
-  name: string;
+  season: string;
   description: string;
-  colors: string[];
+  palette: string[];
+  characteristics: string[];
 }
 
 export const checkHealth = async () => {
@@ -26,16 +26,11 @@ export const fetchSeasons = async (): Promise<SeasonInfo[]> => {
     if (!response.ok) {
       throw new Error('Failed to fetch seasons');
     }
-    return response.json();
+    const responseJson = await response.json();
+    return responseJson.data;
   } catch (error) {
-    return [
-      {
-        type: 'spring',
-        name: '봄 웜 라이트',
-        description: '고명도, 저채도의 밝고 따뜻한 파스텔톤이\\n가장 잘 어울리는 유형입니다.',
-        colors: ['#FFCDD2', '#F8BBD0', '#E1BEE7']
-      }
-    ];
+    console.error('fetchSeasons error:', error);
+    throw error;
   }
 };
 
@@ -59,14 +54,6 @@ export const analyzePersonalColor = async (imageUri: string): Promise<any> => {
     return response.json();
   } catch (error) {
     console.error('analyzePersonalColor error:', error);
-    return {
-      data: {
-        season: 'spring',
-        analysis: {
-          isWarm: true,
-          isBright: true
-        }
-      }
-    };
+    throw error;
   }
 };

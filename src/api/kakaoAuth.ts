@@ -12,16 +12,25 @@ export const loginWithKakao = async (): Promise<any | null> => {
 
     if (!token) return null;
 
+    console.log('Sending token to backend:', { hasAccessToken: !!token.accessToken, hasIdToken: !!token.idToken });
+
     const response = await fetch(`${API_BASE_URL}/api/auth/kakao/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
       body: JSON.stringify({ accessToken: token.accessToken })
     });
 
     if (!response.ok) {
-      throw new Error('Backend login failed');
+      const errorText = await response.text();
+      console.error('Backend Login Failed:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      });
+      throw new Error(`Backend login failed: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const userData = await response.json();
