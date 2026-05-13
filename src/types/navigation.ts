@@ -5,6 +5,6 @@ export type RootStackParamList = {
   MyPage: undefined;
   LastCheck: { from: string };
   PhotoUpload: undefined;
-  Result: { type: string; analysisData?: any };
+  Result: { type: string; subType?: string; analysisData?: any };
   Survey: undefined;
 };

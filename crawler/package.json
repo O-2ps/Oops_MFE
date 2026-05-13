@@ -1,0 +1,25 @@
+{
+  "name": "crawler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "crawl": "ts-node category_crawler.ts",
+    "crawl:skin": "ts-node category_crawler.ts --categories=skinToner,serum,cream,lotion --pages=3",
+    "crawl:makeup": "ts-node category_crawler.ts --categories=baseMakeup,lipMakeup,eyeMakeup --pages=3",
+    "scrape": "ts-node oliveyoung.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@types/cheerio": "^0.22.35",
+    "@types/node": "^25.7.0",
+    "axios": "^1.16.0",
+    "cheerio": "^1.2.0",
+    "puppeteer": "^24.43.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}

@@ -73,8 +73,9 @@ export default function PhotoUploadScreen() {
       const resultData = responseJson.data || responseJson;
       
       // Navigate to Result screen with API data
-      navigation.navigate('Result', { 
+      navigation.navigate('Result', {
         type: resultData.season || 'spring',
+        subType: resultData.subType,
         analysisData: resultData
       });
     } catch (error) {
