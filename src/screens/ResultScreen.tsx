@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image, Text, Linking } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
@@ -16,67 +16,11 @@ import { RootStackParamList } from '../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import { fetchSeasons, SeasonInfo } from '../api/personalColor';
+import { CrawledProduct, getProductPool, sampleProducts, SEASON_COLOR_PALETTE } from '../utils/productRecommend';
 
 const { width, height } = Dimensions.get('window');
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Result'>;
-
-const LIP_IMAGE = null;
-const SET1_IMAGE = null;
-const SET2_IMAGE = null;
-
-const PRODUCT_DATA: Record<string, any[]> = {
-  spring: [
-    { id: 1, title: '어뮤즈 듀 틴트 (4호 포멜로 누드)', price: '20,000원', store: '올리브영', color: '#FFEBEE', image: LIP_IMAGE },
-    { id: 2, title: '에스쁘아 꾸뛰르 립틴트 글레이즈 (오드 코랄)', price: '22,000원', store: '올리브영', color: '#FFF3E0', image: LIP_IMAGE },
-    { id: 3, title: '클리오 프로 아이 팔레트 (15호)', price: '32,000원', store: '올리브영', color: '#FFF8E1', image: SET1_IMAGE },
-    { id: 4, title: '데이지크 블렌딩 무드 치크 (웜 블렌딩)', price: '24,000원', store: '올리브영', color: '#FBE9E7', image: SET2_IMAGE },
-    { id: 5, title: '롬앤 쥬시 래스팅 틴트 (피치 미)', price: '9,900원', store: '올리브영', color: '#FFFDE7', image: LIP_IMAGE },
-    { id: 6, title: '페리페라 잉크 무드 글로이 밤', price: '12,000원', store: '올리브영', color: '#FFF9C4', image: LIP_IMAGE },
-    { id: 7, title: '웨이크메이크 소프트 블러링 아이 팔레트', price: '34,000원', store: '올리브영', color: '#FFF176', image: SET1_IMAGE },
-    { id: 8, title: '릴리바이레드 러브빔 치크', price: '12,000원', store: '올리브영', color: '#FFF59D', image: SET2_IMAGE },
-  ],
-  summer: [
-    { id: 1, title: '롬앤 쥬시 래스팅 틴트 (베어 그레이프)', price: '9,900원', store: '올리브영', color: '#F3E5F5', image: LIP_IMAGE },
-    { id: 2, title: '힌스 무드인헨서 워터 리퀴드 글로우', price: '19,000원', store: '올리브영', color: '#FCE4EC', image: LIP_IMAGE },
-    { id: 3, title: '웨이크메이크 소프트 블러링 팔레트 (생기)', price: '34,000원', store: '올리브영', color: '#F8BBD0', image: SET1_IMAGE },
-    { id: 4, title: '에뛰드 디어달링 워터젤 틴트', price: '5,000원', store: '올리브영', color: '#F48FB1', image: LIP_IMAGE },
-    { id: 5, title: '라네즈 립 슬리핑 마스크 (베리)', price: '22,000원', store: '올리브영', color: '#F06292', image: SET2_IMAGE },
-    { id: 6, title: '뮤드 숄 모먼트 아이섀도우 팔레트', price: '29,000원', store: '올리브영', color: '#EC407A', image: SET1_IMAGE },
-    { id: 7, title: '퓌 블러셔 멜로우 (러브 미 라이트)', price: '18,000원', store: '올리브영', color: '#E91E63', image: SET2_IMAGE },
-    { id: 8, title: '어뮤즈 젤핏 틴트 (서울 걸)', price: '20,000원', store: '올리브영', color: '#D81B60', image: LIP_IMAGE },
-  ],
-  autumn: [
-    { id: 1, title: '롬앤 쥬시 래스팅 틴트 (쥬쥬브)', price: '9,900원', store: '올리브영', color: '#EFEBE9', image: LIP_IMAGE },
-    { id: 2, title: '무지개맨션 오브제 리퀴드 (스트레인저)', price: '18,000원', store: '올리브영', color: '#D7CCC8', image: LIP_IMAGE },
-    { id: 3, title: '3CE 멀티 아이 컬러 팔레트 (오버테이크)', price: '38,000원', store: '올리브영', color: '#BCAAA4', image: SET1_IMAGE },
-    { id: 4, title: '네이밍 플러피 파우더 블러쉬 (토스트)', price: '15,000원', store: '올리브영', color: '#A1887F', image: SET2_IMAGE },
-    { id: 5, title: '클리오 쉬폰 무드 립 (아몬드업)', price: '16,000원', store: '올리브영', color: '#8D6E63', image: LIP_IMAGE },
-    { id: 6, title: '데이지크 섀도우 팔레트 (어텀 브리즈)', price: '34,000원', store: '올리브영', color: '#795548', image: SET1_IMAGE },
-    { id: 7, title: '에스쁘아 리얼 아이 팔레트 (오트 라떼)', price: '32,000원', store: '올리브영', color: '#6D4C41', image: SET1_IMAGE },
-    { id: 8, title: '페리페라 잉크 더 벨벳 (여주인공)', price: '9,000원', store: '올리브영', color: '#5D4037', image: LIP_IMAGE },
-  ],
-  winter: [
-    { id: 1, title: '롬앤 블러 퍼지 틴트 (쿨 로즈 업)', price: '13,000원', store: '올리브영', color: '#E1BEE7', image: LIP_IMAGE },
-    { id: 2, title: '어뮤즈 젤핏 틴트 (서울 걸)', price: '20,000원', store: '올리브영', color: '#CE93D8', image: LIP_IMAGE },
-    { id: 3, title: '롬앤 베러 댄 팔레트 (베리 푸시아 가든)', price: '30,000원', store: '올리브영', color: '#BA68C8', image: SET1_IMAGE },
-    { id: 4, title: '퓌 블러셔 멜로우 (하이키 해피니스)', price: '18,000원', store: '올리브영', color: '#AB47BC', image: SET2_IMAGE },
-    { id: 5, title: '맥 파우더 키스 립스틱 (쇼킹 레벨)', price: '39,000원', store: '백화점/올영', color: '#9C27B0', image: LIP_IMAGE },
-    { id: 6, title: '클리오 듀이시럽 틴트 (딥 라즈베리)', price: '18,000원', store: '올리브영', color: '#8E24AA', image: LIP_IMAGE },
-    { id: 7, title: '웨이크메이크 소프트 블러링 (블랙 허쉬)', price: '34,000원', store: '올리브영', color: '#7B1FA2', image: SET1_IMAGE },
-    { id: 8, title: '잉크 무드 글로이 틴트 (갓기천사)', price: '11,000원', store: '올리브영', color: '#6A1B9A', image: LIP_IMAGE },
-  ],
-  skin: [
-    { id: 1, title: '[화잘먹수분선] 웰라쥬 리얼 히알루로닉 선크림', price: '29,300원', store: '올리브영', color: '#E3F2FD', image: SET1_IMAGE },
-    { id: 2, title: '[SNS대란템] 로벡틴 히알루론산 에센스', price: '18,820원', store: '올리브영', color: '#BBDEFB', image: SET2_IMAGE },
-    { id: 3, title: '바이오더마 센시비오 디펜시브 세럼', price: '22,900원', store: '올리브영', color: '#FFEBEE', image: SET1_IMAGE },
-    { id: 4, title: '토리든 다이브인 저분자 히알루론산 세럼', price: '18,000원', store: '올리브영', color: '#E0F7FA', image: SET2_IMAGE },
-    { id: 5, title: '라운드랩 자작나무 수분 선크림', price: '25,000원', store: '올리브영', color: '#E1F5FE', image: SET1_IMAGE },
-    { id: 6, title: '아누아 어성초 77 수딩 토너', price: '21,000원', store: '올리브영', color: '#F1F8E9', image: SET2_IMAGE },
-    { id: 7, title: '일리윤 세라마이드 아토 집중 크림', price: '19,900원', store: '올리브영', color: '#E8EAF6', image: SET1_IMAGE },
-    { id: 8, title: '리얼베리어 익스트림 크림', price: '32,000원', store: '올리브영', color: '#E8F5E9', image: SET2_IMAGE },
-  ],
-};
 
 export default function ResultScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -84,36 +28,37 @@ export default function ResultScreen() {
   const { type, subType, analysisData } = route.params || { type: 'spring', subType: undefined, analysisData: null };
   const [showProducts, setShowProducts] = useState(false);
   const [seasonInfo, setSeasonInfo] = useState<SeasonInfo | null>(null);
-  const [productPageIndex, setProductPageIndex] = useState(0);
+  const [displayedProducts, setDisplayedProducts] = useState<CrawledProduct[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // 시즌에 맞는 상품 풀 (최초 1회 계산)
+  const productPool = getProductPool(type);
+
+  const refreshProducts = useCallback(() => {
+    setIsRefreshing(true);
+    // 짧은 딜레이로 새로고침 피드백 제공
+    setTimeout(() => {
+      setDisplayedProducts(sampleProducts(productPool, 4));
+      setIsRefreshing(false);
+    }, 300);
+  }, [productPool]);
 
   useEffect(() => {
     if (type !== 'skin') {
       fetchSeasons()
         .then(seasons => {
-          // subType까지 일치하는 항목 우선, 없으면 season만으로 폴백
           const found = seasons.find(s => s.season === type && (!subType || s.subType === subType))
             ?? seasons.find(s => s.season === type);
           if (found) setSeasonInfo(found);
         })
-        .catch(err => {
-          console.error('ResultScreen fetchSeasons error:', err);
-        });
+        .catch(err => console.error('ResultScreen fetchSeasons error:', err));
     }
   }, [type, subType]);
 
   const isSkin = type === 'skin';
-  const allProductsForType = PRODUCT_DATA[type] || PRODUCT_DATA.spring;
-  const currentProducts = allProductsForType.slice(productPageIndex * 4, (productPageIndex * 4) + 4);
-
   const analysisTitle = isSkin ? '건성 피부' : (seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트');
   const highlightColor = isSkin ? '#81D4FA' : '#FF8A65';
-
   const buttonText = isSkin ? '[ 어울리는 피부 화장품 추천 ]' : '[ 어울리는 화장품 보러가기 ]';
-  const recommendMessage = '제품을 추천합니다.';
-
-  const warmScore = analysisData?.matchScore?.warm || 64;
-  const springScore = analysisData?.matchScore?.spring || 71;
-  const lightScore = analysisData?.matchScore?.light || 88;
 
   const handleBack = () => {
     if (showProducts) {
@@ -123,11 +68,10 @@ export default function ResultScreen() {
     }
   };
 
-  const handleHome = () => {
-    navigation.navigate('Home');
-  };
+  const handleHome = () => navigation.navigate('Home');
 
   const handleShowProducts = () => {
+    setDisplayedProducts(sampleProducts(productPool, 4));
     setShowProducts(true);
   };
 
@@ -143,8 +87,11 @@ export default function ResultScreen() {
             <TouchableOpacity onPress={handleHome}>
               <HomeSvg width={28} height={28} fill="#333333" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setProductPageIndex((prev) => (prev + 1) % (allProductsForType.length / 4))}>
-              <RepeatSvg width={28} height={28} fill="#333333" />
+            <TouchableOpacity onPress={refreshProducts} disabled={isRefreshing}>
+              {isRefreshing
+                ? <ActivityIndicator size="small" color="#333333" style={{ width: 28, height: 28 }} />
+                : <RepeatSvg width={28} height={28} fill="#333333" />
+              }
             </TouchableOpacity>
           </View>
 
@@ -155,35 +102,71 @@ export default function ResultScreen() {
               <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleBracket}> ] </StrokedText>
               <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleMain}>에 어울리는</StrokedText>
             </View>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleMain}>{recommendMessage}</StrokedText>
+            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleMain}>제품을 추천합니다.</StrokedText>
           </View>
 
+          {/* 시즌별 컬러 팔레트 */}
+          {SEASON_COLOR_PALETTE[type]?.length > 0 && (
+            <View style={styles.paletteSection}>
+              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.paletteSectionTitle}>
+                추천 컬러 팔레트
+              </StrokedText>
+              {SEASON_COLOR_PALETTE[type].map((categ) => (
+                <View key={categ.label} style={styles.paletteRow}>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.paletteCategoryLabel}>
+                    {categ.label}
+                  </StrokedText>
+                  <View style={styles.chipRow}>
+                    {categ.chips.map((chip) => (
+                      <View key={chip.name} style={styles.chipItem}>
+                        <View style={[styles.colorChip, { backgroundColor: chip.hex }]} />
+                        <StrokedText strokeColor="#ffffff" strokeWidth={0.3} style={styles.chipName}>
+                          {chip.name}
+                        </StrokedText>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+
           <View style={styles.productGrid}>
-            {currentProducts.map((item) => (
+            {displayedProducts.map((item) => (
               <TouchableOpacity
-                key={item.id}
+                key={item.goodsNo}
                 style={styles.productCard}
                 activeOpacity={0.75}
                 onPress={() => {
-                  const query = encodeURIComponent(item.title);
-                  Linking.openURL(`https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${query}`);
+                  Linking.openURL(
+                    `https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=${item.goodsNo}`
+                  );
                 }}
               >
-                <View style={[styles.productImageContainer, { backgroundColor: item.color }]}>
-                  {item.image && (
-                    <Image source={{ uri: item.image }} style={styles.productImage} resizeMode="cover" />
-                  )}
+                <View style={styles.productImageContainer}>
+                  <Image
+                    source={{ uri: item.imageUrl }}
+                    style={styles.productImage}
+                    resizeMode="cover"
+                  />
                 </View>
-                <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.productTitle} numberOfLines={3}>
-                  {item.title}
+                <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.productBrand} numberOfLines={1}>
+                  {item.brand}
+                </StrokedText>
+                <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.productTitle} numberOfLines={2}>
+                  {item.name}
                 </StrokedText>
                 <View style={styles.tagRow}>
                   <View style={styles.priceTag}>
                     <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
                   </View>
-                  <View style={styles.storeTag}>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.tagText}>{item.store}</StrokedText>
-                  </View>
+                  {item.orgPrice !== item.price && (
+                    <View style={[styles.priceTag, styles.orgPriceTag]}>
+                      <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={[styles.tagText, styles.orgPriceText]}>
+                        {item.orgPrice}
+                      </StrokedText>
+                    </View>
+                  )}
                 </View>
               </TouchableOpacity>
             ))}
@@ -433,12 +416,18 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  productBrand: {
+    fontSize: 11,
+    color: '#888888',
+    fontFamily: 'DOSIyagiBoldface',
+    marginBottom: 2,
+  },
   productTitle: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#333333',
     fontFamily: 'DOSIyagiBoldface',
-    lineHeight: 18,
-    marginBottom: 10,
+    lineHeight: 17,
+    marginBottom: 8,
   },
   tagRow: {
     flexDirection: 'row',
@@ -460,6 +449,13 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#333333',
     fontFamily: 'DOSIyagiBoldface',
+  },
+  orgPriceTag: {
+    backgroundColor: '#E0E0E0',
+  },
+  orgPriceText: {
+    color: '#999999',
+    textDecorationLine: 'line-through',
   },
   topAction: {
     width: '100%',
@@ -563,5 +559,57 @@ const styles = StyleSheet.create({
     color: '#666666',
     fontFamily: 'DOSIyagiBoldface',
     marginLeft: 10,
-  }
+  },
+  paletteSection: {
+    marginHorizontal: 20,
+    marginBottom: 28,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#ffffff',
+    padding: 14,
+  },
+  paletteSectionTitle: {
+    fontSize: 14,
+    color: '#555555',
+    fontFamily: 'DOSIyagiBoldface',
+    marginBottom: 12,
+  },
+  paletteRow: {
+    marginBottom: 10,
+  },
+  paletteCategoryLabel: {
+    fontSize: 11,
+    color: '#888888',
+    fontFamily: 'DOSIyagiBoldface',
+    marginBottom: 6,
+  },
+  chipRow: {
+    flexDirection: 'row',
+    gap: 10,
+    flexWrap: 'wrap',
+  },
+  chipItem: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  colorChip: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 2,
+    borderColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  chipName: {
+    fontSize: 9,
+    color: '#555555',
+    fontFamily: 'DOSIyagiBoldface',
+    textAlign: 'center',
+    maxWidth: 40,
+  },
 });
