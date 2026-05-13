@@ -12,6 +12,7 @@ import SkinScreen from './src/screens/SkinScreen';
 import MyPageScreen from './src/screens/MyPageScreen';
 import LastCheckScreen from './src/screens/LastCheckScreen';
 import PhotoUploadScreen from './src/screens/PhotoUploadScreen';
+import SkinPhotoScreen from './src/screens/SkinPhotoScreen';
 import ResultScreen from './src/screens/ResultScreen';
 import SurveyScreen from './src/screens/SurveyScreen';
 import BG from './assets/icons/BG.svg';
@@ -110,7 +111,7 @@ export default function App() {
               <Stack.Screen name="MyPage" component={MyPageScreen} />
               <Stack.Screen name="LastCheck" component={LastCheckScreen} />
               <Stack.Screen name="PhotoUpload" component={PhotoUploadScreen} />
-              {/* Result Screen for Analysis Results */}
+              <Stack.Screen name="SkinPhoto" component={SkinPhotoScreen} />
               <Stack.Screen name="Result" component={ResultScreen} />
               <Stack.Screen name="Survey" component={SurveyScreen} />
             </Stack.Navigator>

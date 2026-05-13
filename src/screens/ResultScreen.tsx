@@ -105,8 +105,33 @@ export default function ResultScreen() {
             <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleMain}>제품을 추천합니다.</StrokedText>
           </View>
 
+          {/* 건성 피부 특징 */}
+          {isSkin && (
+            <View style={styles.skinInfoSection}>
+              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.skinInfoTitle}>
+                건성 피부 특징
+              </StrokedText>
+              {[
+                { icon: '💧', text: '수분이 부족해 자주 당기는 느낌이 납니다.' },
+                { icon: '🌾', text: '각질이 일어나기 쉽고 피부결이 거칩니다.' },
+                { icon: '🔴', text: '외부 자극에 민감하고 쉽게 붉어집니다.' },
+                { icon: '🌙', text: '저녁에도 유·수분이 부족한 상태가 유지됩니다.' },
+                { icon: '✨', text: '집중 보습과 영양 공급이 중요합니다.' },
+              ].map((item, idx) => (
+                <View key={idx} style={styles.skinInfoRow}>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={0} style={styles.skinInfoIcon}>
+                    {item.icon}
+                  </StrokedText>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.skinInfoText}>
+                    {item.text}
+                  </StrokedText>
+                </View>
+              ))}
+            </View>
+          )}
+
           {/* 시즌별 컬러 팔레트 */}
-          {SEASON_COLOR_PALETTE[type]?.length > 0 && (
+          {!isSkin && SEASON_COLOR_PALETTE[type]?.length > 0 && (
             <View style={styles.paletteSection}>
               <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.paletteSectionTitle}>
                 추천 컬러 팔레트
@@ -559,6 +584,38 @@ const styles = StyleSheet.create({
     color: '#666666',
     fontFamily: 'DOSIyagiBoldface',
     marginLeft: 10,
+  },
+  skinInfoSection: {
+    marginHorizontal: 20,
+    marginBottom: 28,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#ffffff',
+    padding: 16,
+  },
+  skinInfoTitle: {
+    fontSize: 14,
+    color: '#555555',
+    fontFamily: 'DOSIyagiBoldface',
+    marginBottom: 14,
+  },
+  skinInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+    gap: 8,
+  },
+  skinInfoIcon: {
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  skinInfoText: {
+    fontSize: 13,
+    color: '#444444',
+    fontFamily: 'DOSIyagiBoldface',
+    lineHeight: 20,
+    flex: 1,
   },
   paletteSection: {
     marginHorizontal: 20,

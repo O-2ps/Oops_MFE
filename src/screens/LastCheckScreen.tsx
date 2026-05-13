@@ -20,7 +20,7 @@ export default function LastCheckScreen() {
 
   const handleStart = () => {
     if (from === 'skin') {
-      navigation.navigate('Survey');
+      navigation.navigate('SkinPhoto');
     } else {
       navigation.navigate('PhotoUpload');
     }

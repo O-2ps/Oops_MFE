@@ -15,8 +15,8 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Survey'>;
 
 const QUESTIONS = [
   '세안을 하고 아무것도\n바르지 않으면 건조하다.',
-  '시간이 지나면',
-  '얼굴이 번들거린다.',
+  '시간이 지나면\n 얼굴이 번들거린다.',
+  '여드름이나 트러블이\n 자주 생긴다.',
   '코나 이마만\n번들거린다.',
   '새 화장품을 사용하면\n피부가 쉽게 붉어진다.'
 ];
@@ -24,7 +24,7 @@ const QUESTIONS = [
 export default function SurveyScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [currentStep, setCurrentStep] = useState(0);
-  
+
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
 
@@ -70,10 +70,10 @@ export default function SurveyScreen() {
         <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
       </View>
 
-      <Animated.View style={{ 
-        flex: 1, 
-        alignItems: 'center', 
-        justifyContent: 'flex-start', 
+      <Animated.View style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'flex-start',
         paddingTop: 150,
         opacity: fadeAnim,
         transform: [{ translateY: slideAnim }]
@@ -91,8 +91,8 @@ export default function SurveyScreen() {
         </View>
 
         <View style={styles.cardContainer}>
-          <TouchableOpacity 
-            style={styles.card} 
+          <TouchableOpacity
+            style={styles.card}
             onPress={handleSelect}
             activeOpacity={0.7}
           >
@@ -104,8 +104,8 @@ export default function SurveyScreen() {
             </StrokedText>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={styles.card} 
+          <TouchableOpacity
+            style={styles.card}
             onPress={handleSelect}
             activeOpacity={0.7}
           >
