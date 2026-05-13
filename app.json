@@ -4,22 +4,14 @@
     "slug": "Oops_MFE",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./icons/logo.svg",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./icons/logo.svg",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.oops.mfe"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./icons/logo.svg",
-        "backgroundColor": "#ffffff"
-      },
+      "package": "com.oops.mfe",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
@@ -27,7 +19,14 @@
       "favicon": "./icons/logo.svg"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "@react-native-seoul/kakao-login",
+        {
+          "kakaoAppKey": "eef0bfabb75f20a8ac23794eb41718a3",
+          "overrideKotlinVersion": "1.9.0"
+        }
+      ]
     ]
   }
 }

@@ -101,8 +101,18 @@ function AnimatedStar({ top, right, size, rotate, delay, duration = 6000 }: Star
   );
 }
 
+import { loginWithKakao } from '../api/kakaoAuth';
+
 export default function LandingScreen() {
   const navigation = useNavigation<NavigationProp>();
+
+  const handleKakaoLogin = async () => {
+    const token = await loginWithKakao();
+    if (token) {
+      console.log('Kakao Login Success:', token);
+      navigation.navigate('Home');
+    }
+  };
 
   const handleGuestLogin = () => {
     navigation.navigate('Home');
@@ -183,7 +193,7 @@ export default function LandingScreen() {
         </S.CenterSection>
 
         <S.ButtonSection>
-          <S.LoginButton>
+          <S.LoginButton onPress={handleKakaoLogin}>
             <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.buttonText}>
               [ 카카오톡 로그인 ]
             </StrokedText>
