@@ -59,19 +59,19 @@ export default function ResultScreen() {
 
   // 백엔드 응답: { success, data: { skinType, skinTypeLabel, skinAge, characteristics, ... } }
   const skinData = isSkin ? (analysisData?.data ?? analysisData) : null;
-  const skinTypeLabel: string  = skinData?.skinTypeLabel ?? '건성 피부';
-  const skinTypeKey: string    = skinData?.skinType      ?? 'dry';
-  const skinAge: number | null = skinData?.skinAge       ?? null;
-  const skinChars: string[]    = skinData?.characteristics ?? [];
+  const skinTypeLabel: string = skinData?.skinTypeLabel ?? '건성 피부';
+  const skinTypeKey: string = skinData?.skinType ?? 'dry';
+  const skinAge: number | null = skinData?.skinAge ?? skinData?.age ?? 16;
+  const skinChars: string[] = skinData?.characteristics ?? [];
 
   const SKIN_BARS_DEFAULT: Record<string, { label: string; flex: number }[]> = {
-    dry:         [{ label: '모공', flex: 0.8 }, { label: '수분', flex: 0.8 }, { label: '유분', flex: 0.8 }, { label: '트러블', flex: 0.7 }],
-    oily:        [{ label: '모공', flex: 0.2 }, { label: '수분', flex: 0.3 }, { label: '유분', flex: 0.1 }, { label: '트러블', flex: 0.3 }],
+    dry: [{ label: '모공', flex: 0.8 }, { label: '수분', flex: 0.8 }, { label: '유분', flex: 0.8 }, { label: '트러블', flex: 0.7 }],
+    oily: [{ label: '모공', flex: 0.2 }, { label: '수분', flex: 0.3 }, { label: '유분', flex: 0.1 }, { label: '트러블', flex: 0.3 }],
     combination: [{ label: '모공', flex: 0.4 }, { label: '수분', flex: 0.6 }, { label: '유분', flex: 0.4 }, { label: '트러블', flex: 0.5 }],
-    normal:      [{ label: '모공', flex: 0.6 }, { label: '수분', flex: 0.4 }, { label: '유분', flex: 0.5 }, { label: '트러블', flex: 0.8 }],
+    normal: [{ label: '모공', flex: 0.6 }, { label: '수분', flex: 0.4 }, { label: '유분', flex: 0.5 }, { label: '트러블', flex: 0.8 }],
   };
   const defaultBars = SKIN_BARS_DEFAULT[skinTypeKey] ?? SKIN_BARS_DEFAULT.dry;
-  
+
   const surveyAnswers = analysisData?.surveyAnswers;
 
   const mapAnswerToFlex = (val: string | undefined, invert: boolean, defaultFlex: number) => {
@@ -82,7 +82,7 @@ export default function ResultScreen() {
     else if (val === 'neutral') score = 0.5;
     else if (val === 'disagree') score = 0.65;
     else if (val === 'strongly_disagree') score = 0.85;
-    
+
     return invert ? (1 - score) : score;
   };
 
@@ -94,10 +94,10 @@ export default function ResultScreen() {
   ] : defaultBars;
 
   const SKIN_ICONS: Record<string, string[]> = {
-    dry:         ['💧', '🌾', '🔴', '🌙'],
-    oily:        ['💦', '🔵', '⚫', '🧴'],
+    dry: ['💧', '🌾', '🔴', '🌙'],
+    oily: ['💦', '🔵', '⚫', '🧴'],
     combination: ['⚖️', '🔀', '💧', '🌡️'],
-    normal:      ['✅', '🌿', '🛡️', '☀️'],
+    normal: ['✅', '🌿', '🛡️', '☀️'],
   };
   const skinIcons = SKIN_ICONS[skinTypeKey] ?? SKIN_ICONS.dry;
 
@@ -325,23 +325,23 @@ export default function ResultScreen() {
                   {skinBars.map((bar, idx) => {
                     const item = { ...bar, left: '많다', right: '적다', color: '#90FDFF' };
                     return (
-                    <View key={idx} style={{ marginBottom: 12, width: width - 40, alignItems: 'flex-start' }}>
-                      <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.indicatorLabel}>{item.label}</StrokedText>
-                      <S.ComparisonRow style={{ marginTop: 2 }}>
-                        <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.barSideLabel}>{item.left}</StrokedText>
-                        <S.BarContainer style={styles.barContainerWithBorder}>
-                          <LinearGradient
-                            colors={['#FFD54F', item.color]}
-                            start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                            style={{ flex: item.flex, height: '100%' }}
-                          />
-                          <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
-                          <View style={{ flex: 1 - item.flex, height: '100%', backgroundColor: '#E0E0E0' }} />
-                        </S.BarContainer>
-                        <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.barSideLabel}>{item.right}</StrokedText>
-                      </S.ComparisonRow>
-                    </View>
-                  );
+                      <View key={idx} style={{ marginBottom: 12, width: width - 40, alignItems: 'flex-start' }}>
+                        <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.indicatorLabel}>{item.label}</StrokedText>
+                        <S.ComparisonRow style={{ marginTop: 2 }}>
+                          <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.barSideLabel}>{item.left}</StrokedText>
+                          <S.BarContainer style={styles.barContainerWithBorder}>
+                            <LinearGradient
+                              colors={['#FFD54F', item.color]}
+                              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                              style={{ flex: item.flex, height: '100%' }}
+                            />
+                            <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
+                            <View style={{ flex: 1 - item.flex, height: '100%', backgroundColor: '#E0E0E0' }} />
+                          </S.BarContainer>
+                          <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.barSideLabel}>{item.right}</StrokedText>
+                        </S.ComparisonRow>
+                      </View>
+                    );
                   })}
                 </>
               ) : (

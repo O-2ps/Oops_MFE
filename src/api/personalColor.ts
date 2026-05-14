@@ -66,3 +66,19 @@ export const analyzePersonalColor = async (imageUri: string): Promise<any> => {
     throw error;
   }
 };
+
+export const getPersonalResult = async (): Promise<any> => {
+  const token = await getToken();
+  if (!token) return null;
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/personal-color/result`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) return null;
+    const json = await response.json();
+    return json.data ?? json;
+  } catch (error) {
+    console.error('getPersonalResult error:', error);
+    return null;
+  }
+};

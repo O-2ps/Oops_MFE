@@ -11,17 +11,18 @@ import { RootStackParamList } from '../types/navigation';
 import { COLORS } from '../constants/theme';
 import { getKakaoProfile } from '../api/kakaoAuth';
 import { getToken } from '../utils/tokenStorage';
-import { getSkinResult } from '../api/skinApi';
+import { getUserHistory, HistoryItem } from '../api/userApi';
 
 const { width, height } = Dimensions.get('window');
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'MyPage'>;
 
-interface RecentResult {
-  id: string;
-  date: string;
-  title: string;
-  data: any;
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  const yy = String(d.getFullYear()).slice(2);
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yy}.${mm}.${dd}.`;
 }
 
 
@@ -30,7 +31,7 @@ export default function MyPageScreen() {
   const [isEntered, setIsEntered] = useState(false);
   const [nickname, setNickname] = useState('로그인 해주세요');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [recentResults, setRecentResults] = useState<RecentResult[]>([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
   const floatAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -43,18 +44,10 @@ export default function MyPageScreen() {
           setNickname(profile.nickname);
         }
         try {
-          const skinRes = await getSkinResult();
-          if (skinRes) {
-            const d = new Date(skinRes.created_at || skinRes.diagnosedAt || new Date());
-            const yy = String(d.getFullYear()).slice(2);
-            const mm = String(d.getMonth() + 1).padStart(2, '0');
-            const dd = String(d.getDate()).padStart(2, '0');
-            const dateStr = `${yy}.${mm}.${dd}.`;
-            const title = skinRes.skinTypeLabel ? `[${skinRes.skinTypeLabel}] 진단 결과` : '피부 진단 결과';
-            setRecentResults([{ id: '1', date: dateStr, title, data: skinRes }]);
-          }
+          const items = await getUserHistory();
+          setHistory(items);
         } catch (e) {
-          console.log('No recent results or error:', e);
+          console.log('history 조회 실패:', e);
         }
       } else {
         setIsLoggedIn(false);
@@ -159,14 +152,26 @@ export default function MyPageScreen() {
               최근 검사 결과 조회
             </StrokedText>
             <View style={styles.listContainer}>
-              {recentResults.length > 0 ? recentResults.map((item) => (
-                <TouchableOpacity 
-                  key={item.id} 
+              {history.length > 0 ? history.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
                   style={styles.listItem}
-                  onPress={() => navigation.navigate('Result', { type: 'skin', analysisData: { data: item.data } })}
+                  onPress={() => {
+                    if (item.type === 'skin') {
+                      navigation.navigate('Result', {
+                        type: 'skin',
+                        analysisData: { skinType: item.skinType, skinTypeLabel: item.label, skinAge: item.skinAge },
+                      });
+                    } else {
+                      navigation.navigate('Result', {
+                        type: item.personalType ?? 'spring',
+                        subType: item.subType,
+                      });
+                    }
+                  }}
                 >
                   <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.listItemText}>
-                    {item.date} {item.title}  {'>'}
+                    {formatDate(item.created_at)}{'  '}[{item.label}] 진단 결과{'  '}{'>'}
                   </StrokedText>
                 </TouchableOpacity>
               )) : (
