@@ -92,14 +92,16 @@ export default function PhotoUploadScreen() {
 
   if (isAnalyzing) {
     return (
-      <S.Container style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <S.Container>
         <View style={StyleSheet.absoluteFill}>
           <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
         </View>
-        <ActivityIndicator size="large" color={COLORS.PRIMARY} />
-        <StrokedText strokeColor="#ffffff" strokeWidth={2} style={{ fontSize: 20, color: COLORS.PRIMARY, marginTop: 20, fontFamily: 'DOSIyagiBoldface' }}>
-          사진을 분석하는 중입니다...
-        </StrokedText>
+        <View style={styles.loadingCenter}>
+          <ActivityIndicator size="large" color={COLORS.PRIMARY} />
+          <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.loadingText}>
+            사진을 분석하는 중입니다...
+          </StrokedText>
+        </View>
       </S.Container>
     );
   }
@@ -210,5 +212,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: COLORS.PRIMARY,
     fontFamily: 'DOSIyagiBoldface',
-  }
+  },
+  loadingCenter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 20,
+  },
+  loadingText: {
+    fontSize: 20,
+    color: COLORS.PRIMARY,
+    fontFamily: 'DOSIyagiBoldface',
+    marginTop: 4,
+  },
 });

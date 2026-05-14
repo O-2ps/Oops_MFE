@@ -10,6 +10,7 @@ import StrokedText from '../components/StrokedText';
 import { RootStackParamList } from '../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { getSkinQuestions, diagnoseSkin, SkinQuestion } from '../api/skinApi';
+import { COLORS } from '../constants/theme';
 
 const { width, height } = Dimensions.get('window');
 
@@ -107,34 +108,17 @@ export default function SurveyScreen() {
     }
   };
 
-  // 로딩 화면
-  if (isLoading) {
+  // 로딩 / 분석 중 화면
+  if (isLoading || isSubmitting) {
     return (
       <S.Container>
         <View style={StyleSheet.absoluteFill}>
           <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
         </View>
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#FF8CB6" />
-          <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.loadingText}>
-            문항을 불러오는 중...
-          </StrokedText>
-        </View>
-      </S.Container>
-    );
-  }
-
-  // 진단 제출 중
-  if (isSubmitting) {
-    return (
-      <S.Container>
-        <View style={StyleSheet.absoluteFill}>
-          <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
-        </View>
-        <View style={styles.center}>
-          <ActivityIndicator size="large" color="#FF8CB6" />
-          <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.loadingText}>
-            피부 타입 분석 중...
+          <ActivityIndicator size="large" color={COLORS.PRIMARY} />
+          <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.loadingText}>
+            {isSubmitting ? '피부 타입 분석 중...' : '문항을 불러오는 중...'}
           </StrokedText>
         </View>
       </S.Container>
@@ -198,9 +182,10 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   loadingText: {
-    fontSize: 16,
-    color: '#555555',
+    fontSize: 20,
+    color: COLORS.PRIMARY,
     fontFamily: 'DOSIyagiBoldface',
+    marginTop: 4,
   },
   progressBar: {
     position: 'absolute',
