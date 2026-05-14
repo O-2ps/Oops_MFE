@@ -152,7 +152,7 @@ export default function MyPageScreen() {
               최근 검사 결과 조회
             </StrokedText>
             <View style={styles.listContainer}>
-              {history.length > 0 ? history.map((item) => (
+              {history.length > 0 ? [...history].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 10).map((item) => (
                 <TouchableOpacity
                   key={item.id}
                   style={styles.listItem}
