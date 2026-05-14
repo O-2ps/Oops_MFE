@@ -38,7 +38,7 @@ export default function ResultScreen() {
     setIsRefreshing(true);
     // 짧은 딜레이로 새로고침 피드백 제공
     setTimeout(() => {
-      setDisplayedProducts(sampleProducts(productPool, 4));
+      setDisplayedProducts(sampleProducts(productPool, 6));
       setIsRefreshing(false);
     }, 300);
   }, [productPool]);
@@ -116,7 +116,7 @@ export default function ResultScreen() {
   const handleHome = () => navigation.navigate('Home');
 
   const handleShowProducts = () => {
-    setDisplayedProducts(sampleProducts(productPool, 4));
+    setDisplayedProducts(sampleProducts(productPool, 8));
     setShowProducts(true);
   };
 
