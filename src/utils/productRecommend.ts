@@ -18,35 +18,38 @@ function toToneKey(type: string, subType?: string): string {
   return `${type}_${subType.replace(/\s+/g, '_')}`;
 }
 
+function filterByKey(key: string): CrawledProduct[] {
+  return (ALL_PRODUCTS as CrawledProduct[]).filter(p =>
+    p.suitableFor?.includes(key) ?? false
+  );
+}
+
+function filterByPrefix(prefix: string): CrawledProduct[] {
+  return (ALL_PRODUCTS as CrawledProduct[]).filter(p =>
+    p.suitableFor?.some(t => t.startsWith(prefix)) ?? false
+  );
+}
+
 /** 시즌/서브톤 또는 피부타입에 맞는 상품 풀 반환 */
 export function getProductPool(type: string, subType?: string): CrawledProduct[] {
   if (type === 'skin') {
-    // 피부타입: dry / oily / combination / normal
-    const skinKey = subType ? `skin_${subType}` : null;
-    const exact = skinKey
-      ? (ALL_PRODUCTS as CrawledProduct[]).filter(p => p.suitableFor?.includes(skinKey) ?? false)
-      : [];
-    if (exact.length > 0) return exact;
-    // 피부타입 없으면 전체 스킨케어 폴백
-    return (ALL_PRODUCTS as CrawledProduct[]).filter(p =>
-      p.suitableFor?.some(t => t.startsWith('skin_')) ?? false
-    );
+    const key = subType ? `skin_${subType}` : null;
+    const pool = key ? filterByKey(key) : [];
+    return pool.length > 0 ? pool : filterByPrefix('skin_');
   }
   const toneKey = toToneKey(type, subType);
-  const exact = (ALL_PRODUCTS as CrawledProduct[]).filter(p =>
-    p.suitableFor?.includes(toneKey) ?? false
-  );
-  // 정확한 서브톤 매칭 실패 시 시즌 prefix로 폴백
-  if (exact.length > 0) return exact;
-  return (ALL_PRODUCTS as CrawledProduct[]).filter(p =>
-    p.suitableFor?.some(t => t.startsWith(type)) ?? false
-  );
+  const pool = filterByKey(toneKey);
+  return pool.length > 0 ? pool : filterByPrefix(type);
 }
 
 /** pool 에서 n 개 무작위 비복원 추출 */
 export function sampleProducts(pool: CrawledProduct[], n: number): CrawledProduct[] {
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, n);
+  const arr = [...pool];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr.slice(0, n);
 }
 
 export interface ColorChip {

@@ -22,6 +22,59 @@ const { width, height } = Dimensions.get('window');
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Result'>;
 
+const SKIN_BARS_DEFAULT: Record<string, { label: string; flex: number }[]> = {
+  dry:         [{ label: '모공', flex: 0.8 }, { label: '수분', flex: 0.8 }, { label: '유분', flex: 0.8 }, { label: '트러블', flex: 0.7 }],
+  oily:        [{ label: '모공', flex: 0.2 }, { label: '수분', flex: 0.3 }, { label: '유분', flex: 0.1 }, { label: '트러블', flex: 0.3 }],
+  combination: [{ label: '모공', flex: 0.4 }, { label: '수분', flex: 0.6 }, { label: '유분', flex: 0.4 }, { label: '트러블', flex: 0.5 }],
+  normal:      [{ label: '모공', flex: 0.6 }, { label: '수분', flex: 0.4 }, { label: '유분', flex: 0.5 }, { label: '트러블', flex: 0.8 }],
+};
+
+const SKIN_ICONS: Record<string, string[]> = {
+  dry:         ['💧', '🌾', '🔴', '🌙'],
+  oily:        ['💦', '🔵', '⚫', '🧴'],
+  combination: ['⚖️', '🔀', '💧', '🌡️'],
+  normal:      ['✅', '🌿', '🛡️', '☀️'],
+};
+
+function mapAnswerToFlex(val: string | undefined, invert: boolean, defaultFlex: number): number {
+  if (!val) return defaultFlex;
+  const scores: Record<string, number> = {
+    strongly_agree: 0.15,
+    agree: 0.35,
+    neutral: 0.5,
+    disagree: 0.65,
+    strongly_disagree: 0.85,
+  };
+  const score = scores[val] ?? 0.5;
+  return invert ? 1 - score : score;
+}
+
+interface GradientBarProps {
+  leftLabel: string;
+  rightLabel: string;
+  fillRatio: number;
+  gradientColors: readonly [string, string];
+  style?: object;
+}
+
+function GradientBar({ leftLabel, rightLabel, fillRatio, gradientColors, style }: GradientBarProps) {
+  return (
+    <S.ComparisonRow style={style}>
+      <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>{leftLabel}</StrokedText>
+      <S.BarContainer style={styles.barContainerWithBorder}>
+        <LinearGradient
+          colors={gradientColors}
+          start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+          style={{ flex: fillRatio, height: '100%' }}
+        />
+        <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
+        <View style={{ flex: 1 - fillRatio, height: '100%', backgroundColor: '#E0E0E0' }} />
+      </S.BarContainer>
+      <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>{rightLabel}</StrokedText>
+    </S.ComparisonRow>
+  );
+}
+
 export default function ResultScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteProp<RootStackParamList, 'Result'>>();
@@ -63,27 +116,9 @@ export default function ResultScreen() {
   const skinAge: number | null = skinData?.skinAge ?? skinData?.age ?? 16;
   const skinChars: string[] = skinData?.characteristics ?? [];
 
-  const SKIN_BARS_DEFAULT: Record<string, { label: string; flex: number }[]> = {
-    dry: [{ label: '모공', flex: 0.8 }, { label: '수분', flex: 0.8 }, { label: '유분', flex: 0.8 }, { label: '트러블', flex: 0.7 }],
-    oily: [{ label: '모공', flex: 0.2 }, { label: '수분', flex: 0.3 }, { label: '유분', flex: 0.1 }, { label: '트러블', flex: 0.3 }],
-    combination: [{ label: '모공', flex: 0.4 }, { label: '수분', flex: 0.6 }, { label: '유분', flex: 0.4 }, { label: '트러블', flex: 0.5 }],
-    normal: [{ label: '모공', flex: 0.6 }, { label: '수분', flex: 0.4 }, { label: '유분', flex: 0.5 }, { label: '트러블', flex: 0.8 }],
-  };
   const defaultBars = SKIN_BARS_DEFAULT[skinTypeKey] ?? SKIN_BARS_DEFAULT.dry;
 
   const surveyAnswers = analysisData?.surveyAnswers;
-
-  const mapAnswerToFlex = (val: string | undefined, invert: boolean, defaultFlex: number) => {
-    if (!val) return defaultFlex;
-    let score = 0.5;
-    if (val === 'strongly_agree') score = 0.15;
-    else if (val === 'agree') score = 0.35;
-    else if (val === 'neutral') score = 0.5;
-    else if (val === 'disagree') score = 0.65;
-    else if (val === 'strongly_disagree') score = 0.85;
-
-    return invert ? (1 - score) : score;
-  };
 
   const skinBars = surveyAnswers ? [
     { label: '모공', flex: mapAnswerToFlex(surveyAnswers.tzone, false, defaultBars[0].flex) },
@@ -92,12 +127,6 @@ export default function ResultScreen() {
     { label: '트러블', flex: mapAnswerToFlex(surveyAnswers.acne, false, defaultBars[3].flex) }
   ] : defaultBars;
 
-  const SKIN_ICONS: Record<string, string[]> = {
-    dry: ['💧', '🌾', '🔴', '🌙'],
-    oily: ['💦', '🔵', '⚫', '🧴'],
-    combination: ['⚖️', '🔀', '💧', '🌡️'],
-    normal: ['✅', '🌿', '🛡️', '☀️'],
-  };
   const skinIcons = SKIN_ICONS[skinTypeKey] ?? SKIN_ICONS.dry;
 
   const analysisTitle = isSkin ? skinTypeLabel : (seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트');
@@ -321,79 +350,31 @@ export default function ResultScreen() {
             <S.ComparisonContainer style={{ marginTop: isSkin ? 0 : 30 }}>
               {isSkin ? (
                 <>
-                  {skinBars.map((bar, idx) => {
-                    const item = { ...bar, left: '많다', right: '적다', color: '#90FDFF' };
-                    return (
-                      <View key={idx} style={{ marginBottom: 12, width: width - 40, alignItems: 'flex-start' }}>
-                        <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.indicatorLabel}>{item.label}</StrokedText>
-                        <S.ComparisonRow style={{ marginTop: 2 }}>
-                          <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.barSideLabel}>{item.left}</StrokedText>
-                          <S.BarContainer style={styles.barContainerWithBorder}>
-                            <LinearGradient
-                              colors={['#FFD54F', item.color]}
-                              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                              style={{ flex: item.flex, height: '100%' }}
-                            />
-                            <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
-                            <View style={{ flex: 1 - item.flex, height: '100%', backgroundColor: '#E0E0E0' }} />
-                          </S.BarContainer>
-                          <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.barSideLabel}>{item.right}</StrokedText>
-                        </S.ComparisonRow>
-                      </View>
-                    );
-                  })}
+                  {skinBars.map((bar, idx) => (
+                    <View key={idx} style={{ marginBottom: 12, width: width - 40, alignItems: 'flex-start' }}>
+                      <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.indicatorLabel}>{bar.label}</StrokedText>
+                      <GradientBar
+                        leftLabel="많다"
+                        rightLabel="적다"
+                        fillRatio={bar.flex}
+                        gradientColors={['#FFD54F', '#90FDFF']}
+                        style={{ marginTop: 2 }}
+                      />
+                    </View>
+                  ))}
                 </>
               ) : (
                 <>
-                  <S.ComparisonRow style={{ marginBottom: 12 }}>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>웜</StrokedText>
-                    <S.BarContainer style={styles.barContainerWithBorder}>
-                      <LinearGradient
-                        colors={['#FFD54F', '#FFB74D']}
-                        start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                        style={{ flex: 0.64, height: '100%' }}
-                      />
-                      <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
-                      <View style={{ flex: 0.36, height: '100%', backgroundColor: '#E0E0E0' }} />
-                    </S.BarContainer>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>쿨</StrokedText>
-                  </S.ComparisonRow>
-                  <S.ComparisonRow style={{ marginBottom: 12 }}>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>봄</StrokedText>
-                    <S.BarContainer style={styles.barContainerWithBorder}>
-                      <LinearGradient
-                        colors={['#FFB74D', '#F57C00']}
-                        start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                        style={{ flex: 0.71, height: '100%' }}
-                      />
-                      <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
-                      <View style={{ flex: 0.29, height: '100%', backgroundColor: '#E0E0E0' }} />
-                    </S.BarContainer>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>가을</StrokedText>
-                  </S.ComparisonRow>
-                  <S.ComparisonRow>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>라이트</StrokedText>
-                    <S.BarContainer style={styles.barContainerWithBorder}>
-                      <LinearGradient
-                        colors={['#FFF176', '#FFD54F']}
-                        start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                        style={{ flex: 0.88, height: '100%' }}
-                      />
-                      <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
-                      <View style={{ flex: 0.12, height: '100%', backgroundColor: '#E0E0E0' }} />
-                    </S.BarContainer>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>딥</StrokedText>
-                  </S.ComparisonRow>
+                  <GradientBar leftLabel="웜" rightLabel="쿨" fillRatio={0.64} gradientColors={['#FFD54F', '#FFB74D']} style={{ marginBottom: 12 }} />
+                  <GradientBar leftLabel="봄" rightLabel="가을" fillRatio={0.71} gradientColors={['#FFB74D', '#F57C00']} style={{ marginBottom: 12 }} />
+                  <GradientBar leftLabel="라이트" rightLabel="딥" fillRatio={0.88} gradientColors={['#FFF176', '#FFD54F']} />
                 </>
               )}
             </S.ComparisonContainer>
 
             <View style={{ marginTop: isSkin ? 20 : 30, alignItems: 'center', width: '100%', paddingBottom: 40, zIndex: 9999 }}>
               <TouchableOpacity
-                onPress={() => {
-                  console.log('--- SHOW PRODUCTS CLICKED ---');
-                  handleShowProducts();
-                }}
+                onPress={handleShowProducts}
                 style={{ marginBottom: 15, width: '90%', alignItems: 'center', zIndex: 10000 }}
                 activeOpacity={0.6}
                 hitSlop={{ top: 20, bottom: 20, left: 30, right: 30 }}
@@ -500,12 +481,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 4,
   },
-  storeTag: {
-    backgroundColor: '#D9D3B4',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
   tagText: {
     fontSize: 11,
     color: '#333333',
@@ -591,11 +566,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'DOSIyagiBoldface',
     opacity: 0.9,
-  },
-  barGap: {
-    width: 4,
-    height: '100%',
-    backgroundColor: '#ffffff',
   },
   skinHeader: {
     position: 'absolute',

@@ -108,14 +108,14 @@ function tagProducts(products: Product[]): Product[] {
     if (MAKEUP_CATEGORIES.includes(category)) {
       const detected = detectSeason(name);
       if (detected) {
-        return { ...product, suitableFor: SUBTONES[detected] as unknown as string[] };
+        return { ...product, suitableFor: [...SUBTONES[detected]] };
       }
 
       // 키워드 없으면 카테고리별 인덱스 기반으로 4시즌 균등 분배
       const idx = categoryIndexMap[category] ?? 0;
       categoryIndexMap[category] = idx + 1;
       const season = seasons[idx % 4];
-      return { ...product, suitableFor: SUBTONES[season] as unknown as string[] };
+      return { ...product, suitableFor: [...SUBTONES[season]] };
     }
 
     // 바디케어, 뷰티툴 등 기타 → 퍼스널컬러/피부타입 추천 제외
@@ -125,7 +125,13 @@ function tagProducts(products: Product[]): Product[] {
 
 function main() {
   const inputPath = path.join(__dirname, '..', 'src', 'assets', 'products.json');
-  const products: Product[] = JSON.parse(fs.readFileSync(inputPath, 'utf-8'));
+  let products: Product[];
+  try {
+    products = JSON.parse(fs.readFileSync(inputPath, 'utf-8'));
+  } catch (err) {
+    console.error('products.json 읽기 실패:', (err as Error).message);
+    process.exit(1);
+  }
 
   console.log(`총 ${products.length}개 상품 처리 중...`);
 
