@@ -9,22 +9,37 @@ export interface CrawledProduct {
   imageUrl: string;
   category: string;
   categoryId: string;
+  suitableFor?: string[];
 }
 
-// 시즌 → 우선 카테고리 매핑
-const SEASON_CATEGORIES: Record<string, string[]> = {
-  spring: ['메이크업 > 립메이크업', '메이크업 > 베이스메이크업', '메이크업 > 아이메이크업'],
-  summer: ['메이크업 > 아이메이크업', '메이크업 > 립메이크업', '메이크업 > 베이스메이크업'],
-  autumn: ['메이크업 > 베이스메이크업', '메이크업 > 립메이크업', '메이크업 > 아이메이크업'],
-  winter: ['메이크업 > 립메이크업', '메이크업 > 아이메이크업', '메이크업 > 베이스메이크업'],
-  skin:   ['스킨케어 > 스킨/토너', '스킨케어 > 에센스/세럼/앰플', '스킨케어 > 크림', '스킨케어 > 로션'],
-};
+/** subType 예: "warm bright" → "spring_warm_bright" 형태의 키로 변환 */
+function toToneKey(type: string, subType?: string): string {
+  if (!subType) return type;
+  return `${type}_${subType.replace(/\s+/g, '_')}`;
+}
 
-/** 시즌에 맞는 카테고리 상품 풀 반환 */
-export function getProductPool(type: string): CrawledProduct[] {
-  const categories = SEASON_CATEGORIES[type] ?? SEASON_CATEGORIES.spring;
+/** 시즌/서브톤 또는 피부타입에 맞는 상품 풀 반환 */
+export function getProductPool(type: string, subType?: string): CrawledProduct[] {
+  if (type === 'skin') {
+    // 피부타입: dry / oily / combination / normal
+    const skinKey = subType ? `skin_${subType}` : null;
+    const exact = skinKey
+      ? (ALL_PRODUCTS as CrawledProduct[]).filter(p => p.suitableFor?.includes(skinKey) ?? false)
+      : [];
+    if (exact.length > 0) return exact;
+    // 피부타입 없으면 전체 스킨케어 폴백
+    return (ALL_PRODUCTS as CrawledProduct[]).filter(p =>
+      p.suitableFor?.some(t => t.startsWith('skin_')) ?? false
+    );
+  }
+  const toneKey = toToneKey(type, subType);
+  const exact = (ALL_PRODUCTS as CrawledProduct[]).filter(p =>
+    p.suitableFor?.includes(toneKey) ?? false
+  );
+  // 정확한 서브톤 매칭 실패 시 시즌 prefix로 폴백
+  if (exact.length > 0) return exact;
   return (ALL_PRODUCTS as CrawledProduct[]).filter(p =>
-    categories.includes(p.category)
+    p.suitableFor?.some(t => t.startsWith(type)) ?? false
   );
 }
 

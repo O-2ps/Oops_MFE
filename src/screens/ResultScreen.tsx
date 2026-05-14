@@ -31,12 +31,18 @@ export default function ResultScreen() {
   const [displayedProducts, setDisplayedProducts] = useState<CrawledProduct[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // 시즌에 맞는 상품 풀 (최초 1회 계산)
-  const productPool = getProductPool(type);
+  const isSkin = type === 'skin';
+
+  // 백엔드 응답: { success, data: { skinType, skinTypeLabel, skinAge, characteristics, ... } }
+  const skinData = isSkin ? (analysisData?.data ?? analysisData) : null;
+  const skinTypeLabel: string = skinData?.skinTypeLabel ?? '건성 피부';
+  const skinTypeKey: string = skinData?.skinType ?? 'dry';
+
+  // 시즌/서브톤 또는 피부타입에 맞는 상품 풀 (최초 1회 계산)
+  const productPool = getProductPool(type, type === 'skin' ? skinTypeKey : subType);
 
   const refreshProducts = useCallback(() => {
     setIsRefreshing(true);
-    // 짧은 딜레이로 새로고침 피드백 제공
     setTimeout(() => {
       setDisplayedProducts(sampleProducts(productPool, 6));
       setIsRefreshing(false);
@@ -54,13 +60,6 @@ export default function ResultScreen() {
         .catch(err => console.error('ResultScreen fetchSeasons error:', err));
     }
   }, [type, subType]);
-
-  const isSkin = type === 'skin';
-
-  // 백엔드 응답: { success, data: { skinType, skinTypeLabel, skinAge, characteristics, ... } }
-  const skinData = isSkin ? (analysisData?.data ?? analysisData) : null;
-  const skinTypeLabel: string = skinData?.skinTypeLabel ?? '건성 피부';
-  const skinTypeKey: string = skinData?.skinType ?? 'dry';
   const skinAge: number | null = skinData?.skinAge ?? skinData?.age ?? 16;
   const skinChars: string[] = skinData?.characteristics ?? [];
 
