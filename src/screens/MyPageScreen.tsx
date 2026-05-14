@@ -10,49 +10,57 @@ import StrokedText from '../components/StrokedText';
 import { RootStackParamList } from '../types/navigation';
 import { COLORS } from '../constants/theme';
 import { getKakaoProfile } from '../api/kakaoAuth';
+import { getToken } from '../utils/tokenStorage';
+import { getSkinResult } from '../api/skinApi';
 
 const { width, height } = Dimensions.get('window');
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'MyPage'>;
 
-const RECENT_RESULTS = [
-  { date: '3월 12일', title: '퍼스널 컬러 검사 결과' },
-  { date: '3월 26일', title: '퍼스널 컬러 검사 결과' },
-  { date: '3월 27일', title: '스킨 타입 검사 결과' },
-  { date: '3월 29일', title: '스킨 타입 검사 결과' },
-];
+interface RecentResult {
+  id: string;
+  date: string;
+  title: string;
+  data: any;
+}
 
-const WISH_LIST = [
-  {
-    id: 1,
-    title: '[화잘먹수분선] 웰라쥬 리얼 히알루로닉 블루 선크림 50ml 1+1 기획',
-    price: '29,300원',
-    store: '올리브영',
-    image: require('../../assets/images/wellage_sunscreen.png'),
-  },
-  {
-    id: 2,
-    title: '[화잘먹수분선] 웰라쥬 리얼 히알루로닉 블루 선크림 50ml 1+1 기획',
-    price: '29,300원',
-    store: '올리브영',
-    image: require('../../assets/images/wellage_sunscreen.png'),
-  },
-];
 
 export default function MyPageScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [isEntered, setIsEntered] = useState(false);
   const [nickname, setNickname] = useState('로그인 해주세요');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [recentResults, setRecentResults] = useState<RecentResult[]>([]);
   const floatAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const profile = await getKakaoProfile();
-      if (profile && profile.nickname) {
-        setNickname(profile.nickname);
+    const checkLoginStatus = async () => {
+      const token = await getToken();
+      if (token) {
+        setIsLoggedIn(true);
+        const profile = await getKakaoProfile();
+        if (profile && profile.nickname) {
+          setNickname(profile.nickname);
+        }
+        try {
+          const skinRes = await getSkinResult();
+          if (skinRes) {
+            const d = new Date(skinRes.created_at || skinRes.diagnosedAt || new Date());
+            const yy = String(d.getFullYear()).slice(2);
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            const dateStr = `${yy}.${mm}.${dd}.`;
+            const title = skinRes.skinTypeLabel ? `[${skinRes.skinTypeLabel}] 진단 결과` : '피부 진단 결과';
+            setRecentResults([{ id: '1', date: dateStr, title, data: skinRes }]);
+          }
+        } catch (e) {
+          console.log('No recent results or error:', e);
+        }
+      } else {
+        setIsLoggedIn(false);
       }
     };
-    fetchProfile();
+    checkLoginStatus();
   }, []);
 
   useEffect(() => {
@@ -94,6 +102,15 @@ export default function MyPageScreen() {
 
       {!isEntered ? (
         <S.MainContent>
+          {!isLoggedIn && (
+            <View style={styles.loginPromptContainer}>
+              <TouchableOpacity onPress={() => navigation.navigate('Landing')}>
+                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.loginPromptText}>
+                  * 로그인 페이지로 이동하기
+                </StrokedText>
+              </TouchableOpacity>
+            </View>
+          )}
           <S.Header>
             <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.stepText}>
               3.
@@ -109,9 +126,9 @@ export default function MyPageScreen() {
             </Animated.View>
           </S.WheelSection>
 
-          <S.FooterAction onPress={handleEnter}>
+          <S.FooterAction onPress={isLoggedIn ? handleEnter : undefined}>
             <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.introFooterText}>
-              [ 들어가기 ]
+              {isLoggedIn ? '[ 들어가기 ]' : '[ 로그인을 하지 않았습니다. ]'}
             </StrokedText>
           </S.FooterAction>
         </S.MainContent>
@@ -142,39 +159,23 @@ export default function MyPageScreen() {
               최근 검사 결과 조회
             </StrokedText>
             <View style={styles.listContainer}>
-              {RECENT_RESULTS.map((item, idx) => (
-                <TouchableOpacity key={idx} style={styles.listItem}>
+              {recentResults.length > 0 ? recentResults.map((item) => (
+                <TouchableOpacity 
+                  key={item.id} 
+                  style={styles.listItem}
+                  onPress={() => navigation.navigate('Result', { type: 'skin', analysisData: { data: item.data } })}
+                >
                   <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.listItemText}>
                     {item.date} {item.title}  {'>'}
                   </StrokedText>
                 </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.sectionTitle}>
-              찜 해둔 상품
-            </StrokedText>
-            <View style={styles.productGrid}>
-              {WISH_LIST.map((item) => (
-                <View key={item.id} style={styles.productCard}>
-                  <View style={styles.productImageContainer}>
-                    <Image source={item.image} style={styles.productImage} resizeMode="cover" />
-                  </View>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.productTitle} numberOfLines={3}>
-                    {item.title}
+              )) : (
+                <View style={styles.listItem}>
+                  <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.listItemText}>
+                    최근 검사 결과가 없습니다.
                   </StrokedText>
-                  <View style={styles.tagRow}>
-                    <View style={styles.priceTag}>
-                      <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
-                    </View>
-                    <View style={styles.storeTag}>
-                      <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.tagText}>{item.store}</StrokedText>
-                    </View>
-                  </View>
                 </View>
-              ))}
+              )}
             </View>
           </View>
         </ScrollView>
@@ -189,6 +190,18 @@ const styles = StyleSheet.create({
     color: '#FF8CB6',
     fontFamily: 'DOSIyagiBoldface',
     marginBottom: 25,
+  },
+  loginPromptContainer: {
+    position: 'absolute',
+    top: 50,
+    width: '100%',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  loginPromptText: {
+    fontSize: 14,
+    color: '#FF8CB6',
+    fontFamily: 'DOSIyagiBoldface',
   },
   introTitleText: {
     fontSize: 24,
@@ -246,57 +259,6 @@ const styles = StyleSheet.create({
   listItemText: {
     fontSize: 14,
     color: '#666666',
-    fontFamily: 'DOSIyagiBoldface',
-  },
-  productGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    justifyContent: 'space-between',
-  },
-  productCard: {
-    width: (width - 52) / 2,
-    marginBottom: 15,
-  },
-  productImageContainer: {
-    width: '100%',
-    aspectRatio: 1,
-    borderRadius: 5,
-    borderWidth: 2,
-    borderColor: '#3F44FF',
-    overflow: 'hidden',
-    marginBottom: 8,
-  },
-  productImage: {
-    width: '100%',
-    height: '100%',
-  },
-  productTitle: {
-    fontSize: 12,
-    color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
-    lineHeight: 16,
-    marginBottom: 8,
-  },
-  tagRow: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  priceTag: {
-    backgroundColor: '#D9D3B4',
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    borderRadius: 4,
-  },
-  storeTag: {
-    backgroundColor: '#D9D3B4',
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    borderRadius: 4,
-  },
-  tagText: {
-    fontSize: 10,
-    color: '#333333',
     fontFamily: 'DOSIyagiBoldface',
   },
 });

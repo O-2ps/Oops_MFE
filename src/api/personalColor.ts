@@ -1,4 +1,5 @@
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
+import { getToken } from '../utils/tokenStorage';
 
 export interface SeasonInfo {
   season: string;
@@ -44,8 +45,15 @@ export const analyzePersonalColor = async (imageUri: string): Promise<any> => {
       type: 'image/jpeg',
     } as any);
 
+    const token = await getToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_BASE_URL}/api/personal-color/analyze`, {
       method: 'POST',
+      headers,
       body: formData,
     });
 
