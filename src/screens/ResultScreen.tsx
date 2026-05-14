@@ -109,7 +109,7 @@ export default function ResultScreen() {
     if (showProducts) {
       setShowProducts(false);
     } else {
-      navigation.navigate('Home');
+      navigation.goBack();
     }
   };
 
