@@ -56,7 +56,52 @@ export default function ResultScreen() {
   }, [type, subType]);
 
   const isSkin = type === 'skin';
-  const analysisTitle = isSkin ? '건성 피부' : (seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트');
+
+  // 백엔드 응답: { success, data: { skinType, skinTypeLabel, skinAge, characteristics, ... } }
+  const skinData = isSkin ? (analysisData?.data ?? analysisData) : null;
+  const skinTypeLabel: string  = skinData?.skinTypeLabel ?? '건성 피부';
+  const skinTypeKey: string    = skinData?.skinType      ?? 'dry';
+  const skinAge: number | null = skinData?.skinAge       ?? null;
+  const skinChars: string[]    = skinData?.characteristics ?? [];
+
+  const SKIN_BARS_DEFAULT: Record<string, { label: string; flex: number }[]> = {
+    dry:         [{ label: '모공', flex: 0.8 }, { label: '수분', flex: 0.8 }, { label: '유분', flex: 0.8 }, { label: '트러블', flex: 0.7 }],
+    oily:        [{ label: '모공', flex: 0.2 }, { label: '수분', flex: 0.3 }, { label: '유분', flex: 0.1 }, { label: '트러블', flex: 0.3 }],
+    combination: [{ label: '모공', flex: 0.4 }, { label: '수분', flex: 0.6 }, { label: '유분', flex: 0.4 }, { label: '트러블', flex: 0.5 }],
+    normal:      [{ label: '모공', flex: 0.6 }, { label: '수분', flex: 0.4 }, { label: '유분', flex: 0.5 }, { label: '트러블', flex: 0.8 }],
+  };
+  const defaultBars = SKIN_BARS_DEFAULT[skinTypeKey] ?? SKIN_BARS_DEFAULT.dry;
+  
+  const surveyAnswers = analysisData?.surveyAnswers;
+
+  const mapAnswerToFlex = (val: string | undefined, invert: boolean, defaultFlex: number) => {
+    if (!val) return defaultFlex;
+    let score = 0.5;
+    if (val === 'strongly_agree') score = 0.15;
+    else if (val === 'agree') score = 0.35;
+    else if (val === 'neutral') score = 0.5;
+    else if (val === 'disagree') score = 0.65;
+    else if (val === 'strongly_disagree') score = 0.85;
+    
+    return invert ? (1 - score) : score;
+  };
+
+  const skinBars = surveyAnswers ? [
+    { label: '모공', flex: mapAnswerToFlex(surveyAnswers.tzone, false, defaultBars[0].flex) },
+    { label: '수분', flex: mapAnswerToFlex(surveyAnswers.dryness, true, defaultBars[1].flex) },
+    { label: '유분', flex: mapAnswerToFlex(surveyAnswers.oiliness, false, defaultBars[2].flex) },
+    { label: '트러블', flex: mapAnswerToFlex(surveyAnswers.acne, false, defaultBars[3].flex) }
+  ] : defaultBars;
+
+  const SKIN_ICONS: Record<string, string[]> = {
+    dry:         ['💧', '🌾', '🔴', '🌙'],
+    oily:        ['💦', '🔵', '⚫', '🧴'],
+    combination: ['⚖️', '🔀', '💧', '🌡️'],
+    normal:      ['✅', '🌿', '🛡️', '☀️'],
+  };
+  const skinIcons = SKIN_ICONS[skinTypeKey] ?? SKIN_ICONS.dry;
+
+  const analysisTitle = isSkin ? skinTypeLabel : (seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트');
   const highlightColor = isSkin ? '#81D4FA' : '#FF8A65';
   const buttonText = isSkin ? '[ 어울리는 피부 화장품 추천 ]' : '[ 어울리는 화장품 보러가기 ]';
 
@@ -105,25 +150,19 @@ export default function ResultScreen() {
             <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleMain}>제품을 추천합니다.</StrokedText>
           </View>
 
-          {/* 건성 피부 특징 */}
+          {/* 피부 타입 특징 */}
           {isSkin && (
             <View style={styles.skinInfoSection}>
               <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.skinInfoTitle}>
-                건성 피부 특징
+                {skinTypeLabel} 특징
               </StrokedText>
-              {[
-                { icon: '💧', text: '수분이 부족해 자주 당기는 느낌이 납니다.' },
-                { icon: '🌾', text: '각질이 일어나기 쉽고 피부결이 거칩니다.' },
-                { icon: '🔴', text: '외부 자극에 민감하고 쉽게 붉어집니다.' },
-                { icon: '🌙', text: '저녁에도 유·수분이 부족한 상태가 유지됩니다.' },
-                { icon: '✨', text: '집중 보습과 영양 공급이 중요합니다.' },
-              ].map((item, idx) => (
+              {skinChars.map((text, idx) => (
                 <View key={idx} style={styles.skinInfoRow}>
                   <StrokedText strokeColor="#ffffff" strokeWidth={0} style={styles.skinInfoIcon}>
-                    {item.icon}
+                    {skinIcons[idx] ?? '✨'}
                   </StrokedText>
                   <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.skinInfoText}>
-                    {item.text}
+                    {text}
                   </StrokedText>
                 </View>
               ))}
@@ -225,7 +264,7 @@ export default function ResultScreen() {
 
             <View style={{ marginTop: isSkin ? 60 : 20, marginBottom: 20 }}>
               <StrokedText strokeColor="#ffffff" strokeWidth={5} style={[styles.title, isSkin && { color: '#333333' }]}>
-                {isSkin ? '[ 건성 피부 ]' : `[ ${seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트'} ]`}
+                {isSkin ? `[ ${skinTypeLabel} ]` : `[ ${seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트'} ]`}
               </StrokedText>
             </View>
 
@@ -237,7 +276,7 @@ export default function ResultScreen() {
                   </StrokedText>
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
                     <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.skinAgeText}>
-                      [ 27살 ]
+                      {skinAge !== null ? `[ ${skinAge}살 ]` : '-'}
                     </StrokedText>
                     <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
                       {' '}입니다.
@@ -283,12 +322,9 @@ export default function ResultScreen() {
             <S.ComparisonContainer style={{ marginTop: isSkin ? 0 : 30 }}>
               {isSkin ? (
                 <>
-                  {[
-                    { label: '모공', left: '많다', right: '적다', flex: 0.7, color: '#90FDFF' },
-                    { label: '수분', left: '많다', right: '적다', flex: 0.9, color: '#90FDFF' },
-                    { label: '유분', left: '많다', right: '적다', flex: 0.8, color: '#90FDFF' },
-                    { label: '트러블', left: '많다', right: '적다', flex: 0.4, color: '#90FDFF' }
-                  ].map((item, idx) => (
+                  {skinBars.map((bar, idx) => {
+                    const item = { ...bar, left: '많다', right: '적다', color: '#90FDFF' };
+                    return (
                     <View key={idx} style={{ marginBottom: 12, width: width - 40, alignItems: 'flex-start' }}>
                       <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.indicatorLabel}>{item.label}</StrokedText>
                       <S.ComparisonRow style={{ marginTop: 2 }}>
@@ -305,7 +341,8 @@ export default function ResultScreen() {
                         <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.barSideLabel}>{item.right}</StrokedText>
                       </S.ComparisonRow>
                     </View>
-                  ))}
+                  );
+                  })}
                 </>
               ) : (
                 <>

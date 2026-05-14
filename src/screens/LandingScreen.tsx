@@ -102,14 +102,19 @@ function AnimatedStar({ top, right, size, rotate, delay, duration = 6000 }: Star
 }
 
 import { loginWithKakao } from '../api/kakaoAuth';
+import { saveToken } from '../utils/tokenStorage';
 
 export default function LandingScreen() {
   const navigation = useNavigation<NavigationProp>();
 
   const handleKakaoLogin = async () => {
-    const token = await loginWithKakao();
-    if (token) {
-      console.log('Kakao Login Success:', token);
+    const result = await loginWithKakao();
+    if (result) {
+      // 백엔드 JWT 토큰 저장
+      if (result.user?.token) {
+        await saveToken(result.user.token);
+      }
+      console.log('Kakao Login Success:', result);
       navigation.navigate('Home');
     }
   };
