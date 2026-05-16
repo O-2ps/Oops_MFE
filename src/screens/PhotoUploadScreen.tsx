@@ -29,37 +29,28 @@ export default function PhotoUploadScreen() {
     return true;
   };
 
-  const handleTakePhoto = async () => {
+  const handleImageSelection = async (useCamera: boolean) => {
     const hasPermission = await requestPermissions();
     if (!hasPermission) return;
 
-    let result = await ImagePicker.launchCameraAsync({
+    const options: any = {
       mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [3, 4],
       quality: 0.8,
-    });
+    };
+
+    let result = useCamera
+      ? await ImagePicker.launchCameraAsync(options)
+      : await ImagePicker.launchImageLibraryAsync(options);
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       setImageUri(result.assets[0].uri);
     }
   };
 
-  const handlePickImage = async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [3, 4],
-      quality: 0.8,
-    });
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setImageUri(result.assets[0].uri);
-    }
-  };
+  const handleTakePhoto = () => handleImageSelection(true);
+  const handlePickImage = () => handleImageSelection(false);
 
   const handleStartAnalysis = async () => {
     if (!imageUri) {

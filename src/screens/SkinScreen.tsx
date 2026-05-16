@@ -9,13 +9,7 @@ import StrokedText from '../components/StrokedText';
 
 const { width, height } = Dimensions.get('window');
 
-type RootStackParamList = {
-  Landing: undefined;
-  Home: undefined;
-  LastCheck: { from: string };
-  MyPage: undefined;
-  Skin: undefined;
-};
+import { RootStackParamList } from '../types/navigation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Skin'>;
 

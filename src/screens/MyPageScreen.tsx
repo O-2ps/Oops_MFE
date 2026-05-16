@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Image, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -87,6 +87,26 @@ export default function MyPageScreen() {
     setIsEntered(true);
   };
 
+  const sortedHistory = useMemo(() => {
+    return [...history]
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 10);
+  }, [history]);
+
+  const handleHistoryPress = useCallback((item: HistoryItem) => {
+    if (item.type === 'skin') {
+      navigation.navigate('Result', {
+        type: 'skin',
+        analysisData: { skinType: item.skinType, skinTypeLabel: item.label, skinAge: item.skinAge },
+      });
+    } else {
+      navigation.navigate('Result', {
+        type: item.personalType ?? 'spring',
+        subType: item.subType,
+      });
+    }
+  }, [navigation]);
+
   return (
     <S.Container>
       <View style={StyleSheet.absoluteFill}>
@@ -152,23 +172,11 @@ export default function MyPageScreen() {
               최근 검사 결과 조회
             </StrokedText>
             <View style={styles.listContainer}>
-              {history.length > 0 ? [...history].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 10).map((item) => (
+              {sortedHistory.length > 0 ? sortedHistory.map((item) => (
                 <TouchableOpacity
                   key={item.id}
                   style={styles.listItem}
-                  onPress={() => {
-                    if (item.type === 'skin') {
-                      navigation.navigate('Result', {
-                        type: 'skin',
-                        analysisData: { skinType: item.skinType, skinTypeLabel: item.label, skinAge: item.skinAge },
-                      });
-                    } else {
-                      navigation.navigate('Result', {
-                        type: item.personalType ?? 'spring',
-                        subType: item.subType,
-                      });
-                    }
-                  }}
+                  onPress={() => handleHistoryPress(item)}
                 >
                   <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.listItemText}>
                     {formatDate(item.created_at)}{'  '}[{item.label}] 진단 결과{'  '}{'>'}
