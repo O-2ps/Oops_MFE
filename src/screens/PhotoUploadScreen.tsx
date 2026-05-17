@@ -23,7 +23,7 @@ export default function PhotoUploadScreen() {
     const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
     const mediaStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (cameraStatus.status !== 'granted' || mediaStatus.status !== 'granted') {
-      Alert.alert('권한 필요', '카메라 및 갤러리 접근 권한이 필요합니다.');
+      Alert.alert('카메라 및 갤러리 접근 권한이 필요합니다.', '카메라 및 갤러리 접근 권한이 필요합니다.');
       return false;
     }
     return true;
