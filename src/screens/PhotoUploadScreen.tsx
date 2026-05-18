@@ -146,6 +146,10 @@ export default function PhotoUploadScreen() {
           )}
         </View>
 
+        <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.hintText}>
+          손목의 색깔과 비교해보세요!
+        </StrokedText>
+
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.actionButton} onPress={handleTakePhoto}>
             <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.actionButtonText}>
@@ -205,6 +209,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#A0A0A0',
     fontFamily: 'DOSIyagiBoldface',
+  },
+  hintText: {
+    fontSize: 15,
+    color: '#333333',
+    fontFamily: 'DOSIyagiBoldface',
+    marginBottom: 14,
   },
   buttonRow: {
     flexDirection: 'row',
