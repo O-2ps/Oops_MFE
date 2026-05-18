@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Image, Animated, Easing } from 'react-native';
+import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Image, Animated, Easing, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
@@ -12,6 +12,8 @@ import { COLORS } from '../constants/theme';
 import { getKakaoProfile } from '../api/kakaoAuth';
 import { getToken } from '../utils/tokenStorage';
 import { getUserHistory, HistoryItem } from '../api/userApi';
+import { CrawledProduct } from '../utils/productRecommend';
+import { getWishlist, removeFromWishlist } from '../utils/wishlistStorage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,6 +34,7 @@ export default function MyPageScreen() {
   const [nickname, setNickname] = useState('로그인 해주세요');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [wishlist, setWishlist] = useState<CrawledProduct[]>([]);
   const floatAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -54,6 +57,17 @@ export default function MyPageScreen() {
       }
     };
     checkLoginStatus();
+  }, []);
+
+  useEffect(() => {
+    if (isEntered) {
+      getWishlist().then(setWishlist);
+    }
+  }, [isEntered]);
+
+  const handleRemoveWishlist = useCallback(async (goodsNo: string) => {
+    await removeFromWishlist(goodsNo);
+    setWishlist(prev => prev.filter(p => p.goodsNo !== goodsNo));
   }, []);
 
   useEffect(() => {
@@ -191,6 +205,52 @@ export default function MyPageScreen() {
               )}
             </View>
           </View>
+
+          <View style={styles.section}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.sectionTitle}>
+              찜한 화장품
+            </StrokedText>
+            {wishlist.length > 0 ? (
+              <View style={styles.wishlistGrid}>
+                {wishlist.map((item) => (
+                  <View key={item.goodsNo} style={styles.wishlistCard}>
+                    <TouchableOpacity
+                      onPress={() => Linking.openURL(
+                        `https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=${item.goodsNo}`
+                      )}
+                      activeOpacity={0.8}
+                    >
+                      <Image source={{ uri: item.imageUrl }} style={styles.wishlistImage} resizeMode="cover" />
+                    </TouchableOpacity>
+                    <View style={styles.wishlistInfo}>
+                      <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.wishlistBrand} numberOfLines={1}>
+                        {item.brand}
+                      </StrokedText>
+                      <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.wishlistName} numberOfLines={2}>
+                        {item.name}
+                      </StrokedText>
+                      <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.wishlistPrice}>
+                        {item.price}
+                      </StrokedText>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.wishlistRemove}
+                      onPress={() => handleRemoveWishlist(item.goodsNo)}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <Text style={styles.wishlistRemoveText}>♥</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.listItem}>
+                <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.listItemText}>
+                  찜한 화장품이 없습니다.
+                </StrokedText>
+              </View>
+            )}
+          </View>
         </ScrollView>
       )}
     </S.Container>
@@ -273,5 +333,50 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666666',
     fontFamily: 'DOSIyagiBoldface',
+  },
+  wishlistGrid: {
+    gap: 10,
+  },
+  wishlistCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderRadius: 8,
+    padding: 10,
+    gap: 12,
+  },
+  wishlistImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    borderColor: '#3F44FF',
+  },
+  wishlistInfo: {
+    flex: 1,
+    gap: 3,
+  },
+  wishlistBrand: {
+    fontSize: 10,
+    color: '#888888',
+    fontFamily: 'DOSIyagiBoldface',
+  },
+  wishlistName: {
+    fontSize: 12,
+    color: '#333333',
+    fontFamily: 'DOSIyagiBoldface',
+    lineHeight: 16,
+  },
+  wishlistPrice: {
+    fontSize: 11,
+    color: COLORS.PRIMARY,
+    fontFamily: 'DOSIyagiBoldface',
+  },
+  wishlistRemove: {
+    padding: 4,
+  },
+  wishlistRemoveText: {
+    fontSize: 20,
+    color: COLORS.PRIMARY,
   },
 });

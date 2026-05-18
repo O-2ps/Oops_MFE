@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator, Text } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
@@ -17,6 +17,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import { fetchSeasons, SeasonInfo } from '../api/personalColor';
 import { CrawledProduct, getProductPool, sampleProducts, SEASON_COLOR_PALETTE } from '../utils/productRecommend';
+import { getWishlist, toggleWishlist } from '../utils/wishlistStorage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -83,6 +84,7 @@ export default function ResultScreen() {
   const [seasonInfo, setSeasonInfo] = useState<SeasonInfo | null>(null);
   const [displayedProducts, setDisplayedProducts] = useState<CrawledProduct[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [wishlistedIds, setWishlistedIds] = useState<Set<string>>(new Set());
 
   const isSkin = type === 'skin';
 
@@ -93,6 +95,24 @@ export default function ResultScreen() {
 
   // 시즌/서브톤 또는 피부타입에 맞는 상품 풀 (최초 1회 계산)
   const productPool = getProductPool(type, type === 'skin' ? skinTypeKey : subType);
+
+  useEffect(() => {
+    if (showProducts) {
+      getWishlist().then(list => {
+        setWishlistedIds(new Set(list.map(p => p.goodsNo)));
+      });
+    }
+  }, [showProducts]);
+
+  const handleToggleWishlist = useCallback(async (product: CrawledProduct) => {
+    const nowWishlisted = await toggleWishlist(product);
+    setWishlistedIds(prev => {
+      const next = new Set(prev);
+      if (nowWishlisted) next.add(product.goodsNo);
+      else next.delete(product.goodsNo);
+      return next;
+    });
+  }, []);
 
   const refreshProducts = useCallback(() => {
     setIsRefreshing(true);
@@ -241,6 +261,15 @@ export default function ResultScreen() {
                     style={styles.productImage}
                     resizeMode="cover"
                   />
+                  <TouchableOpacity
+                    style={styles.wishlistButton}
+                    onPress={(e) => { e.stopPropagation(); handleToggleWishlist(item); }}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  >
+                    <Text style={styles.wishlistIcon}>
+                      {wishlistedIds.has(item.goodsNo) ? '♥' : '♡'}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
                 <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.productBrand} numberOfLines={1}>
                   {item.brand}
@@ -457,6 +486,22 @@ const styles = StyleSheet.create({
   productImage: {
     width: '100%',
     height: '100%',
+  },
+  wishlistButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    borderRadius: 14,
+    width: 28,
+    height: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  wishlistIcon: {
+    fontSize: 16,
+    color: COLORS.PRIMARY,
+    lineHeight: 20,
   },
   productBrand: {
     fontSize: 11,
