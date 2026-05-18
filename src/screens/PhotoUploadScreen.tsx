@@ -3,6 +3,7 @@ import { StyleSheet, View, Dimensions, TouchableOpacity, Image, ActivityIndicato
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
+import ImageColors from 'react-native-image-colors';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
@@ -17,6 +18,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'PhotoUpload
 export default function PhotoUploadScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [dominantColor, setDominantColor] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const requestPermissions = async () => {
@@ -45,7 +47,27 @@ export default function PhotoUploadScreen() {
       : await ImagePicker.launchImageLibraryAsync(options);
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      setImageUri(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      setImageUri(uri);
+      setDominantColor(null);
+      extractDominantColor(uri);
+    }
+  };
+
+  const extractDominantColor = async (uri: string) => {
+    try {
+      const colors = await ImageColors.getColors(uri, { fallback: '#888888', cache: false });
+      let color: string | undefined;
+      if (colors.platform === 'android') {
+        color = colors.dominant ?? colors.average ?? colors.vibrant;
+      } else if (colors.platform === 'ios') {
+        color = colors.primary ?? colors.secondary;
+      } else {
+        color = colors.dominant;
+      }
+      setDominantColor(color ?? '#888888');
+    } catch {
+      setDominantColor('#888888');
     }
   };
 
@@ -118,6 +140,9 @@ export default function PhotoUploadScreen() {
                 사진이 없습니다
               </StrokedText>
             </View>
+          )}
+          {dominantColor && (
+            <View style={[styles.colorSwatch, { backgroundColor: dominantColor }]} />
           )}
         </View>
 
@@ -214,5 +239,15 @@ const styles = StyleSheet.create({
     color: COLORS.PRIMARY,
     fontFamily: 'DOSIyagiBoldface',
     marginTop: 4,
+  },
+  colorSwatch: {
+    position: 'absolute',
+    bottom: 12,
+    left: 12,
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#fafafa',
   },
 });
