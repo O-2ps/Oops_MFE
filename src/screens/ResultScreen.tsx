@@ -37,6 +37,13 @@ const SKIN_ICONS: Record<string, string[]> = {
   normal:      ['✅', '🌿', '🛡️', '☀️'],
 };
 
+const SKIN_CHARACTERISTICS_DEFAULT: Record<string, string[]> = {
+  dry:         ['피부가 당기고 건조함을 자주 느낍니다', '각질이 일어나기 쉽습니다', '모공이 작고 피부결이 섬세합니다', '자외선에 민감하게 반응할 수 있습니다'],
+  oily:        ['피부에 유분기가 많습니다', '모공이 넓고 피지 분비가 활발합니다', '트러블과 블랙헤드가 생기기 쉽습니다', '화장이 쉽게 지워질 수 있습니다'],
+  combination: ['T존은 번들거리고 볼은 건조한 복합성 피부입니다', '부위별로 다른 스킨케어가 필요합니다', '계절 변화에 따라 피부 상태가 달라집니다', '모공은 T존 위주로 눈에 띕니다'],
+  normal:      ['피부 밸런스가 잘 유지되는 이상적인 피부입니다', '모공이 눈에 띄지 않고 피부결이 고릅니다', '유분과 수분이 균형을 이루고 있습니다', '트러블이 잘 생기지 않습니다'],
+};
+
 function mapAnswerToFlex(val: string | undefined, invert: boolean, defaultFlex: number): number {
   if (!val) return defaultFlex;
   const scores: Record<string, number> = {
@@ -134,7 +141,9 @@ export default function ResultScreen() {
     }
   }, [type, subType]);
   const skinAge: number | null = skinData?.skinAge ?? skinData?.age ?? 16;
-  const skinChars: string[] = skinData?.characteristics ?? [];
+  const skinChars: string[] = skinData?.characteristics?.length > 0
+    ? skinData.characteristics
+    : (SKIN_CHARACTERISTICS_DEFAULT[skinTypeKey] ?? []);
 
   const defaultBars = SKIN_BARS_DEFAULT[skinTypeKey] ?? SKIN_BARS_DEFAULT.dry;
 
