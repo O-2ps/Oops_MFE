@@ -183,7 +183,7 @@ export default function LandingScreen() {
           duration={8600}
         />
 
-        <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.noticeText}>
+        <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.noticeText}>
           마이페이지는 로그인 후 이용 가능합니다.
         </StrokedText>
 
@@ -192,19 +192,19 @@ export default function LandingScreen() {
             <Logo width={width * 0.6} height={(width * 0.6) * (122 / 245)} />
           </View>
 
-          <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.subTitleText}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.subTitleText}>
             {'내 피부를 위한\n가장 정교한 선택'}
           </StrokedText>
         </S.CenterSection>
 
         <S.ButtonSection>
           <S.LoginButton onPress={handleKakaoLogin}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.buttonText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.buttonText}>
               [ 카카오톡 로그인 ]
             </StrokedText>
           </S.LoginButton>
           <S.LoginButton onPress={handleGuestLogin}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.buttonText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.buttonText}>
               [ 비회원 로그인 ]
             </StrokedText>
           </S.LoginButton>

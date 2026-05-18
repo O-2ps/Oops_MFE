@@ -88,7 +88,7 @@ export default function PhotoUploadScreen() {
         </View>
         <View style={styles.loadingCenter}>
           <ActivityIndicator size="large" color={COLORS.PRIMARY} />
-          <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.loadingText}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.loadingText}>
             사진을 분석하는 중입니다...
           </StrokedText>
         </View>
@@ -104,7 +104,7 @@ export default function PhotoUploadScreen() {
 
       <S.MainContent>
         <View style={{ marginBottom: 30 }}>
-          <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.title}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.title}>
             얼굴 사진을 등록해주세요
           </StrokedText>
         </View>
@@ -114,7 +114,7 @@ export default function PhotoUploadScreen() {
             <Image source={{ uri: imageUri }} style={styles.imagePreview} />
           ) : (
             <View style={styles.imagePlaceholder}>
-              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.placeholderText}>
+              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.placeholderText}>
                 사진이 없습니다
               </StrokedText>
             </View>
@@ -123,12 +123,12 @@ export default function PhotoUploadScreen() {
 
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.actionButton} onPress={handleTakePhoto}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.actionButtonText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.actionButtonText}>
               사진 촬영
             </StrokedText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton} onPress={handlePickImage}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.actionButtonText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.actionButtonText}>
               갤러리 선택
             </StrokedText>
           </TouchableOpacity>
@@ -136,13 +136,13 @@ export default function PhotoUploadScreen() {
 
         <View style={{ marginTop: 50, alignItems: 'center' }}>
           <S.FooterAction onPress={handleStartAnalysis} style={{ opacity: imageUri ? 1 : 0.5 }}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.footerText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.footerText}>
               [ 분석 시작하기 ]
             </StrokedText>
           </S.FooterAction>
 
           <S.BackButton onPress={handleBack}>
-            <S.BackButtonText style={{ color: '#ffffff', opacity: 0.8 }}>뒤로가기</S.BackButtonText>
+            <S.BackButtonText style={{ color: '#fafafa', opacity: 0.8 }}>뒤로가기</S.BackButtonText>
           </S.BackButton>
         </View>
       </S.MainContent>
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#rgba(255, 255, 255, 0.3)',
     borderRadius: 15,
     borderWidth: 3,
-    borderColor: '#ffffff',
+    borderColor: '#fafafa',
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: '#ffffff',
+    borderColor: '#fafafa',
   },
   actionButtonText: {
     fontSize: 16,

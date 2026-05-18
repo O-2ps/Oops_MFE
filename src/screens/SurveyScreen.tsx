@@ -117,7 +117,7 @@ export default function SurveyScreen() {
         </View>
         <View style={styles.center}>
           <ActivityIndicator size="large" color={COLORS.PRIMARY} />
-          <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.loadingText}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.loadingText}>
             {isSubmitting ? '피부 타입 분석 중...' : '문항을 불러오는 중...'}
           </StrokedText>
         </View>
@@ -141,14 +141,14 @@ export default function SurveyScreen() {
       <Animated.View style={[styles.inner, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
         {/* 문항 번호 */}
         <View style={{ marginBottom: 10 }}>
-          <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.qNumber}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.qNumber}>
             Q{step + 1} / {questions.length}
           </StrokedText>
         </View>
 
         {/* 질문 */}
         <View style={styles.questionBox}>
-          <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.questionText}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.questionText}>
             {currentQ?.question ?? ''}
           </StrokedText>
         </View>
@@ -163,7 +163,7 @@ export default function SurveyScreen() {
               onPress={() => handleOptionSelect(currentQ.id, opt.value)}
             >
               <View style={[styles.optionDot, { backgroundColor: opt.color }]} />
-              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.optionLabel}>
+              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.optionLabel}>
                 {opt.label}
               </StrokedText>
             </TouchableOpacity>

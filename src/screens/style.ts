@@ -261,7 +261,7 @@ export const BarFill = styled.View<BarFillProps>`
 export const BarMarker = styled.View`
   width: 4px;
   height: 100%;
-  background-color: #ffffff;
+  background-color: #fafafa;
   position: absolute;
   left: ${(props: { $position: number }) => props.$position * 100}%;
   transform: translateX(-2px);

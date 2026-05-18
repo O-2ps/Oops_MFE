@@ -60,17 +60,17 @@ interface GradientBarProps {
 function GradientBar({ leftLabel, rightLabel, fillRatio, gradientColors, style }: GradientBarProps) {
   return (
     <S.ComparisonRow style={style}>
-      <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>{leftLabel}</StrokedText>
+      <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.barSideLabel}>{leftLabel}</StrokedText>
       <S.BarContainer style={styles.barContainerWithBorder}>
         <LinearGradient
           colors={gradientColors}
           start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
           style={{ flex: fillRatio, height: '100%' }}
         />
-        <View style={{ width: 10, height: '100%', backgroundColor: '#ffffff' }} />
+        <View style={{ width: 10, height: '100%', backgroundColor: '#fafafa' }} />
         <View style={{ flex: 1 - fillRatio, height: '100%', backgroundColor: '#E0E0E0' }} />
       </S.BarContainer>
-      <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.barSideLabel}>{rightLabel}</StrokedText>
+      <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.barSideLabel}>{rightLabel}</StrokedText>
     </S.ComparisonRow>
   );
 }
@@ -170,26 +170,26 @@ export default function ResultScreen() {
 
           <View style={styles.recommendationTitleContainer}>
             <View style={styles.recommendTitleRow}>
-              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleBracket}>[ </StrokedText>
-              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={[styles.recommendTitleHighlight, { color: highlightColor }]}>{analysisTitle}</StrokedText>
-              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleBracket}> ] </StrokedText>
-              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleMain}>에 어울리는</StrokedText>
+              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.recommendTitleBracket}>[ </StrokedText>
+              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={[styles.recommendTitleHighlight, { color: highlightColor }]}>{analysisTitle}</StrokedText>
+              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.recommendTitleBracket}> ] </StrokedText>
+              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.recommendTitleMain}>에 어울리는</StrokedText>
             </View>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.recommendTitleMain}>제품을 추천합니다.</StrokedText>
+            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.recommendTitleMain}>제품을 추천합니다.</StrokedText>
           </View>
 
           {/* 피부 타입 특징 */}
           {isSkin && (
             <View style={styles.skinInfoSection}>
-              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.skinInfoTitle}>
+              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.skinInfoTitle}>
                 {skinTypeLabel} 특징
               </StrokedText>
               {skinChars.map((text, idx) => (
                 <View key={idx} style={styles.skinInfoRow}>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={0} style={styles.skinInfoIcon}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={0} style={styles.skinInfoIcon}>
                     {skinIcons[idx] ?? '✨'}
                   </StrokedText>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.skinInfoText}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.skinInfoText}>
                     {text}
                   </StrokedText>
                 </View>
@@ -200,19 +200,19 @@ export default function ResultScreen() {
           {/* 시즌별 컬러 팔레트 */}
           {!isSkin && SEASON_COLOR_PALETTE[type]?.length > 0 && (
             <View style={styles.paletteSection}>
-              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.paletteSectionTitle}>
+              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.paletteSectionTitle}>
                 추천 컬러 팔레트
               </StrokedText>
               {SEASON_COLOR_PALETTE[type].map((categ) => (
                 <View key={categ.label} style={styles.paletteRow}>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.paletteCategoryLabel}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.paletteCategoryLabel}>
                     {categ.label}
                   </StrokedText>
                   <View style={styles.chipRow}>
                     {categ.chips.map((chip) => (
                       <View key={chip.name} style={styles.chipItem}>
                         <View style={[styles.colorChip, { backgroundColor: chip.hex }]} />
-                        <StrokedText strokeColor="#ffffff" strokeWidth={0.3} style={styles.chipName}>
+                        <StrokedText strokeColor="#fafafa" strokeWidth={0.3} style={styles.chipName}>
                           {chip.name}
                         </StrokedText>
                       </View>
@@ -242,19 +242,19 @@ export default function ResultScreen() {
                     resizeMode="cover"
                   />
                 </View>
-                <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.productBrand} numberOfLines={1}>
+                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.productBrand} numberOfLines={1}>
                   {item.brand}
                 </StrokedText>
-                <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.productTitle} numberOfLines={2}>
+                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.productTitle} numberOfLines={2}>
                   {item.name}
                 </StrokedText>
                 <View style={styles.tagRow}>
                   <View style={styles.priceTag}>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
+                    <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
                   </View>
                   {item.orgPrice !== item.price && (
                     <View style={[styles.priceTag, styles.orgPriceTag]}>
-                      <StrokedText strokeColor="#ffffff" strokeWidth={0.5} style={[styles.tagText, styles.orgPriceText]}>
+                      <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={[styles.tagText, styles.orgPriceText]}>
                         {item.orgPrice}
                       </StrokedText>
                     </View>
@@ -269,7 +269,7 @@ export default function ResultScreen() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', paddingTop: 10 }}>
             {isSkin && (
               <View style={styles.skinHeader}>
-                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.saveInfoText}>
+                <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.saveInfoText}>
                   * 결과는 마이페이지에 저장됩니다.
                 </StrokedText>
               </View>
@@ -291,7 +291,7 @@ export default function ResultScreen() {
             )}
 
             <View style={{ marginTop: isSkin ? 60 : 20, marginBottom: 20 }}>
-              <StrokedText strokeColor="#ffffff" strokeWidth={5} style={[styles.title, isSkin && { color: '#333333' }]}>
+              <StrokedText strokeColor="#fafafa" strokeWidth={5} style={[styles.title, isSkin && { color: '#333333' }]}>
                 {isSkin ? `[ ${skinTypeLabel} ]` : `[ ${seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트'} ]`}
               </StrokedText>
             </View>
@@ -299,21 +299,21 @@ export default function ResultScreen() {
             <View style={{ marginBottom: isSkin ? 40 : 20 }}>
               {isSkin ? (
                 <View style={{ alignItems: 'center' }}>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.description}>
                     당신의 피부 나이는
                   </StrokedText>
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.skinAgeText}>
+                    <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.skinAgeText}>
                       {skinAge !== null ? `[ ${skinAge}살 ]` : '-'}
                     </StrokedText>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
+                    <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.description}>
                       {' '}입니다.
                     </StrokedText>
                   </View>
                 </View>
               ) : (
                 <View style={{ alignItems: 'center', paddingHorizontal: 20 }}>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.description}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.description}>
                     {seasonInfo?.characteristics?.join(' · ') || '밝고 선명한 따뜻한 색조'}
                   </StrokedText>
                 </View>
@@ -323,26 +323,26 @@ export default function ResultScreen() {
             {!isSkin && (
               <S.StatContainer style={{ marginTop: 10, paddingHorizontal: 40 }}>
                 <S.StatItem>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={3.5} style={styles.statValue}>
                     {analysisData?.analysis?.isWarm ? '78%' : '22%'}
                   </StrokedText>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.statLabel}>
                     {analysisData?.analysis?.isWarm ? '웜톤' : '쿨톤'}
                   </StrokedText>
                 </S.StatItem>
                 <View style={styles.statDivider} />
                 <S.StatItem>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={3.5} style={styles.statValue}>
                     {analysisData?.analysis?.isBright ? '82%' : '18%'}
                   </StrokedText>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.statLabel}>
                     {analysisData?.analysis?.isBright ? '라이트' : '뮤트'}
                   </StrokedText>
                 </S.StatItem>
                 <View style={styles.statDivider} />
                 <S.StatItem>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={3.5} style={styles.statValue}>91%</StrokedText>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.statLabel}>일치도</StrokedText>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={3.5} style={styles.statValue}>91%</StrokedText>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.statLabel}>일치도</StrokedText>
                 </S.StatItem>
               </S.StatContainer>
             )}
@@ -352,7 +352,7 @@ export default function ResultScreen() {
                 <>
                   {skinBars.map((bar, idx) => (
                     <View key={idx} style={{ marginBottom: 12, width: width - 40, alignItems: 'flex-start' }}>
-                      <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.indicatorLabel}>{bar.label}</StrokedText>
+                      <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.indicatorLabel}>{bar.label}</StrokedText>
                       <GradientBar
                         leftLabel="많다"
                         rightLabel="적다"
@@ -381,7 +381,7 @@ export default function ResultScreen() {
               >
                 <View pointerEvents="none" style={{ alignItems: 'center', width: '100%' }}>
                   <S.FooterAction>
-                    <StrokedText strokeColor="#ffffff" strokeWidth={5} style={styles.footerText}>
+                    <StrokedText strokeColor="#fafafa" strokeWidth={5} style={styles.footerText}>
                       {buttonText}
                     </StrokedText>
                   </S.FooterAction>
@@ -504,9 +504,9 @@ const styles = StyleSheet.create({
     marginTop: 0,
     borderRadius: 10,
     borderWidth: 3,
-    borderColor: '#ffffff',
+    borderColor: '#fafafa',
     overflow: 'hidden',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fafafa',
     width: width * 0.65,
     height: width * 0.45,
   },
@@ -542,7 +542,7 @@ const styles = StyleSheet.create({
   },
   barContainerWithBorder: {
     borderWidth: 3,
-    borderColor: '#ffffff',
+    borderColor: '#fafafa',
     padding: 1,
     height: 16,
     borderRadius: 8,
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
     fontFamily: 'DOSIyagiBoldface',
   },
   backButtonText: {
-    color: '#ffffff',
+    color: '#fafafa',
     fontSize: 14,
     fontFamily: 'DOSIyagiBoldface',
     opacity: 0.9,
@@ -597,7 +597,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.55)',
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#ffffff',
+    borderColor: '#fafafa',
     padding: 16,
   },
   skinInfoTitle: {
@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.55)',
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#ffffff',
+    borderColor: '#fafafa',
     padding: 14,
   },
   paletteSectionTitle: {
@@ -661,7 +661,7 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     borderWidth: 2,
-    borderColor: '#ffffff',
+    borderColor: '#fafafa',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.15,

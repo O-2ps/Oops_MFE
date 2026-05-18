@@ -118,17 +118,17 @@ export default function MyPageScreen() {
           {!isLoggedIn && (
             <View style={styles.loginPromptContainer}>
               <TouchableOpacity onPress={() => navigation.navigate('Landing')}>
-                <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.loginPromptText}>
+                <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.loginPromptText}>
                   * 로그인 페이지로 이동하기
                 </StrokedText>
               </TouchableOpacity>
             </View>
           )}
           <S.Header>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.stepText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.stepText}>
               3.
             </StrokedText>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.introTitleText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.introTitleText}>
               마이페이지
             </StrokedText>
           </S.Header>
@@ -140,7 +140,7 @@ export default function MyPageScreen() {
           </S.WheelSection>
 
           <S.FooterAction onPress={isLoggedIn ? handleEnter : undefined}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.introFooterText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.introFooterText}>
               {isLoggedIn ? '[ 들어가기 ]' : '[ 로그인을 하지 않았습니다. ]'}
             </StrokedText>
           </S.FooterAction>
@@ -154,21 +154,21 @@ export default function MyPageScreen() {
           </View>
 
           <View style={styles.greetingSection}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.greetText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.greetText}>
               안녕하세요
             </StrokedText>
             <View style={styles.nicknameRow}>
-              <StrokedText strokeColor="#ffffff" strokeWidth={4} style={styles.nicknameSticker}>
+              <StrokedText strokeColor="#fafafa" strokeWidth={4} style={styles.nicknameSticker}>
                 [ {nickname} ]
               </StrokedText>
-              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.greetText}>
+              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.greetText}>
                 {' '}님
               </StrokedText>
             </View>
           </View>
 
           <View style={styles.section}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.sectionTitle}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.sectionTitle}>
               최근 검사 결과 조회
             </StrokedText>
             <View style={styles.listContainer}>
@@ -178,13 +178,13 @@ export default function MyPageScreen() {
                   style={styles.listItem}
                   onPress={() => handleHistoryPress(item)}
                 >
-                  <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.listItemText}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.listItemText}>
                     {formatDate(item.created_at)}{'  '}[{item.label}] 진단 결과{'  '}{'>'}
                   </StrokedText>
                 </TouchableOpacity>
               )) : (
                 <View style={styles.listItem}>
-                  <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.listItemText}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.listItemText}>
                     최근 검사 결과가 없습니다.
                   </StrokedText>
                 </View>

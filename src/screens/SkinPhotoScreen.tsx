@@ -71,7 +71,7 @@ export default function SkinPhotoScreen() {
 
       <S.MainContent>
         <View style={{ marginBottom: 30 }}>
-          <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.title}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.title}>
             피부 사진을 등록해주세요
           </StrokedText>
         </View>
@@ -81,7 +81,7 @@ export default function SkinPhotoScreen() {
             <Image source={{ uri: imageUri }} style={styles.imagePreview} />
           ) : (
             <View style={styles.imagePlaceholder}>
-              <StrokedText strokeColor="#ffffff" strokeWidth={1} style={styles.placeholderText}>
+              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.placeholderText}>
                 사진이 없습니다
               </StrokedText>
             </View>
@@ -90,12 +90,12 @@ export default function SkinPhotoScreen() {
 
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.actionButton} onPress={handleTakePhoto}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.actionButtonText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.actionButtonText}>
               사진 촬영
             </StrokedText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton} onPress={handlePickImage}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={1.5} style={styles.actionButtonText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.actionButtonText}>
               갤러리 선택
             </StrokedText>
           </TouchableOpacity>
@@ -103,13 +103,13 @@ export default function SkinPhotoScreen() {
 
         <View style={{ marginTop: 50, alignItems: 'center' }}>
           <S.FooterAction onPress={handleNext} style={{ opacity: imageUri ? 1 : 0.5 }}>
-            <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.footerText}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.footerText}>
               [ 다음으로 ]
             </StrokedText>
           </S.FooterAction>
 
           <S.BackButton onPress={() => navigation.goBack()}>
-            <S.BackButtonText style={{ color: '#ffffff', opacity: 0.8 }}>뒤로가기</S.BackButtonText>
+            <S.BackButtonText style={{ color: '#fafafa', opacity: 0.8 }}>뒤로가기</S.BackButtonText>
           </S.BackButton>
         </View>
       </S.MainContent>
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     height: width * 0.7 * (4 / 3),
     borderRadius: 15,
     borderWidth: 3,
-    borderColor: '#ffffff',
+    borderColor: '#fafafa',
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: '#ffffff',
+    borderColor: '#fafafa',
   },
   actionButtonText: {
     fontSize: 16,

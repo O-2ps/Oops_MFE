@@ -47,10 +47,10 @@ export default function SkinScreen() {
       </View>
       <S.MainContent>
         <S.Header>
-          <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.stepText}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.stepText}>
             2.
           </StrokedText>
-          <StrokedText strokeColor="#ffffff" strokeWidth={2.5} style={styles.titleText}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.titleText}>
             피부 타입 분석하기
           </StrokedText>
         </S.Header>
@@ -62,7 +62,7 @@ export default function SkinScreen() {
         </S.WheelSection>
 
         <S.FooterAction onPress={handleStartAnalysis}>
-          <StrokedText strokeColor="#ffffff" strokeWidth={2} style={styles.footerText}>
+          <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.footerText}>
             [ 분석 시작하기 ]
           </StrokedText>
         </S.FooterAction>
