@@ -110,7 +110,6 @@ export default function LandingScreen() {
   const handleKakaoLogin = async () => {
     const result = await loginWithKakao();
     if (result) {
-      // 백엔드 JWT 토큰 저장
       if (result.user?.token) {
         await saveToken(result.user.token);
       }

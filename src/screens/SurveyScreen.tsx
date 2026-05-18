@@ -18,7 +18,6 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Survey'>;
 
 const QUESTION_IDS = ['elasticity', 'moisture', 'pigmentation', 'oiliness', 'sensitivity'];
 
-// API가 내려주는 선택지와 동일한 순서/값으로 고정
 const OPTIONS = [
   { value: 'strongly_agree', label: '매우 그렇다', score: 4, color: '#FF8CB6' },
   { value: 'agree', label: '그렇다', score: 3, color: '#FFB3CC' },
@@ -27,13 +26,11 @@ const OPTIONS = [
   { value: 'strongly_disagree', label: '전혀 아니다', score: 0, color: '#7B9FFF' },
 ];
 
-// 나이 선택용 (진단 첫 화면)
 const AGE_OPTIONS = [10, 20, 30, 40, 50];
 
 export default function SurveyScreen() {
   const navigation = useNavigation<NavigationProp>();
 
-  // 0~4: 문항 단계
   const [step, setStep] = useState(0);
   const [age, setAge] = useState<number | null>(null);
   const [questions, setQuestions] = useState<SkinQuestion[]>([]);
@@ -44,12 +41,10 @@ export default function SurveyScreen() {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
 
-  // 문항 로드
   useEffect(() => {
     getSkinQuestions()
       .then(setQuestions)
       .catch(() => {
-        // API 실패 시 하드코딩 폴백
         setQuestions(QUESTION_IDS.map((id, i) => ({
           id,
           question: [
@@ -85,10 +80,8 @@ export default function SurveyScreen() {
     setAnswers(newAnswers);
 
     if (step < questions.length - 1) {
-      // 아직 문항이 남아 있으면 다음 단계로
       animateTransition(() => setStep(step + 1));
     } else {
-      // 마지막 문항 완료 → 진단 요청
       setIsSubmitting(true);
       try {
         const result = await diagnoseSkin({
@@ -108,7 +101,6 @@ export default function SurveyScreen() {
     }
   };
 
-  // 로딩 / 분석 중 화면
   if (isLoading || isSubmitting) {
     return (
       <S.Container>
@@ -125,7 +117,6 @@ export default function SurveyScreen() {
     );
   }
 
-  // 문항 단계
   const currentQ = questions[step];
   return (
     <S.Container>
@@ -133,27 +124,23 @@ export default function SurveyScreen() {
         <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
       </View>
 
-      {/* 진행 바 */}
       <View style={styles.progressBar}>
         <View style={[styles.progressFill, { width: `${((step + 1) / questions.length) * 100}%` }]} />
       </View>
 
       <Animated.View style={[styles.inner, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
-        {/* 문항 번호 */}
         <View style={{ marginBottom: 10 }}>
           <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.qNumber}>
             Q{step + 1} / {questions.length}
           </StrokedText>
         </View>
 
-        {/* 질문 */}
         <View style={styles.questionBox}>
           <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.questionText}>
             {currentQ?.question ?? ''}
           </StrokedText>
         </View>
 
-        {/* 5지선다 선택지 */}
         <View style={styles.optionsContainer}>
           {OPTIONS.map((opt) => (
             <TouchableOpacity

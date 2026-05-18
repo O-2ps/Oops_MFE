@@ -107,8 +107,6 @@ export const LoginButtonText = styled.Text`
   text-shadow-radius: 0.5px;
 `;
 
-// --- Shared & Screen Specific Styles ---
-
 export const Header = styled.View`
   align-items: center;
   width: 100%;

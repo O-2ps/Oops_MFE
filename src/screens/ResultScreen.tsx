@@ -95,12 +95,10 @@ export default function ResultScreen() {
 
   const isSkin = type === 'skin';
 
-  // 백엔드 응답: { success, data: { skinType, skinTypeLabel, skinAge, characteristics, ... } }
   const skinData = isSkin ? (analysisData?.data ?? analysisData) : null;
   const skinTypeLabel: string = skinData?.skinTypeLabel ?? '건성 피부';
   const skinTypeKey: string = skinData?.skinType ?? 'dry';
 
-  // 시즌/서브톤 또는 피부타입에 맞는 상품 풀 (최초 1회 계산)
   const productPool = getProductPool(type, type === 'skin' ? skinTypeKey : subType);
 
   useEffect(() => {
@@ -207,7 +205,6 @@ export default function ResultScreen() {
             <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.recommendTitleMain}>제품을 추천합니다.</StrokedText>
           </View>
 
-          {/* 피부 타입 특징 */}
           {isSkin && (
             <View style={styles.skinInfoSection}>
               <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.skinInfoTitle}>
@@ -226,7 +223,6 @@ export default function ResultScreen() {
             </View>
           )}
 
-          {/* 시즌별 컬러 팔레트 */}
           {!isSkin && SEASON_COLOR_PALETTE[type]?.length > 0 && (
             <View style={styles.paletteSection}>
               <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.paletteSectionTitle}>
