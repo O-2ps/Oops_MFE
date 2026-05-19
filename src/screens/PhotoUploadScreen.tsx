@@ -7,6 +7,7 @@ import ImageColors from 'react-native-image-colors';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
+import FaceGuide from '../components/FaceGuide';
 import { COLORS } from '../constants/theme';
 import { RootStackParamList } from '../types/navigation';
 import { analyzePersonalColor } from '../api/personalColor';
@@ -135,11 +136,7 @@ export default function PhotoUploadScreen() {
           {imageUri ? (
             <Image source={{ uri: imageUri }} style={styles.imagePreview} />
           ) : (
-            <View style={styles.imagePlaceholder}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.placeholderText}>
-                사진이 없습니다
-              </StrokedText>
-            </View>
+            <FaceGuide width={width * 0.7} height={width * 0.7 * (4 / 3)} />
           )}
           {dominantColor && (
             <View style={[styles.colorSwatch, { backgroundColor: dominantColor }]} />
@@ -200,15 +197,6 @@ const styles = StyleSheet.create({
   imagePreview: {
     width: '100%',
     height: '100%',
-  },
-  imagePlaceholder: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  placeholderText: {
-    fontSize: 16,
-    color: '#A0A0A0',
-    fontFamily: 'DOSIyagiBoldface',
   },
   hintText: {
     fontSize: 15,
