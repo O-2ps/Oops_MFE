@@ -176,9 +176,8 @@ export const BackButton = styled.TouchableOpacity`
 
 export const BackButtonText = styled.Text`
   font-size: 16px;
-  color: ${COLORS.PRIMARY};
+  color: #ffffff;
   font-family: ${FONTS.PIXEL};
-  opacity: 0.7;
 `;
 
 export const ResultImageContainer = styled.View`

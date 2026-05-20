@@ -67,7 +67,7 @@ export default function LastCheckScreen() {
           </S.FooterAction>
 
           <S.BackButton onPress={handleBack}>
-            <S.BackButtonText style={{ color: '#ffffff', opacity: 0.8 }}>뒤로가기</S.BackButtonText>
+            <S.BackButtonText>뒤로가기</S.BackButtonText>
           </S.BackButton>
         </View>
       </S.MainContent>

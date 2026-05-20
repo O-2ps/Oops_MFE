@@ -18,6 +18,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { fetchSeasons, SeasonInfo } from '../api/personalColor';
 import { CrawledProduct, getProductPool, sampleProducts, SEASON_COLOR_PALETTE } from '../utils/productRecommend';
 import { getWishlist, toggleWishlist } from '../utils/wishlistStorage';
+import { saveColorResult, saveSkinResult } from '../utils/analysisStorage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -136,6 +137,9 @@ export default function ResultScreen() {
           if (found) setSeasonInfo(found);
         })
         .catch(err => console.error('ResultScreen fetchSeasons error:', err));
+      saveColorResult(type, subType);
+    } else {
+      saveSkinResult(skinTypeKey, skinTypeLabel);
     }
   }, [type, subType]);
   const skinAge: number | null = skinData?.skinAge ?? skinData?.age ?? 16;
@@ -189,8 +193,8 @@ export default function ResultScreen() {
             </TouchableOpacity>
             <TouchableOpacity onPress={refreshProducts} disabled={isRefreshing}>
               {isRefreshing
-                ? <ActivityIndicator size="small" color="#333333" style={{ width: 28, height: 28 }} />
-                : <RepeatSvg width={28} height={28} fill="#333333" />
+                ? <ActivityIndicator size="small" color="#FF8CB6" style={{ width: 28, height: 28 }} />
+                : <RepeatSvg width={28} height={28} fill="#FF8CB6" />
               }
             </TouchableOpacity>
           </View>
@@ -422,6 +426,27 @@ export default function ResultScreen() {
                 </View>
               </TouchableOpacity>
 
+              <View style={styles.smartToolsRow}>
+                {!isSkin && (
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('ColorMatch')}
+                    style={styles.smartToolBtn}
+                    activeOpacity={0.7}
+                  >
+                    <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.smartToolIcon}>🎨</StrokedText>
+                    <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.smartToolText}>컬러 스캐너</StrokedText>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('WeatherBeauty')}
+                  style={styles.smartToolBtn}
+                  activeOpacity={0.7}
+                >
+                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.smartToolIcon}>🌤️</StrokedText>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.smartToolText}>날씨 뷰티</StrokedText>
+                </TouchableOpacity>
+              </View>
+
               <TouchableOpacity
                 onPress={handleBack}
                 hitSlop={{ top: 10, bottom: 10, left: 20, right: 20 }}
@@ -612,10 +637,9 @@ const styles = StyleSheet.create({
     fontFamily: 'DOSIyagiBoldface',
   },
   backButtonText: {
-    color: '#fafafa',
+    color: '#ffffff',
     fontSize: 14,
     fontFamily: 'DOSIyagiBoldface',
-    opacity: 0.9,
   },
   skinHeader: {
     position: 'absolute',
@@ -724,5 +748,31 @@ const styles = StyleSheet.create({
     fontFamily: 'DOSIyagiBoldface',
     textAlign: 'center',
     maxWidth: 40,
+  },
+  smartToolsRow: {
+    flexDirection: 'column',
+    gap: 10,
+    marginBottom: 16,
+    width: '90%',
+  },
+  smartToolBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.75)',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,140,182,0.4)',
+    gap: 10,
+    width: '100%',
+  },
+  smartToolIcon: {
+    fontSize: 22,
+  },
+  smartToolText: {
+    fontSize: 13,
+    color: '#555555',
+    fontFamily: 'DOSIyagiBoldface',
   },
 });

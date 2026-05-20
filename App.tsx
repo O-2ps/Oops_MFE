@@ -15,6 +15,8 @@ import PhotoUploadScreen from './src/screens/PhotoUploadScreen';
 import SkinPhotoScreen from './src/screens/SkinPhotoScreen';
 import ResultScreen from './src/screens/ResultScreen';
 import SurveyScreen from './src/screens/SurveyScreen';
+import ColorMatchScreen from './src/screens/ColorMatchScreen';
+import WeatherBeautyScreen from './src/screens/WeatherBeautyScreen';
 import BG from './assets/icons/BG.svg';
 import * as S from './src/screens/style';
 import StrokedText from './src/components/StrokedText';
@@ -114,6 +116,8 @@ export default function App() {
               <Stack.Screen name="SkinPhoto" component={SkinPhotoScreen} />
               <Stack.Screen name="Result" component={ResultScreen} />
               <Stack.Screen name="Survey" component={SurveyScreen} />
+              <Stack.Screen name="ColorMatch" component={ColorMatchScreen} />
+              <Stack.Screen name="WeatherBeauty" component={WeatherBeautyScreen} />
             </Stack.Navigator>
           </NavigationContainer>
 

@@ -106,7 +106,7 @@ export default function SkinPhotoScreen() {
           </S.FooterAction>
 
           <S.BackButton onPress={() => navigation.goBack()}>
-            <S.BackButtonText style={{ color: '#fafafa', opacity: 0.8 }}>뒤로가기</S.BackButtonText>
+            <S.BackButtonText>뒤로가기</S.BackButtonText>
           </S.BackButton>
         </View>
       </S.MainContent>

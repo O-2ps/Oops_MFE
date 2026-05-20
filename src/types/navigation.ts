@@ -8,4 +8,6 @@ export type RootStackParamList = {
   SkinPhoto: undefined;
   Result: { type: string; subType?: string; analysisData?: any };
   Survey: undefined;
+  ColorMatch: undefined;
+  WeatherBeauty: undefined;
 };

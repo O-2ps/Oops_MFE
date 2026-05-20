@@ -183,6 +183,40 @@ export default function MyPageScreen() {
 
           <View style={styles.section}>
             <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.sectionTitle}>
+              스마트 도구
+            </StrokedText>
+            <View style={styles.toolsRow}>
+              <TouchableOpacity
+                style={styles.toolCard}
+                activeOpacity={0.75}
+                onPress={() => navigation.navigate('ColorMatch')}
+              >
+                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.toolEmoji}>🎨</StrokedText>
+                <View style={styles.toolTextContainer}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.toolTitle}>컬러 매칭 스캐너</StrokedText>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={0.3} style={styles.toolDesc}>
+                    아이템 사진으로 내 퍼스널컬러 매칭
+                  </StrokedText>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.toolCard, { borderColor: 'rgba(198,235,141,0.6)' }]}
+                activeOpacity={0.75}
+                onPress={() => navigation.navigate('WeatherBeauty')}
+              >
+                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.toolEmoji}>🌤️</StrokedText>
+                <View style={styles.toolTextContainer}>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.toolTitle}>날씨 맞춤 뷰티 루틴</StrokedText>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={0.3} style={styles.toolDesc}>
+                    오늘 날씨로 맞춤 뷰티 팁
+                  </StrokedText>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.sectionTitle}>
               최근 검사 결과 조회
             </StrokedText>
             <View style={styles.listContainer}>
@@ -378,5 +412,39 @@ const styles = StyleSheet.create({
   wishlistRemoveText: {
     fontSize: 20,
     color: COLORS.PRIMARY,
+  },
+  toolsRow: {
+    flexDirection: 'column',
+    gap: 12,
+  },
+  toolCard: {
+    width: '100%',
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,140,182,0.4)',
+  },
+  toolTextContainer: {
+    flex: 1,
+  },
+  toolEmoji: {
+    fontSize: 30,
+  },
+  toolTitle: {
+    fontSize: 14,
+    color: '#333333',
+    fontFamily: 'DOSIyagiBoldface',
+    marginBottom: 3,
+  },
+  toolDesc: {
+    fontSize: 11,
+    color: '#888888',
+    fontFamily: 'DOSIyagiBoldface',
+    lineHeight: 16,
   },
 });
