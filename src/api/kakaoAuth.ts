@@ -12,8 +12,6 @@ export const loginWithKakao = async (): Promise<any | null> => {
 
     if (!token) return null;
 
-    console.log('Sending token to backend:', { hasAccessToken: !!token.accessToken, hasIdToken: !!token.idToken });
-
     const response = await fetch(`${API_BASE_URL}/api/auth/kakao/token`, {
       method: 'POST',
       headers: {
@@ -25,11 +23,6 @@ export const loginWithKakao = async (): Promise<any | null> => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Backend Login Failed:', {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText
-      });
       throw new Error(`Backend login failed: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
@@ -40,10 +33,8 @@ export const loginWithKakao = async (): Promise<any | null> => {
       user: userData
     };
   } catch (err: any) {
-    if (err.code === 'E_CANCELLED_OPERATION') {
-      console.log('Login Cancelled');
-    } else {
-      console.error('Kakao Login Error:', err);
+    if (err.code !== 'E_CANCELLED_OPERATION') {
+      throw err;
     }
     return null;
   }
@@ -56,8 +47,7 @@ export const logoutWithKakao = async (): Promise<string | null> => {
   try {
     const message = await logout();
     return message;
-  } catch (err) {
-    console.error('Kakao Logout Error:', err);
+  } catch {
     return null;
   }
 };
@@ -69,8 +59,7 @@ export const getKakaoProfile = async (): Promise<KakaoProfile | null> => {
   try {
     const profile = await getProfile();
     return profile;
-  } catch (err) {
-    console.error('Get Kakao Profile Error:', err);
+  } catch {
     return null;
   }
 };

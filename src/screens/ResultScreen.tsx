@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator, Text } from 'react-native';
+import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator, Text, Share } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
@@ -44,6 +44,32 @@ const SKIN_CHARACTERISTICS_DEFAULT: Record<string, string[]> = {
   combination: ['T존은 번들거리고 볼은 건조한 복합성 피부입니다', '부위별로 다른 스킨케어가 필요합니다', '계절 변화에 따라 피부 상태가 달라집니다', '모공은 T존 위주로 눈에 띕니다'],
   normal:      ['피부 밸런스가 잘 유지되는 이상적인 피부입니다', '모공이 눈에 띄지 않고 피부결이 고릅니다', '유분과 수분이 균형을 이루고 있습니다', '트러블이 잘 생기지 않습니다'],
 };
+
+interface SeasonStats {
+  tonePct: string;
+  toneLabel: string;
+  brightnessPct: string;
+  brightnessLabel: string;
+  matchPct: string;
+  warmFill: number;
+  seasonFill: number;
+  lightFill: number;
+}
+
+function getSeasonStats(season: string): SeasonStats {
+  switch (season) {
+    case 'spring':
+      return { tonePct: '76%', toneLabel: '웜톤', brightnessPct: '80%', brightnessLabel: '라이트', matchPct: '89%', warmFill: 0.74, seasonFill: 0.76, lightFill: 0.82 };
+    case 'summer':
+      return { tonePct: '73%', toneLabel: '쿨톤', brightnessPct: '75%', brightnessLabel: '라이트', matchPct: '87%', warmFill: 0.27, seasonFill: 0.24, lightFill: 0.74 };
+    case 'autumn':
+      return { tonePct: '74%', toneLabel: '웜톤', brightnessPct: '72%', brightnessLabel: '딥', matchPct: '88%', warmFill: 0.72, seasonFill: 0.28, lightFill: 0.26 };
+    case 'winter':
+      return { tonePct: '81%', toneLabel: '쿨톤', brightnessPct: '77%', brightnessLabel: '딥', matchPct: '92%', warmFill: 0.21, seasonFill: 0.20, lightFill: 0.22 };
+    default:
+      return { tonePct: '75%', toneLabel: '웜톤', brightnessPct: '75%', brightnessLabel: '라이트', matchPct: '88%', warmFill: 0.64, seasonFill: 0.71, lightFill: 0.88 };
+  }
+}
 
 function mapAnswerToFlex(val: string | undefined, invert: boolean, defaultFlex: number): number {
   if (!val) return defaultFlex;
@@ -136,7 +162,7 @@ export default function ResultScreen() {
             ?? seasons.find(s => s.season === type);
           if (found) setSeasonInfo(found);
         })
-        .catch(err => console.error('ResultScreen fetchSeasons error:', err));
+        .catch(() => {});
       saveColorResult(type, subType);
     } else {
       saveSkinResult(skinTypeKey, skinTypeLabel);
@@ -163,6 +189,18 @@ export default function ResultScreen() {
   const analysisTitle = isSkin ? skinTypeLabel : (seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트');
   const highlightColor = isSkin ? '#81D4FA' : '#FF8A65';
   const buttonText = isSkin ? '[ 어울리는 피부 화장품 추천 ]' : '[ 어울리는 화장품 보러가기 ]';
+  const seasonStats = getSeasonStats(type);
+
+  const handleShare = useCallback(async () => {
+    try {
+      const msg = isSkin
+        ? `[Oops] 내 피부 분석 결과\n피부 타입: ${skinTypeLabel}\n피부 나이: ${skinAge !== null ? skinAge + '살' : '-'}\n\n앱에서 내 피부에 맞는 화장품을 추천받아보세요!`
+        : `[Oops] 내 퍼스널컬러 분석 결과\n${analysisTitle}\n\n앱에서 내 컬러에 맞는 화장품을 추천받아보세요!`;
+      await Share.share({ message: msg });
+    } catch {
+      // 공유 취소 시 무시
+    }
+  }, [isSkin, skinTypeLabel, skinAge, analysisTitle]);
 
   const handleBack = () => {
     if (showProducts) {
@@ -314,7 +352,7 @@ export default function ResultScreen() {
             )}
 
             <View style={styles.topAction}>
-              <TouchableOpacity style={{ padding: 5 }}>
+              <TouchableOpacity style={{ padding: 5 }} onPress={handleShare}>
                 <DownloadSvg width={18} height={18} fill="#666666" />
               </TouchableOpacity>
             </View>
@@ -362,24 +400,26 @@ export default function ResultScreen() {
               <S.StatContainer style={{ marginTop: 10, paddingHorizontal: 40 }}>
                 <S.StatItem>
                   <StrokedText strokeColor="#fafafa" strokeWidth={3.5} style={styles.statValue}>
-                    {analysisData?.analysis?.isWarm ? '78%' : '22%'}
+                    {seasonStats.tonePct}
                   </StrokedText>
                   <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.statLabel}>
-                    {analysisData?.analysis?.isWarm ? '웜톤' : '쿨톤'}
+                    {seasonStats.toneLabel}
                   </StrokedText>
                 </S.StatItem>
                 <View style={styles.statDivider} />
                 <S.StatItem>
                   <StrokedText strokeColor="#fafafa" strokeWidth={3.5} style={styles.statValue}>
-                    {analysisData?.analysis?.isBright ? '82%' : '18%'}
+                    {seasonStats.brightnessPct}
                   </StrokedText>
                   <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.statLabel}>
-                    {analysisData?.analysis?.isBright ? '라이트' : '뮤트'}
+                    {seasonStats.brightnessLabel}
                   </StrokedText>
                 </S.StatItem>
                 <View style={styles.statDivider} />
                 <S.StatItem>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={3.5} style={styles.statValue}>91%</StrokedText>
+                  <StrokedText strokeColor="#fafafa" strokeWidth={3.5} style={styles.statValue}>
+                    {seasonStats.matchPct}
+                  </StrokedText>
                   <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.statLabel}>일치도</StrokedText>
                 </S.StatItem>
               </S.StatContainer>
@@ -403,9 +443,9 @@ export default function ResultScreen() {
                 </>
               ) : (
                 <>
-                  <GradientBar leftLabel="웜" rightLabel="쿨" fillRatio={0.64} gradientColors={['#FFD54F', '#FFB74D']} style={{ marginBottom: 12 }} />
-                  <GradientBar leftLabel="봄" rightLabel="가을" fillRatio={0.71} gradientColors={['#FFB74D', '#F57C00']} style={{ marginBottom: 12 }} />
-                  <GradientBar leftLabel="라이트" rightLabel="딥" fillRatio={0.88} gradientColors={['#FFF176', '#FFD54F']} />
+                  <GradientBar leftLabel="웜" rightLabel="쿨" fillRatio={seasonStats.warmFill} gradientColors={['#FFD54F', '#90CAF9']} style={{ marginBottom: 12 }} />
+                  <GradientBar leftLabel="봄" rightLabel="가을" fillRatio={seasonStats.seasonFill} gradientColors={['#FFB74D', '#F57C00']} style={{ marginBottom: 12 }} />
+                  <GradientBar leftLabel="라이트" rightLabel="딥" fillRatio={seasonStats.lightFill} gradientColors={['#FFF176', '#8D6E63']} />
                 </>
               )}
             </S.ComparisonContainer>

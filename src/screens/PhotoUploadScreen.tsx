@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   imagePreviewContainer: {
     width: width * 0.7,
     height: width * 0.7 * (4 / 3),
-    backgroundColor: '#rgba(255, 255, 255, 0.3)',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 15,
     borderWidth: 3,
     borderColor: '#fafafa',

@@ -49,8 +49,8 @@ export default function MyPageScreen() {
         try {
           const items = await getUserHistory();
           setHistory(items);
-        } catch (e) {
-          console.log('history 조회 실패:', e);
+        } catch {
+          // 히스토리 조회 실패 시 빈 목록으로 처리
         }
       } else {
         setIsLoggedIn(false);
@@ -95,7 +95,7 @@ export default function MyPageScreen() {
 
   useEffect(() => {
     navigation.setParams({ hideArrows: isEntered } as any);
-  }, [isEntered]);
+  }, [isEntered, navigation]);
 
   const handleEnter = () => {
     setIsEntered(true);

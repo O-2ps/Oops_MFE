@@ -26,11 +26,18 @@ const OPTIONS = [
   { value: 'strongly_disagree', label: '전혀 아니다', score: 0, color: '#7B9FFF' },
 ];
 
-const AGE_OPTIONS = [10, 20, 30, 40, 50];
+const AGE_OPTIONS = [
+  { label: '10대', value: 15 },
+  { label: '20대', value: 25 },
+  { label: '30대', value: 35 },
+  { label: '40대', value: 45 },
+  { label: '50대 이상', value: 55 },
+];
 
 export default function SurveyScreen() {
   const navigation = useNavigation<NavigationProp>();
 
+  const [ageSelected, setAgeSelected] = useState(false);
   const [step, setStep] = useState(0);
   const [age, setAge] = useState<number | null>(null);
   const [questions, setQuestions] = useState<SkinQuestion[]>([]);
@@ -92,9 +99,8 @@ export default function SurveyScreen() {
           type: 'skin',
           analysisData: result,
         });
-      } catch (err) {
+      } catch {
         Alert.alert('진단 오류', '피부 진단 중 오류가 발생했습니다. 다시 시도해주세요.');
-        console.error('[SurveyScreen] diagnoseSkin error:', err);
       } finally {
         setIsSubmitting(false);
       }
@@ -112,6 +118,46 @@ export default function SurveyScreen() {
           <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.loadingText}>
             {isSubmitting ? '피부 타입 분석 중...' : '문항을 불러오는 중...'}
           </StrokedText>
+        </View>
+      </S.Container>
+    );
+  }
+
+  if (!ageSelected) {
+    return (
+      <S.Container>
+        <View style={StyleSheet.absoluteFill}>
+          <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
+        </View>
+        <View style={styles.inner}>
+          <View style={{ marginBottom: 10 }}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.qNumber}>
+              나이대를 선택해주세요
+            </StrokedText>
+          </View>
+          <View style={styles.questionBox}>
+            <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.questionText}>
+              더 정확한 피부 분석을 위해{'\n'}연령대가 필요해요.
+            </StrokedText>
+          </View>
+          <View style={styles.optionsContainer}>
+            {AGE_OPTIONS.map((opt) => (
+              <TouchableOpacity
+                key={opt.value}
+                style={[styles.optionCard, { borderColor: '#FF8CB6' }]}
+                activeOpacity={0.7}
+                onPress={() => {
+                  setAge(opt.value);
+                  setAgeSelected(true);
+                }}
+              >
+                <View style={[styles.optionDot, { backgroundColor: '#FF8CB6' }]} />
+                <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.optionLabel}>
+                  {opt.label}
+                </StrokedText>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </S.Container>
     );

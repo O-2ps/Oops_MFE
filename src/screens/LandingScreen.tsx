@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Dimensions, View, Text, StyleSheet, StyleProp, TextStyle } from 'react-native';
+import { Animated, Dimensions, View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
 import Logo from '../../assets/icons/logo.svg';
 import Star from '../../assets/icons/star.svg';
+import StrokedText from '../components/StrokedText';
 
 const { width, height } = Dimensions.get('window');
 
@@ -15,39 +16,6 @@ type RootStackParamList = {
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Landing'>;
-
-interface StrokedTextProps {
-  children: React.ReactNode;
-  strokeColor: string;
-  strokeWidth: number;
-  style?: StyleProp<TextStyle>;
-}
-
-function StrokedText({ children, strokeColor, strokeWidth, style }: StrokedTextProps) {
-  const createShadow = (dx: number, dy: number): TextStyle => ({
-    position: 'absolute',
-    top: dy,
-    left: dx,
-    color: strokeColor,
-    textShadowColor: strokeColor,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 0,
-  });
-
-  return (
-    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={[style, createShadow(strokeWidth, 0)]}>{children}</Text>
-      <Text style={[style, createShadow(-strokeWidth, 0)]}>{children}</Text>
-      <Text style={[style, createShadow(0, strokeWidth)]}>{children}</Text>
-      <Text style={[style, createShadow(0, -strokeWidth)]}>{children}</Text>
-      <Text style={[style, createShadow(strokeWidth, strokeWidth)]}>{children}</Text>
-      <Text style={[style, createShadow(-strokeWidth, -strokeWidth)]}>{children}</Text>
-      <Text style={[style, createShadow(strokeWidth, -strokeWidth)]}>{children}</Text>
-      <Text style={[style, createShadow(-strokeWidth, strokeWidth)]}>{children}</Text>
-      <Text style={style}>{children}</Text>
-    </View>
-  );
-}
 
 interface StarItemProps {
   top: number;
@@ -103,18 +71,23 @@ function AnimatedStar({ top, right, size, rotate, delay, duration = 6000 }: Star
 
 import { loginWithKakao } from '../api/kakaoAuth';
 import { saveToken } from '../utils/tokenStorage';
+import { Alert } from 'react-native';
 
 export default function LandingScreen() {
   const navigation = useNavigation<NavigationProp>();
 
   const handleKakaoLogin = async () => {
-    const result = await loginWithKakao();
-    if (result) {
-      if (result.user?.token) {
-        await saveToken(result.user.token);
+    try {
+      const result = await loginWithKakao();
+      if (result) {
+        const token = result.user?.token ?? result.user?.accessToken ?? result.user?.data?.token;
+        if (token) {
+          await saveToken(token);
+        }
+        navigation.navigate('Home');
       }
-      console.log('Kakao Login Success:', result);
-      navigation.navigate('Home');
+    } catch {
+      Alert.alert('로그인 실패', '카카오 로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
 
