@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { StyleSheet, View, Dimensions, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -11,6 +11,7 @@ import FaceGuide from '../components/FaceGuide';
 import { COLORS } from '../constants/theme';
 import { RootStackParamList } from '../types/navigation';
 import { analyzePersonalColor } from '../api/personalColor';
+import { extractHexColors } from '../utils/colorAnalysis';
 
 const { width, height } = Dimensions.get('window');
 
@@ -21,12 +22,13 @@ export default function PhotoUploadScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [dominantColor, setDominantColor] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const extractedColorsRef = useRef<string[]>([]);
 
   const requestPermissions = async () => {
     const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
     const mediaStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (cameraStatus.status !== 'granted' || mediaStatus.status !== 'granted') {
-      Alert.alert('카메라 및 갤러리 접근 권한이 필요합니다.', '카메라 및 갤러리 접근 권한이 필요합니다.');
+      Alert.alert('권한 필요', '카메라 및 갤러리 접근 권한이 필요합니다.');
       return false;
     }
     return true;
@@ -43,7 +45,7 @@ export default function PhotoUploadScreen() {
       quality: 0.8,
     };
 
-    let result = useCamera
+    const result = useCamera
       ? await ImagePicker.launchCameraAsync(options)
       : await ImagePicker.launchImageLibraryAsync(options);
 
@@ -51,24 +53,22 @@ export default function PhotoUploadScreen() {
       const uri = result.assets[0].uri;
       setImageUri(uri);
       setDominantColor(null);
-      extractDominantColor(uri);
+      extractedColorsRef.current = [];
+      extractColors(uri);
     }
   };
 
-  const extractDominantColor = async (uri: string) => {
+  const extractColors = async (uri: string) => {
     try {
-      const colors = await ImageColors.getColors(uri, { fallback: '#888888', cache: false });
-      let color: string | undefined;
-      if (colors.platform === 'android') {
-        color = colors.dominant ?? colors.average ?? colors.vibrant;
-      } else if (colors.platform === 'ios') {
-        color = colors.primary ?? colors.secondary;
-      } else {
-        color = colors.dominant;
-      }
-      setDominantColor(color ?? '#888888');
+      const colorResult = await ImageColors.getColors(uri, { fallback: '#D4A574', cache: false });
+      const hexColors = extractHexColors(colorResult);
+      extractedColorsRef.current = hexColors;
+
+      // 대표색 스와치 표시
+      const primary = hexColors[0] ?? '#D4A574';
+      setDominantColor(primary);
     } catch {
-      setDominantColor('#888888');
+      setDominantColor('#D4A574');
     }
   };
 
@@ -89,11 +89,11 @@ export default function PhotoUploadScreen() {
       navigation.navigate('Result', {
         type: resultData.season || 'spring',
         subType: resultData.subType,
-        analysisData: resultData
+        analysisData: resultData,
+        extractedColors: extractedColorsRef.current,
       });
-    } catch (error) {
-      Alert.alert('분석 실패', '사진 분석 중 오류가 발생했습니다.');
-      console.error(error);
+    } catch {
+      Alert.alert('분석 실패', '사진 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       setIsAnalyzing(false);
     }

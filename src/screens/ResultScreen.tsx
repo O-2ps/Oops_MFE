@@ -19,6 +19,7 @@ import { fetchSeasons, SeasonInfo } from '../api/personalColor';
 import { CrawledProduct, getProductPool, sampleProducts, SEASON_COLOR_PALETTE } from '../utils/productRecommend';
 import { getWishlist, toggleWishlist } from '../utils/wishlistStorage';
 import { saveColorResult, saveSkinResult } from '../utils/analysisStorage';
+import { computeImageColorStats, getSeasonStats as getDefaultSeasonStats } from '../utils/colorAnalysis';
 
 const { width, height } = Dimensions.get('window');
 
@@ -45,31 +46,6 @@ const SKIN_CHARACTERISTICS_DEFAULT: Record<string, string[]> = {
   normal:      ['피부 밸런스가 잘 유지되는 이상적인 피부입니다', '모공이 눈에 띄지 않고 피부결이 고릅니다', '유분과 수분이 균형을 이루고 있습니다', '트러블이 잘 생기지 않습니다'],
 };
 
-interface SeasonStats {
-  tonePct: string;
-  toneLabel: string;
-  brightnessPct: string;
-  brightnessLabel: string;
-  matchPct: string;
-  warmFill: number;
-  seasonFill: number;
-  lightFill: number;
-}
-
-function getSeasonStats(season: string): SeasonStats {
-  switch (season) {
-    case 'spring':
-      return { tonePct: '76%', toneLabel: '웜톤', brightnessPct: '80%', brightnessLabel: '라이트', matchPct: '89%', warmFill: 0.74, seasonFill: 0.76, lightFill: 0.82 };
-    case 'summer':
-      return { tonePct: '73%', toneLabel: '쿨톤', brightnessPct: '75%', brightnessLabel: '라이트', matchPct: '87%', warmFill: 0.27, seasonFill: 0.24, lightFill: 0.74 };
-    case 'autumn':
-      return { tonePct: '74%', toneLabel: '웜톤', brightnessPct: '72%', brightnessLabel: '딥', matchPct: '88%', warmFill: 0.72, seasonFill: 0.28, lightFill: 0.26 };
-    case 'winter':
-      return { tonePct: '81%', toneLabel: '쿨톤', brightnessPct: '77%', brightnessLabel: '딥', matchPct: '92%', warmFill: 0.21, seasonFill: 0.20, lightFill: 0.22 };
-    default:
-      return { tonePct: '75%', toneLabel: '웜톤', brightnessPct: '75%', brightnessLabel: '라이트', matchPct: '88%', warmFill: 0.64, seasonFill: 0.71, lightFill: 0.88 };
-  }
-}
 
 function mapAnswerToFlex(val: string | undefined, invert: boolean, defaultFlex: number): number {
   if (!val) return defaultFlex;
@@ -113,7 +89,7 @@ function GradientBar({ leftLabel, rightLabel, fillRatio, gradientColors, style }
 export default function ResultScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteProp<RootStackParamList, 'Result'>>();
-  const { type, subType, analysisData } = route.params || { type: 'spring', subType: undefined, analysisData: null };
+  const { type, subType, analysisData, extractedColors } = route.params || { type: 'spring', subType: undefined, analysisData: null, extractedColors: undefined };
   const [showProducts, setShowProducts] = useState(false);
   const [seasonInfo, setSeasonInfo] = useState<SeasonInfo | null>(null);
   const [displayedProducts, setDisplayedProducts] = useState<CrawledProduct[]>([]);
@@ -189,7 +165,11 @@ export default function ResultScreen() {
   const analysisTitle = isSkin ? skinTypeLabel : (seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트');
   const highlightColor = isSkin ? '#81D4FA' : '#FF8A65';
   const buttonText = isSkin ? '[ 어울리는 피부 화장품 추천 ]' : '[ 어울리는 화장품 보러가기 ]';
-  const seasonStats = getSeasonStats(type);
+
+  // 실제 이미지 색상이 있으면 그것으로 계산, 없으면 시즌 기본값 사용
+  const seasonStats = (!isSkin && extractedColors && extractedColors.length > 0)
+    ? (computeImageColorStats(extractedColors, type) ?? getDefaultSeasonStats(type))
+    : getDefaultSeasonStats(type);
 
   const handleShare = useCallback(async () => {
     try {

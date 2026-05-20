@@ -20,6 +20,7 @@ import { COLORS, FONTS } from '../constants/theme';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { getSavedColorResult } from '../utils/analysisStorage';
+import { hexToHSL, scoreColorForSeason, extractHexColors } from '../utils/colorAnalysis';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,60 +33,6 @@ const SEASON_NAMES: Record<string, string> = {
   winter: '겨울 쿨',
 };
 
-function hexToHSL(hex: string): { h: number; s: number; l: number } {
-  const clean = hex.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
-  if (clean.length < 6) return { h: 0, s: 0, l: 50 };
-  const r = parseInt(clean.slice(0, 2), 16) / 255;
-  const g = parseInt(clean.slice(2, 4), 16) / 255;
-  const b = parseInt(clean.slice(4, 6), 16) / 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const l = (max + min) / 2;
-  if (max === min) return { h: 0, s: 0, l: l * 100 };
-  const d = max - min;
-  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-  let h = 0;
-  if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
-  else if (max === g) h = ((b - r) / d + 2) / 6;
-  else h = ((r - g) / d + 4) / 6;
-  return { h: h * 360, s: s * 100, l: l * 100 };
-}
-
-function scoreColorForSeason(hex: string, season: string): number {
-  const { h, s, l } = hexToHSL(hex);
-  if (s < 8) return 50;
-  const isWarm = (h >= 0 && h <= 65) || (h >= 340 && h <= 360);
-  const isCool = h >= 175 && h <= 295;
-  switch (season) {
-    case 'spring': {
-      const a = isWarm ? 1.0 : isCool ? 0.1 : 0.5;
-      const b = s > 50 ? 1.0 : s > 30 ? 0.7 : 0.3;
-      const c = l >= 45 && l <= 85 ? 1.0 : 0.3;
-      return Math.round(a * 40 + b * 35 + c * 25);
-    }
-    case 'summer': {
-      const a = isCool ? 1.0 : isWarm ? 0.1 : 0.5;
-      const b = s < 55 ? 1.0 : s < 75 ? 0.6 : 0.2;
-      const c = l >= 45 && l <= 80 ? 1.0 : 0.35;
-      return Math.round(a * 40 + b * 35 + c * 25);
-    }
-    case 'autumn': {
-      const a = isWarm ? 1.0 : isCool ? 0.1 : 0.55;
-      const b = s >= 35 && s <= 85 ? 1.0 : 0.35;
-      const c = l >= 20 && l <= 58 ? 1.0 : l > 58 && l <= 70 ? 0.55 : 0.2;
-      return Math.round(a * 40 + b * 30 + c * 30);
-    }
-    case 'winter': {
-      const a = isCool ? 1.0 : isWarm ? 0.05 : 0.3;
-      const b = l < 30 || l > 70 ? 1.0 : 0.25;
-      const c = s > 55 ? 1.0 : s > 35 ? 0.6 : 0.2;
-      return Math.round(a * 40 + b * 35 + c * 25);
-    }
-    default:
-      return 50;
-  }
-}
-
 function getVerdict(score: number): { emoji: string; text: string; color: string } {
   if (score >= 72) return { emoji: '✅', text: '잘 어울려요!', color: '#4CAF50' };
   if (score >= 52) return { emoji: '⚠️', text: '보통이에요', color: '#FF9800' };
@@ -94,7 +41,7 @@ function getVerdict(score: number): { emoji: string; text: string; color: string
 
 function getExplanation(score: number, season: string, colors: string[]): string {
   if (!colors.length) return '';
-  const { h, s } = hexToHSL(colors[0]);
+  const { h } = hexToHSL(colors[0]);
   const isWarm = (h >= 0 && h <= 65) || (h >= 340 && h <= 360);
   const isCool = h >= 175 && h <= 295;
   const tone = isWarm ? '따뜻한(웜) 계열' : isCool ? '차가운(쿨) 계열' : '중간 계열';
@@ -112,24 +59,6 @@ function getExplanation(score: number, season: string, colors: string[]): string
   return `이 색상은 ${name} 타입에 잘 맞지 않아요.`;
 }
 
-function extractColorsFromResult(result: any): string[] {
-  const colors: string[] = [];
-  if (result.platform === 'ios') {
-    if (result.background) colors.push(result.background);
-    if (result.primary) colors.push(result.primary);
-    if (result.secondary) colors.push(result.secondary);
-    if (result.detail) colors.push(result.detail);
-  } else if (result.platform === 'android') {
-    if (result.dominant) colors.push(result.dominant);
-    if (result.vibrant) colors.push(result.vibrant);
-    if (result.muted) colors.push(result.muted);
-    if (result.darkVibrant) colors.push(result.darkVibrant);
-  } else {
-    if (result.dominant) colors.push(result.dominant);
-    if (result.vibrant) colors.push(result.vibrant);
-  }
-  return colors.filter(c => typeof c === 'string' && c.startsWith('#'));
-}
 
 export default function ColorMatchScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -170,11 +99,11 @@ export default function ColorMatchScreen() {
       setIsExtracting(true);
       try {
         const colorResult = await ImageColors.getColors(uri, { fallback: '#888888', cache: false });
-        const colors = extractColorsFromResult(colorResult);
+        const colors = extractHexColors(colorResult);
         setExtractedColors(colors);
         if (savedSeason && colors.length > 0) {
-          const scores = colors.map(c => scoreColorForSeason(c, savedSeason));
-          const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+          const scores = colors.map((c: string) => scoreColorForSeason(c, savedSeason));
+          const avg = Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length);
           setScore(avg);
         }
       } catch {
