@@ -85,8 +85,6 @@ export function computeImageColorStats(
   const avgS = hslValues.reduce((sum, v) => sum + v.s, 0) / hslValues.length;
   const avgL = hslValues.reduce((sum, v) => sum + v.l, 0) / hslValues.length;
 
-  // 웜/쿨 비율 계산 (0=쿨, 1=웜)
-  // 피부 웜톤: 복숭아/골드 계열 (H: 5~55), 쿨톤: 핑크/로즈 계열 (H: 280~350) or 채도 낮음
   let warmFill: number;
   if ((avgH >= 5 && avgH <= 55) || (avgH >= 355)) {
     // 명확한 웜 계열
@@ -107,7 +105,6 @@ export function computeImageColorStats(
   // 라이트/딥 비율 계산 (0=딥, 1=라이트) — 명도 기반
   const lightFill = Math.max(0.08, Math.min(0.92, (avgL - 10) / 75));
 
-  // 봄↔가을 / 여름↔겨울 비율 (시즌 스펙트럼 위치)
   let seasonFill: number;
   if (season === 'spring' || season === 'autumn') {
     // 봄: 밝고 선명, 가을: 어둡고 뮤트 → 밝기+채도 기반
