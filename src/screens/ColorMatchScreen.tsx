@@ -137,26 +137,26 @@ export default function ColorMatchScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.backText}>← 뒤로</StrokedText>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.backText}>← 뒤로</StrokedText>
         </TouchableOpacity>
 
-        <StrokedText strokeColor="#fafafa" strokeWidth={3} style={styles.title}>
+        <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={3} style={styles.title}>
           컬러 매칭 스캐너
         </StrokedText>
-        <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.subtitle}>
+        <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.subtitle}>
           옷, 가방, 립스틱 사진을 올리면{'\n'}내 퍼스널컬러와 어울리는지 알려드려요!
         </StrokedText>
 
         <View style={styles.seasonBadge}>
           {seasonDisplayName ? (
             <>
-              <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.seasonLabel}>내 퍼스널컬러</StrokedText>
-              <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.seasonValue}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.seasonLabel}>내 퍼스널컬러</StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.seasonValue}>
                 [ {seasonDisplayName} ]
               </StrokedText>
             </>
           ) : (
-            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.noSeason}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.noSeason}>
               * 먼저 퍼스널컬러 분석을 받아주세요
             </StrokedText>
           )}
@@ -171,11 +171,11 @@ export default function ColorMatchScreen() {
             <Image source={{ uri: imageUri }} style={styles.pickedImage} resizeMode="cover" />
           ) : (
             <View style={styles.emptyImageContent}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.emptyImageIcon}>📷</StrokedText>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.emptyImageText}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.emptyImageIcon}>📷</StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.emptyImageText}>
                 사진을 선택해주세요
               </StrokedText>
-              <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.emptyImageHint}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.emptyImageHint}>
                 옷 / 악세사리 / 화장품 등
               </StrokedText>
             </View>
@@ -185,7 +185,7 @@ export default function ColorMatchScreen() {
         {isExtracting && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={COLORS.PRIMARY} />
-            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.loadingText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.loadingText}>
               색상 분석 중...
             </StrokedText>
           </View>
@@ -193,14 +193,14 @@ export default function ColorMatchScreen() {
 
         {extractedColors.length > 0 && !isExtracting && (
           <View style={styles.colorSection}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.colorSectionLabel}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.colorSectionLabel}>
               추출된 색상
             </StrokedText>
             <View style={styles.colorChips}>
               {extractedColors.slice(0, 4).map((color, i) => (
                 <View key={i} style={styles.chipWrapper}>
                   <View style={[styles.colorChip, { backgroundColor: color }]} />
-                  <StrokedText strokeColor="#fafafa" strokeWidth={0.3} style={styles.chipHex}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.3} style={styles.chipHex}>
                     {color.toUpperCase()}
                   </StrokedText>
                 </View>
@@ -211,20 +211,20 @@ export default function ColorMatchScreen() {
 
         {verdict && score !== null && !isExtracting && (
           <View style={styles.resultCard}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.verdictEmoji}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.verdictEmoji}>
               {verdict.emoji}
             </StrokedText>
-            <StrokedText strokeColor="#fafafa" strokeWidth={3} style={[styles.verdictText, { color: verdict.color }]}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={3} style={[styles.verdictText, { color: verdict.color }]}>
               {verdict.text}
             </StrokedText>
             <View style={styles.scoreRow}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.scoreNumber}>{score}</StrokedText>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.scoreUnit}>점</StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.scoreNumber}>{score}</StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.scoreUnit}>점</StrokedText>
             </View>
             <View style={styles.scoreBar}>
               <View style={[styles.scoreBarFill, { width: `${score}%`, backgroundColor: verdict.color }]} />
             </View>
-            <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.explanationText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.explanationText}>
               {explanation}
             </StrokedText>
           </View>
@@ -232,7 +232,7 @@ export default function ColorMatchScreen() {
 
         {!savedSeason && !isExtracting && (
           <View style={styles.noAnalysisHint}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.noAnalysisText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.noAnalysisText}>
               퍼스널컬러 분석 결과가 없어요.{'\n'}홈에서 분석을 먼저 진행해주세요!
             </StrokedText>
           </View>
@@ -241,20 +241,20 @@ export default function ColorMatchScreen() {
         <View style={styles.actions}>
           {imageUri && (
             <TouchableOpacity onPress={reset} style={styles.resetBtn} activeOpacity={0.7}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.resetText}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.resetText}>
                 [ 다른 사진 분석하기 ]
               </StrokedText>
             </TouchableOpacity>
           )}
           {!imageUri && (
             <TouchableOpacity onPress={pickImage} style={styles.resetBtn} activeOpacity={0.7}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.resetText}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.resetText}>
                 [ 사진 선택하기 ]
               </StrokedText>
             </TouchableOpacity>
           )}
           <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={{ top: 10, bottom: 10, left: 20, right: 20 }}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.goBackText}>뒤로가기</StrokedText>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.goBackText}>뒤로가기</StrokedText>
           </TouchableOpacity>
         </View>
       </ScrollView>

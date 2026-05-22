@@ -10,7 +10,7 @@ import StrokedText from '../components/StrokedText';
 import { RootStackParamList } from '../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { getSkinQuestions, diagnoseSkin, SkinQuestion } from '../api/skinApi';
-import { COLORS } from '../constants/theme';
+import { COLORS, FONTS } from '../constants/theme';
 
 const { width, height } = Dimensions.get('window');
 
@@ -115,7 +115,7 @@ export default function SurveyScreen() {
         </View>
         <View style={styles.center}>
           <ActivityIndicator size="large" color={COLORS.PRIMARY} />
-          <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.loadingText}>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.loadingText}>
             {isSubmitting ? '피부 타입 분석 중...' : '문항을 불러오는 중...'}
           </StrokedText>
         </View>
@@ -131,12 +131,12 @@ export default function SurveyScreen() {
         </View>
         <View style={styles.inner}>
           <View style={{ marginBottom: 10 }}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.qNumber}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.qNumber}>
               나이대를 선택해주세요
             </StrokedText>
           </View>
           <View style={styles.questionBox}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.questionText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.questionText}>
               더 정확한 피부 분석을 위해{'\n'}연령대가 필요해요.
             </StrokedText>
           </View>
@@ -144,15 +144,15 @@ export default function SurveyScreen() {
             {AGE_OPTIONS.map((opt) => (
               <TouchableOpacity
                 key={opt.value}
-                style={[styles.optionCard, { borderColor: '#FF8CB6' }]}
+                style={[styles.optionCard, { borderColor: COLORS.PRIMARY }]}
                 activeOpacity={0.7}
                 onPress={() => {
                   setAge(opt.value);
                   setAgeSelected(true);
                 }}
               >
-                <View style={[styles.optionDot, { backgroundColor: '#FF8CB6' }]} />
-                <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.optionLabel}>
+                <View style={[styles.optionDot, { backgroundColor: COLORS.PRIMARY }]} />
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.optionLabel}>
                   {opt.label}
                 </StrokedText>
               </TouchableOpacity>
@@ -176,13 +176,13 @@ export default function SurveyScreen() {
 
       <Animated.View style={[styles.inner, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
         <View style={{ marginBottom: 10 }}>
-          <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.qNumber}>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.qNumber}>
             Q{step + 1} / {questions.length}
           </StrokedText>
         </View>
 
         <View style={styles.questionBox}>
-          <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.questionText}>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.questionText}>
             {currentQ?.question ?? ''}
           </StrokedText>
         </View>
@@ -196,7 +196,7 @@ export default function SurveyScreen() {
               onPress={() => handleOptionSelect(currentQ.id, opt.value)}
             >
               <View style={[styles.optionDot, { backgroundColor: opt.color }]} />
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.optionLabel}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.optionLabel}>
                 {opt.label}
               </StrokedText>
             </TouchableOpacity>
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 20,
     color: COLORS.PRIMARY,
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginTop: 4,
   },
   progressBar: {
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#FF8CB6',
+    backgroundColor: COLORS.PRIMARY,
   },
   inner: {
     flex: 1,
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   qNumber: {
     fontSize: 22,
     color: '#888888',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   questionBox: {
     marginBottom: 30,
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   questionText: {
     fontSize: 20,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     textAlign: 'center',
     lineHeight: 30,
   },
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   optionLabel: {
     fontSize: 15,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
 
 });

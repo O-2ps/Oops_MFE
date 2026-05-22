@@ -11,7 +11,7 @@ import SummerCoolTrueSvg from '../../assets/personal/summer cool true.svg';
 import AutumnWarmMuteSvg from '../../assets/personal/autumn warm mute.svg';
 import WinterCoolTrueSvg from '../../assets/personal/winter cool true.svg';
 import StrokedText from '../components/StrokedText';
-import { COLORS } from '../constants/theme';
+import { COLORS, FONTS } from '../constants/theme';
 import { RootStackParamList } from '../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -71,7 +71,7 @@ interface GradientBarProps {
 function GradientBar({ leftLabel, rightLabel, fillRatio, gradientColors, style }: GradientBarProps) {
   return (
     <S.ComparisonRow style={style}>
-      <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.barSideLabel}>{leftLabel}</StrokedText>
+      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.barSideLabel}>{leftLabel}</StrokedText>
       <S.BarContainer style={styles.barContainerWithBorder}>
         <LinearGradient
           colors={gradientColors}
@@ -81,7 +81,7 @@ function GradientBar({ leftLabel, rightLabel, fillRatio, gradientColors, style }
         <View style={{ width: 10, height: '100%', backgroundColor: '#fafafa' }} />
         <View style={{ flex: 1 - fillRatio, height: '100%', backgroundColor: '#E0E0E0' }} />
       </S.BarContainer>
-      <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.barSideLabel}>{rightLabel}</StrokedText>
+      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.barSideLabel}>{rightLabel}</StrokedText>
     </S.ComparisonRow>
   );
 }
@@ -219,25 +219,25 @@ export default function ResultScreen() {
 
           <View style={styles.recommendationTitleContainer}>
             <View style={styles.recommendTitleRow}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.recommendTitleBracket}>[ </StrokedText>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={[styles.recommendTitleHighlight, { color: highlightColor }]}>{analysisTitle}</StrokedText>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.recommendTitleBracket}> ] </StrokedText>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.recommendTitleMain}>에 어울리는</StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.recommendTitleBracket}>[ </StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={[styles.recommendTitleHighlight, { color: highlightColor }]}>{analysisTitle}</StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.recommendTitleBracket}> ] </StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.recommendTitleMain}>에 어울리는</StrokedText>
             </View>
-            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.recommendTitleMain}>제품을 추천합니다.</StrokedText>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.recommendTitleMain}>제품을 추천합니다.</StrokedText>
           </View>
 
           {isSkin && (
             <View style={styles.skinInfoSection}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.skinInfoTitle}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.skinInfoTitle}>
                 {skinTypeLabel} 특징
               </StrokedText>
               {skinChars.map((text, idx) => (
                 <View key={idx} style={styles.skinInfoRow}>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={0} style={styles.skinInfoIcon}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0} style={styles.skinInfoIcon}>
                     {skinIcons[idx] ?? '✨'}
                   </StrokedText>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.skinInfoText}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.skinInfoText}>
                     {text}
                   </StrokedText>
                 </View>
@@ -247,19 +247,19 @@ export default function ResultScreen() {
 
           {!isSkin && SEASON_COLOR_PALETTE[type]?.length > 0 && (
             <View style={styles.paletteSection}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.paletteSectionTitle}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.paletteSectionTitle}>
                 추천 컬러 팔레트
               </StrokedText>
               {SEASON_COLOR_PALETTE[type].map((categ) => (
                 <View key={categ.label} style={styles.paletteRow}>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.paletteCategoryLabel}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.paletteCategoryLabel}>
                     {categ.label}
                   </StrokedText>
                   <View style={styles.chipRow}>
                     {categ.chips.map((chip) => (
                       <View key={chip.name} style={styles.chipItem}>
                         <View style={[styles.colorChip, { backgroundColor: chip.hex }]} />
-                        <StrokedText strokeColor="#fafafa" strokeWidth={0.3} style={styles.chipName}>
+                        <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.3} style={styles.chipName}>
                           {chip.name}
                         </StrokedText>
                       </View>
@@ -298,19 +298,19 @@ export default function ResultScreen() {
                     </Text>
                   </TouchableOpacity>
                 </View>
-                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.productBrand} numberOfLines={1}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.productBrand} numberOfLines={1}>
                   {item.brand}
                 </StrokedText>
-                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.productTitle} numberOfLines={2}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.productTitle} numberOfLines={2}>
                   {item.name}
                 </StrokedText>
                 <View style={styles.tagRow}>
                   <View style={styles.priceTag}>
-                    <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
+                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
                   </View>
                   {item.orgPrice !== item.price && (
                     <View style={[styles.priceTag, styles.orgPriceTag]}>
-                      <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={[styles.tagText, styles.orgPriceText]}>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={[styles.tagText, styles.orgPriceText]}>
                         {item.orgPrice}
                       </StrokedText>
                     </View>
@@ -325,7 +325,7 @@ export default function ResultScreen() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', paddingTop: 10 }}>
             {isSkin && (
               <View style={styles.skinHeader}>
-                <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.saveInfoText}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.saveInfoText}>
                   * 결과는 마이페이지에 저장됩니다.
                 </StrokedText>
               </View>
@@ -347,7 +347,7 @@ export default function ResultScreen() {
             )}
 
             <View style={{ marginTop: isSkin ? 60 : 20, marginBottom: 20 }}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={5} style={[styles.title, isSkin && { color: '#333333' }]}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={5} style={[styles.title, isSkin && { color: '#333333' }]}>
                 {isSkin ? `[ ${skinTypeLabel} ]` : `[ ${seasonInfo?.description?.split(' (')[0] || '봄 웜 라이트'} ]`}
               </StrokedText>
             </View>
@@ -355,21 +355,21 @@ export default function ResultScreen() {
             <View style={{ marginBottom: isSkin ? 40 : 20 }}>
               {isSkin ? (
                 <View style={{ alignItems: 'center' }}>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.description}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.description}>
                     당신의 피부 나이는
                   </StrokedText>
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-                    <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.skinAgeText}>
+                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.skinAgeText}>
                       {skinAge !== null ? `[ ${skinAge}살 ]` : '-'}
                     </StrokedText>
-                    <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.description}>
+                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.description}>
                       {' '}입니다.
                     </StrokedText>
                   </View>
                 </View>
               ) : (
                 <View style={{ alignItems: 'center', paddingHorizontal: 20 }}>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.description}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.description}>
                     {seasonInfo?.characteristics?.join(' · ') || '밝고 선명한 따뜻한 색조'}
                   </StrokedText>
                 </View>
@@ -379,28 +379,28 @@ export default function ResultScreen() {
             {!isSkin && (
               <S.StatContainer style={{ marginTop: 10, paddingHorizontal: 40 }}>
                 <S.StatItem>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={3.5} style={styles.statValue}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={3.5} style={styles.statValue}>
                     {seasonStats.tonePct}
                   </StrokedText>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.statLabel}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.statLabel}>
                     {seasonStats.toneLabel}
                   </StrokedText>
                 </S.StatItem>
                 <View style={styles.statDivider} />
                 <S.StatItem>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={3.5} style={styles.statValue}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={3.5} style={styles.statValue}>
                     {seasonStats.brightnessPct}
                   </StrokedText>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.statLabel}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.statLabel}>
                     {seasonStats.brightnessLabel}
                   </StrokedText>
                 </S.StatItem>
                 <View style={styles.statDivider} />
                 <S.StatItem>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={3.5} style={styles.statValue}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={3.5} style={styles.statValue}>
                     {seasonStats.matchPct}
                   </StrokedText>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.statLabel}>일치도</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.statLabel}>일치도</StrokedText>
                 </S.StatItem>
               </S.StatContainer>
             )}
@@ -410,7 +410,7 @@ export default function ResultScreen() {
                 <>
                   {skinBars.map((bar, idx) => (
                     <View key={idx} style={{ marginBottom: 12, width: width - 40, alignItems: 'flex-start' }}>
-                      <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.indicatorLabel}>{bar.label}</StrokedText>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.indicatorLabel}>{bar.label}</StrokedText>
                       <GradientBar
                         leftLabel="많다"
                         rightLabel="적다"
@@ -439,7 +439,7 @@ export default function ResultScreen() {
               >
                 <View pointerEvents="none" style={{ alignItems: 'center', width: '100%' }}>
                   <S.FooterAction>
-                    <StrokedText strokeColor="#fafafa" strokeWidth={5} style={styles.footerText}>
+                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={5} style={styles.footerText}>
                       {buttonText}
                     </StrokedText>
                   </S.FooterAction>
@@ -453,8 +453,8 @@ export default function ResultScreen() {
                     style={styles.smartToolBtn}
                     activeOpacity={0.7}
                   >
-                    <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.smartToolIcon}>🎨</StrokedText>
-                    <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.smartToolText}>컬러 스캐너</StrokedText>
+                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.smartToolIcon}>🎨</StrokedText>
+                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.smartToolText}>컬러 스캐너</StrokedText>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
@@ -462,8 +462,8 @@ export default function ResultScreen() {
                   style={styles.smartToolBtn}
                   activeOpacity={0.7}
                 >
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.smartToolIcon}>🌤️</StrokedText>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.smartToolText}>날씨 뷰티</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.smartToolIcon}>🌤️</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.smartToolText}>날씨 뷰티</StrokedText>
                 </TouchableOpacity>
               </View>
 
@@ -501,17 +501,17 @@ const styles = StyleSheet.create({
   recommendTitleMain: {
     fontSize: 22,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   recommendTitleHighlight: {
     fontSize: 24,
     color: '#FF8A65',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   recommendTitleBracket: {
     fontSize: 24,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   productGrid: {
     flexDirection: 'row',
@@ -556,13 +556,13 @@ const styles = StyleSheet.create({
   productBrand: {
     fontSize: 11,
     color: '#888888',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginBottom: 2,
   },
   productTitle: {
     fontSize: 13,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     lineHeight: 17,
     marginBottom: 8,
   },
@@ -579,7 +579,7 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: 11,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   orgPriceTag: {
     backgroundColor: '#E0E0E0',
@@ -608,30 +608,30 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     color: COLORS.PRIMARY,
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   description: {
     fontSize: 15,
     color: '#A0A0A0',
     textAlign: 'center',
     lineHeight: 22,
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   statValue: {
     fontSize: 34,
     color: '#000000',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   statLabel: {
     fontSize: 19,
     color: '#A0A0A0',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginTop: 14,
   },
   barSideLabel: {
     fontSize: 11,
     color: '#A0A0A0',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     width: 45,
     textAlign: 'center',
   },
@@ -654,12 +654,12 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 22,
     color: '#FF8CB6',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   backButtonText: {
     color: '#ffffff',
     fontSize: 14,
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   skinHeader: {
     position: 'absolute',
@@ -671,18 +671,18 @@ const styles = StyleSheet.create({
   saveInfoText: {
     fontSize: 12,
     color: COLORS.PRIMARY,
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     opacity: 0.8,
   },
   skinAgeText: {
     fontSize: 22,
     color: COLORS.PRIMARY,
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   indicatorLabel: {
     fontSize: 13,
     color: '#666666',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginLeft: 10,
   },
   skinInfoSection: {
@@ -697,7 +697,7 @@ const styles = StyleSheet.create({
   skinInfoTitle: {
     fontSize: 14,
     color: '#555555',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginBottom: 14,
   },
   skinInfoRow: {
@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
   skinInfoText: {
     fontSize: 13,
     color: '#444444',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     lineHeight: 20,
     flex: 1,
   },
@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
   paletteSectionTitle: {
     fontSize: 14,
     color: '#555555',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginBottom: 12,
   },
   paletteRow: {
@@ -738,7 +738,7 @@ const styles = StyleSheet.create({
   paletteCategoryLabel: {
     fontSize: 11,
     color: '#888888',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginBottom: 6,
   },
   chipRow: {
@@ -765,7 +765,7 @@ const styles = StyleSheet.create({
   chipName: {
     fontSize: 9,
     color: '#555555',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     textAlign: 'center',
     maxWidth: 40,
   },
@@ -793,6 +793,6 @@ const styles = StyleSheet.create({
   smartToolText: {
     fontSize: 13,
     color: '#555555',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
 });

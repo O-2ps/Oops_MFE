@@ -8,7 +8,7 @@ import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
 import FaceGuide from '../components/FaceGuide';
-import { COLORS } from '../constants/theme';
+import { COLORS, FONTS } from '../constants/theme';
 import { RootStackParamList } from '../types/navigation';
 import { analyzePersonalColor } from '../api/personalColor';
 import { extractHexColors } from '../utils/colorAnalysis';
@@ -111,7 +111,7 @@ export default function PhotoUploadScreen() {
         </View>
         <View style={styles.loadingCenter}>
           <ActivityIndicator size="large" color={COLORS.PRIMARY} />
-          <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.loadingText}>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.loadingText}>
             사진을 분석하는 중입니다...
           </StrokedText>
         </View>
@@ -127,7 +127,7 @@ export default function PhotoUploadScreen() {
 
       <S.MainContent>
         <View style={{ marginBottom: 30 }}>
-          <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.title}>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.title}>
             얼굴 사진을 등록해주세요
           </StrokedText>
         </View>
@@ -143,18 +143,18 @@ export default function PhotoUploadScreen() {
           )}
         </View>
 
-        <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.hintText}>
+        <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.hintText}>
           손목의 색깔과 비교해보세요!
         </StrokedText>
 
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.actionButton} onPress={handleTakePhoto}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.actionButtonText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.actionButtonText}>
               사진 촬영
             </StrokedText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton} onPress={handlePickImage}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.actionButtonText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.actionButtonText}>
               갤러리 선택
             </StrokedText>
           </TouchableOpacity>
@@ -162,7 +162,7 @@ export default function PhotoUploadScreen() {
 
         <View style={{ marginTop: 50, alignItems: 'center' }}>
           <S.FooterAction onPress={handleStartAnalysis} style={{ opacity: imageUri ? 1 : 0.5 }}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.footerText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.footerText}>
               [ 분석 시작하기 ]
             </StrokedText>
           </S.FooterAction>
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   imagePreviewContainer: {
     width: width * 0.7,
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   hintText: {
     fontSize: 15,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginBottom: 14,
   },
   buttonRow: {
@@ -219,12 +219,12 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: 16,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   footerText: {
     fontSize: 20,
     color: COLORS.PRIMARY,
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   loadingCenter: {
     flex: 1,
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 20,
     color: COLORS.PRIMARY,
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginTop: 4,
   },
   colorSwatch: {

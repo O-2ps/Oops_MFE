@@ -7,7 +7,7 @@ import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
 import FaceGuide from '../components/FaceGuide';
-import { COLORS } from '../constants/theme';
+import { COLORS, FONTS } from '../constants/theme';
 import { RootStackParamList } from '../types/navigation';
 
 const { width, height } = Dimensions.get('window');
@@ -71,8 +71,8 @@ export default function SkinPhotoScreen() {
       </View>
 
       <S.MainContent>
-        <View style={{ marginBottom: 30 }}>
-          <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.title}>
+        <View style={styles.titleContainer}>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.title}>
             피부 사진을 등록해주세요
           </StrokedText>
         </View>
@@ -87,20 +87,20 @@ export default function SkinPhotoScreen() {
 
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.actionButton} onPress={handleTakePhoto}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.actionButtonText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.actionButtonText}>
               사진 촬영
             </StrokedText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton} onPress={handlePickImage}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.actionButtonText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.actionButtonText}>
               갤러리 선택
             </StrokedText>
           </TouchableOpacity>
         </View>
 
-        <View style={{ marginTop: 50, alignItems: 'center' }}>
+        <View style={styles.footer}>
           <S.FooterAction onPress={handleNext} style={{ opacity: imageUri ? 1 : 0.5 }}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.footerText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.footerText}>
               [ 다음으로 ]
             </StrokedText>
           </S.FooterAction>
@@ -115,17 +115,20 @@ export default function SkinPhotoScreen() {
 }
 
 const styles = StyleSheet.create({
+  titleContainer: {
+    marginBottom: 30,
+  },
   title: {
     fontSize: 22,
-    color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    color: COLORS.TEXT_DARK,
+    fontFamily: FONTS.PIXEL,
   },
   imagePreviewContainer: {
     width: width * 0.7,
     height: width * 0.7 * (4 / 3),
     borderRadius: 15,
     borderWidth: 3,
-    borderColor: '#fafafa',
+    borderColor: COLORS.OFF_WHITE,
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
@@ -146,16 +149,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: '#fafafa',
+    borderColor: COLORS.OFF_WHITE,
   },
   actionButtonText: {
     fontSize: 16,
-    color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    color: COLORS.TEXT_DARK,
+    fontFamily: FONTS.PIXEL,
+  },
+  footer: {
+    marginTop: 50,
+    alignItems: 'center',
   },
   footerText: {
     fontSize: 20,
     color: COLORS.PRIMARY,
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
 });

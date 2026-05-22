@@ -8,7 +8,7 @@ import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
 import { useHomeAnimations } from '../hooks/useHomeAnimations';
 import { RootStackParamList } from '../types/navigation';
-import { COLORS } from '../constants/theme';
+import { COLORS, FONTS } from '../constants/theme';
 
 const { width, height } = Dimensions.get('window');
 
@@ -29,10 +29,10 @@ export default function HomeScreen() {
       </View>
       <S.MainContent>
         <S.Header>
-          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={{ fontSize: 20, color: COLORS.PRIMARY, marginBottom: 25, fontFamily: 'DOSIyagiBoldface' }}>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.stepText}>
             1.
           </StrokedText>
-          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={{ fontSize: 24, color: COLORS.PRIMARY, fontFamily: 'DOSIyagiBoldface' }}>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.titleText}>
             퍼스널 컬러 분석하기
           </StrokedText>
         </S.Header>
@@ -44,11 +44,30 @@ export default function HomeScreen() {
         </S.WheelSection>
 
         <S.FooterAction onPress={handleStartAnalysis}>
-          <StrokedText strokeColor={COLORS.WHITE} strokeWidth={2} style={{ fontSize: 20, color: COLORS.PRIMARY, fontFamily: 'DOSIyagiBoldface' }}>
+          <StrokedText strokeColor={COLORS.WHITE} strokeWidth={2} style={styles.footerText}>
             [ 분석 시작하기 ]
           </StrokedText>
         </S.FooterAction>
       </S.MainContent>
-    </S.Container >
+    </S.Container>
   );
 }
+
+const styles = StyleSheet.create({
+  stepText: {
+    fontSize: 20,
+    color: COLORS.PRIMARY,
+    fontFamily: FONTS.PIXEL,
+    marginBottom: 25,
+  },
+  titleText: {
+    fontSize: 24,
+    color: COLORS.PRIMARY,
+    fontFamily: FONTS.PIXEL,
+  },
+  footerText: {
+    fontSize: 20,
+    color: COLORS.PRIMARY,
+    fontFamily: FONTS.PIXEL,
+  },
+});

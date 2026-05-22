@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Image, Animated, Easing, Text, Linking } from 'react-native';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Image, Animated, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
@@ -7,8 +7,9 @@ import HomeSvg from '../../assets/icons/home.svg';
 import MyPageSvg from '../../assets/icons/mypage.svg';
 import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
+import { useHomeAnimations } from '../hooks/useHomeAnimations';
 import { RootStackParamList } from '../types/navigation';
-import { COLORS } from '../constants/theme';
+import { COLORS, FONTS } from '../constants/theme';
 import { getKakaoProfile } from '../api/kakaoAuth';
 import { getToken } from '../utils/tokenStorage';
 import { getUserHistory, HistoryItem } from '../api/userApi';
@@ -35,7 +36,7 @@ export default function MyPageScreen() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [wishlist, setWishlist] = useState<CrawledProduct[]>([]);
-  const floatAnim = useRef(new Animated.Value(0)).current;
+  const { floatAnim } = useHomeAnimations();
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -69,25 +70,6 @@ export default function MyPageScreen() {
     await removeFromWishlist(goodsNo);
     setWishlist(prev => prev.filter(p => p.goodsNo !== goodsNo));
   }, []);
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(floatAnim, {
-          toValue: -15,
-          duration: 3000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(floatAnim, {
-          toValue: 0,
-          duration: 3000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, [floatAnim]);
 
   const handleHome = () => {
     navigation.navigate('Home');
@@ -132,17 +114,17 @@ export default function MyPageScreen() {
           {!isLoggedIn && (
             <View style={styles.loginPromptContainer}>
               <TouchableOpacity onPress={() => navigation.navigate('Landing')}>
-                <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.loginPromptText}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.loginPromptText}>
                   * 로그인 페이지로 이동하기
                 </StrokedText>
               </TouchableOpacity>
             </View>
           )}
           <S.Header>
-            <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.stepText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.stepText}>
               3.
             </StrokedText>
-            <StrokedText strokeColor="#fafafa" strokeWidth={2.5} style={styles.introTitleText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.introTitleText}>
               마이페이지
             </StrokedText>
           </S.Header>
@@ -154,7 +136,7 @@ export default function MyPageScreen() {
           </S.WheelSection>
 
           <S.FooterAction onPress={isLoggedIn ? handleEnter : undefined}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.introFooterText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.introFooterText}>
               {isLoggedIn ? '[ 들어가기 ]' : '[ 로그인을 하지 않았습니다. ]'}
             </StrokedText>
           </S.FooterAction>
@@ -168,21 +150,21 @@ export default function MyPageScreen() {
           </View>
 
           <View style={styles.greetingSection}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.greetText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.greetText}>
               안녕하세요
             </StrokedText>
             <View style={styles.nicknameRow}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={4} style={styles.nicknameSticker}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={4} style={styles.nicknameSticker}>
                 [ {nickname} ]
               </StrokedText>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.greetText}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.greetText}>
                 {' '}님
               </StrokedText>
             </View>
           </View>
 
           <View style={styles.section}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.sectionTitle}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.sectionTitle}>
               스마트 도구
             </StrokedText>
             <View style={styles.toolsRow}>
@@ -191,10 +173,10 @@ export default function MyPageScreen() {
                 activeOpacity={0.75}
                 onPress={() => navigation.navigate('ColorMatch')}
               >
-                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.toolEmoji}>🎨</StrokedText>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.toolEmoji}>🎨</StrokedText>
                 <View style={styles.toolTextContainer}>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.toolTitle}>컬러 매칭 스캐너</StrokedText>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={0.3} style={styles.toolDesc}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.toolTitle}>컬러 매칭 스캐너</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.3} style={styles.toolDesc}>
                     아이템 사진으로 내 퍼스널컬러 매칭
                   </StrokedText>
                 </View>
@@ -204,10 +186,10 @@ export default function MyPageScreen() {
                 activeOpacity={0.75}
                 onPress={() => navigation.navigate('WeatherBeauty')}
               >
-                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.toolEmoji}>🌤️</StrokedText>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.toolEmoji}>🌤️</StrokedText>
                 <View style={styles.toolTextContainer}>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.toolTitle}>날씨 맞춤 뷰티 루틴</StrokedText>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={0.3} style={styles.toolDesc}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.toolTitle}>날씨 맞춤 뷰티 루틴</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.3} style={styles.toolDesc}>
                     오늘 날씨로 맞춤 뷰티 팁
                   </StrokedText>
                 </View>
@@ -216,7 +198,7 @@ export default function MyPageScreen() {
           </View>
 
           <View style={styles.section}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.sectionTitle}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.sectionTitle}>
               최근 검사 결과 조회
             </StrokedText>
             <View style={styles.listContainer}>
@@ -226,13 +208,13 @@ export default function MyPageScreen() {
                   style={styles.listItem}
                   onPress={() => handleHistoryPress(item)}
                 >
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.listItemText}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.listItemText}>
                     {formatDate(item.created_at)}{'  '}[{item.label}] 진단 결과{'  '}{'>'}
                   </StrokedText>
                 </TouchableOpacity>
               )) : (
                 <View style={styles.listItem}>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.listItemText}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.listItemText}>
                     최근 검사 결과가 없습니다.
                   </StrokedText>
                 </View>
@@ -241,7 +223,7 @@ export default function MyPageScreen() {
           </View>
 
           <View style={styles.section}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.sectionTitle}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.sectionTitle}>
               찜한 화장품
             </StrokedText>
             {wishlist.length > 0 ? (
@@ -257,13 +239,13 @@ export default function MyPageScreen() {
                       <Image source={{ uri: item.imageUrl }} style={styles.wishlistImage} resizeMode="cover" />
                     </TouchableOpacity>
                     <View style={styles.wishlistInfo}>
-                      <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.wishlistBrand} numberOfLines={1}>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.wishlistBrand} numberOfLines={1}>
                         {item.brand}
                       </StrokedText>
-                      <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.wishlistName} numberOfLines={2}>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.wishlistName} numberOfLines={2}>
                         {item.name}
                       </StrokedText>
-                      <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.wishlistPrice}>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.wishlistPrice}>
                         {item.price}
                       </StrokedText>
                     </View>
@@ -279,7 +261,7 @@ export default function MyPageScreen() {
               </View>
             ) : (
               <View style={styles.listItem}>
-                <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.listItemText}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.listItemText}>
                   찜한 화장품이 없습니다.
                 </StrokedText>
               </View>
@@ -295,7 +277,7 @@ const styles = StyleSheet.create({
   stepText: {
     fontSize: 20,
     color: '#FF8CB6',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginBottom: 25,
   },
   loginPromptContainer: {
@@ -308,17 +290,17 @@ const styles = StyleSheet.create({
   loginPromptText: {
     fontSize: 14,
     color: '#FF8CB6',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   introTitleText: {
     fontSize: 24,
     color: '#FF8CB6',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   introFooterText: {
     fontSize: 20,
     color: '#FF8CB6',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   header: {
     paddingHorizontal: 20,
@@ -332,7 +314,7 @@ const styles = StyleSheet.create({
   greetText: {
     fontSize: 22,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   nicknameRow: {
     flexDirection: 'row',
@@ -342,7 +324,7 @@ const styles = StyleSheet.create({
   nicknameSticker: {
     fontSize: 26,
     color: COLORS.PRIMARY,
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   section: {
     paddingHorizontal: 20,
@@ -351,7 +333,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginBottom: 12,
   },
   listContainer: {
@@ -366,7 +348,7 @@ const styles = StyleSheet.create({
   listItemText: {
     fontSize: 14,
     color: '#666666',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   wishlistGrid: {
     gap: 10,
@@ -393,18 +375,18 @@ const styles = StyleSheet.create({
   wishlistBrand: {
     fontSize: 10,
     color: '#888888',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   wishlistName: {
     fontSize: 12,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     lineHeight: 16,
   },
   wishlistPrice: {
     fontSize: 11,
     color: COLORS.PRIMARY,
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
   },
   wishlistRemove: {
     padding: 4,
@@ -438,13 +420,13 @@ const styles = StyleSheet.create({
   toolTitle: {
     fontSize: 14,
     color: '#333333',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     marginBottom: 3,
   },
   toolDesc: {
     fontSize: 11,
     color: '#888888',
-    fontFamily: 'DOSIyagiBoldface',
+    fontFamily: FONTS.PIXEL,
     lineHeight: 16,
   },
 });

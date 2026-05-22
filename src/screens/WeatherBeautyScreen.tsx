@@ -242,13 +242,13 @@ export default function WeatherBeautyScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.backText}>← 뒤로</StrokedText>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.backText}>← 뒤로</StrokedText>
         </TouchableOpacity>
 
-        <StrokedText strokeColor="#fafafa" strokeWidth={3} style={styles.title}>
+        <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={3} style={styles.title}>
           오늘의 뷰티 루틴
         </StrokedText>
-        <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.subtitle}>
+        <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.subtitle}>
           현재 날씨 + 내 피부타입 + 퍼스널컬러{'\n'}맞춤 뷰티 팁을 알려드려요!
         </StrokedText>
 
@@ -256,19 +256,19 @@ export default function WeatherBeautyScreen() {
           <View style={styles.profileBadge}>
             {seasonDisplay && (
               <View style={styles.badgeItem}>
-                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.badgeLabel}>퍼스널컬러</StrokedText>
-                <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.badgeValue}>{seasonDisplay}</StrokedText>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.badgeLabel}>퍼스널컬러</StrokedText>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.badgeValue}>{seasonDisplay}</StrokedText>
               </View>
             )}
             {seasonDisplay && skinDisplay && <View style={styles.badgeDivider} />}
             {skinDisplay && (
               <View style={styles.badgeItem}>
-                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.badgeLabel}>피부타입</StrokedText>
-                <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.badgeValue}>{skinDisplay}</StrokedText>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.badgeLabel}>피부타입</StrokedText>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.badgeValue}>{skinDisplay}</StrokedText>
               </View>
             )}
             {!seasonDisplay && !skinDisplay && (
-              <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.noProfileText}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.noProfileText}>
                 분석 결과 없음 (일반 팁 제공)
               </StrokedText>
             )}
@@ -278,7 +278,7 @@ export default function WeatherBeautyScreen() {
         {loading && (
           <View style={styles.loadingBox}>
             <ActivityIndicator size="large" color={COLORS.PRIMARY} />
-            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.loadingText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.loadingText}>
               날씨 정보를 불러오는 중...
             </StrokedText>
           </View>
@@ -286,11 +286,11 @@ export default function WeatherBeautyScreen() {
 
         {error && !loading && (
           <View style={styles.errorBox}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={1} style={styles.errorText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.errorText}>
               {error}
             </StrokedText>
             <TouchableOpacity onPress={loadWeather} style={styles.retryBtn}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.retryText}>다시 시도</StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.retryText}>다시 시도</StrokedText>
             </TouchableOpacity>
           </View>
         )}
@@ -299,56 +299,56 @@ export default function WeatherBeautyScreen() {
           <>
             <View style={styles.weatherCard}>
               <View style={styles.weatherTopRow}>
-                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.cityText}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.cityText}>
                   📍 {weather.cityName}
                 </StrokedText>
-                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.weatherDescText}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.weatherDescText}>
                   {getWeatherEmoji(weather.weatherCode)} {getWeatherDesc(weather.weatherCode)}
                 </StrokedText>
               </View>
               <View style={styles.weatherStats}>
                 <View style={styles.weatherStat}>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.weatherStatValue}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.weatherStatValue}>
                     {weather.temp}°
                   </StrokedText>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.weatherStatLabel}>기온</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.weatherStatLabel}>기온</StrokedText>
                 </View>
                 <View style={styles.weatherStatDivider} />
                 <View style={styles.weatherStat}>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.weatherStatValue}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.weatherStatValue}>
                     {weather.humidity}%
                   </StrokedText>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.weatherStatLabel}>습도</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.weatherStatLabel}>습도</StrokedText>
                 </View>
                 <View style={styles.weatherStatDivider} />
                 <View style={styles.weatherStat}>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={2} style={[styles.weatherStatValue, { color: getUVColor(weather.uvIndex) }]}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={[styles.weatherStatValue, { color: getUVColor(weather.uvIndex) }]}>
                     {weather.uvIndex}
                   </StrokedText>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={[styles.weatherStatLabel, { color: getUVColor(weather.uvIndex) }]}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={[styles.weatherStatLabel, { color: getUVColor(weather.uvIndex) }]}>
                     UV {getUVLabel(weather.uvIndex)}
                   </StrokedText>
                 </View>
               </View>
             </View>
 
-            <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.tipsTitle}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.tipsTitle}>
               오늘의 맞춤 뷰티 팁
             </StrokedText>
 
             {tips.map((tip, i) => (
               <View key={i} style={styles.tipCard}>
                 <View style={styles.tipHeader}>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.tipIcon}>{tip.icon}</StrokedText>
-                  <StrokedText strokeColor="#fafafa" strokeWidth={1.5} style={styles.tipCategory}>{tip.category}</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tipIcon}>{tip.icon}</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.tipCategory}>{tip.category}</StrokedText>
                 </View>
-                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.tipText}>{tip.tip}</StrokedText>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tipText}>{tip.tip}</StrokedText>
               </View>
             ))}
 
             {!colorSeason && !skinType && (
               <View style={styles.analysisHint}>
-                <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.analysisHintText}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.analysisHintText}>
                   💡 퍼스널컬러·피부 분석을 받으면{'\n'}더 정확한 맞춤 팁을 드릴 수 있어요!
                 </StrokedText>
               </View>
@@ -359,13 +359,13 @@ export default function WeatherBeautyScreen() {
         <View style={styles.actions}>
           {!loading && (
             <TouchableOpacity onPress={loadWeather} style={styles.refreshBtn} activeOpacity={0.7}>
-              <StrokedText strokeColor="#fafafa" strokeWidth={2} style={styles.refreshText}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.refreshText}>
                 [ 새로고침 ]
               </StrokedText>
             </TouchableOpacity>
           )}
           <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={{ top: 10, bottom: 10, left: 20, right: 20 }}>
-            <StrokedText strokeColor="#fafafa" strokeWidth={0.5} style={styles.goBackText}>뒤로가기</StrokedText>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.goBackText}>뒤로가기</StrokedText>
           </TouchableOpacity>
         </View>
       </ScrollView>
