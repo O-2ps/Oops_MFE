@@ -63,17 +63,12 @@ export interface ImageColorStats {
   matchPct: string;
 }
 
-/**
- * 추출된 이미지 색상들로 퍼스널컬러 통계를 계산합니다.
- * 피부톤 범위(너무 어둡거나 너무 밝은 배경색 제외)로 필터링 후 분석합니다.
- */
 export function computeImageColorStats(
   hexColors: string[],
   season: string
 ): ImageColorStats | null {
   if (!hexColors.length) return null;
 
-  // 피부톤 범위에 해당하는 색상만 필터 (배경·흰색·검정 제외)
   const skinRange = hexColors.filter(hex => {
     const { s, l } = hexToHSL(hex);
     return l > 18 && l < 90 && s > 5;
@@ -87,46 +82,35 @@ export function computeImageColorStats(
 
   let warmFill: number;
   if ((avgH >= 5 && avgH <= 55) || (avgH >= 355)) {
-    // 명확한 웜 계열
     warmFill = Math.min(0.88, 0.58 + (avgS / 100) * 0.28);
   } else if (avgH > 55 && avgH < 90) {
-    // 옐로-그린 경계 (중립 웜)
     warmFill = 0.52 + (avgS / 100) * 0.12;
   } else if (avgH >= 280 && avgH < 355) {
-    // 핑크/마젠타 (쿨 계열)
     warmFill = Math.max(0.12, 0.38 - (avgS / 100) * 0.22);
   } else if (avgH >= 175 && avgH < 280) {
-    // 명확한 쿨 계열
     warmFill = Math.max(0.08, 0.32 - (avgS / 100) * 0.20);
   } else {
     warmFill = 0.42 + (avgS / 100) * 0.08;
   }
 
-  // 라이트/딥 비율 계산 (0=딥, 1=라이트) — 명도 기반
   const lightFill = Math.max(0.08, Math.min(0.92, (avgL - 10) / 75));
 
   let seasonFill: number;
   if (season === 'spring' || season === 'autumn') {
-    // 봄: 밝고 선명, 가을: 어둡고 뮤트 → 밝기+채도 기반
     seasonFill = Math.max(0.08, Math.min(0.92,
       (avgL / 100) * 0.65 + (avgS / 100) * 0.35
     ));
   } else {
-    // 여름: 부드럽고 밝음, 겨울: 대비 강함
-    // 여름은 채도 낮고 밝음, 겨울은 채도 높거나 어두움
     const summerScore = (avgL / 100) * 0.55 + ((100 - avgS) / 100) * 0.45;
     seasonFill = Math.max(0.08, Math.min(0.92, summerScore));
   }
 
-  // 퍼센트 계산: 얼마나 확실히 웜/쿨인지 (중립 0.5에서 멀수록 높음)
   const toneConfidence = Math.abs(warmFill - 0.5) * 2;
   const tonePctNum = Math.round(55 + toneConfidence * 35);
 
-  // 라이트/딥 확신도
   const brightnessConfidence = Math.abs(lightFill - 0.5) * 2;
   const brightnessPctNum = Math.round(54 + brightnessConfidence * 32);
 
-  // 이미지-시즌 일치도: 색상 스코어의 평균
   const matchScores = colors.map(c => scoreColorForSeason(c, season));
   const avgMatch = matchScores.reduce((a, b) => a + b, 0) / matchScores.length;
   const matchPctNum = Math.round(Math.max(62, Math.min(97, avgMatch * 1.08)));
@@ -143,7 +127,6 @@ export function computeImageColorStats(
   };
 }
 
-/** 이미지 색상 추출 없이 시즌만으로 계산하는 기본 통계 (fallback) */
 export function getSeasonStats(season: string): ImageColorStats {
   switch (season) {
     case 'spring':
@@ -159,7 +142,6 @@ export function getSeasonStats(season: string): ImageColorStats {
   }
 }
 
-/** ImageColors 라이브러리 결과에서 hex 배열 추출 */
 export function extractHexColors(colorResult: any): string[] {
   const colors: string[] = [];
   if (!colorResult) return colors;

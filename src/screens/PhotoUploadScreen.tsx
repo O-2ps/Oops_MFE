@@ -64,7 +64,6 @@ export default function PhotoUploadScreen() {
       const hexColors = extractHexColors(colorResult);
       extractedColorsRef.current = hexColors;
 
-      // 대표색 스와치 표시
       const primary = hexColors[0] ?? '#D4A574';
       setDominantColor(primary);
     } catch {

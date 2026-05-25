@@ -12,7 +12,6 @@ export interface CrawledProduct {
   suitableFor?: string[];
 }
 
-/** subType 예: "warm bright" → "spring_warm_bright" 형태의 키로 변환 */
 function toToneKey(type: string, subType?: string): string {
   if (!subType) return type;
   return `${type}_${subType.replace(/\s+/g, '_')}`;
@@ -30,7 +29,6 @@ function filterByPrefix(prefix: string): CrawledProduct[] {
   );
 }
 
-/** 시즌/서브톤 또는 피부타입에 맞는 상품 풀 반환 */
 export function getProductPool(type: string, subType?: string): CrawledProduct[] {
   if (type === 'skin') {
     const key = subType ? `skin_${subType}` : null;
@@ -42,7 +40,6 @@ export function getProductPool(type: string, subType?: string): CrawledProduct[]
   return pool.length > 0 ? pool : filterByPrefix(type);
 }
 
-/** pool 에서 n 개 무작위 비복원 추출 */
 export function sampleProducts(pool: CrawledProduct[], n: number): CrawledProduct[] {
   const arr = [...pool];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -62,7 +59,6 @@ export interface ColorCategory {
   chips: ColorChip[];
 }
 
-// 시즌별 어울리는 색조 팔레트
 export const SEASON_COLOR_PALETTE: Record<string, ColorCategory[]> = {
   spring: [
     {

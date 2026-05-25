@@ -51,7 +51,6 @@ export default function MyPageScreen() {
           const items = await getUserHistory();
           setHistory(items);
         } catch {
-          // 히스토리 조회 실패 시 빈 목록으로 처리
         }
       } else {
         setIsLoggedIn(false);

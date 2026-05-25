@@ -32,10 +32,6 @@ export interface SkinResultResponse {
   [key: string]: any;
 }
 
-/**
- * GET /api/skin/questions
- * 설문 문항 5개 + 선택지 반환 (인증 불필요)
- */
 export const getSkinQuestions = async (): Promise<SkinQuestion[]> => {
   const response = await fetch(`${API_BASE_URL}/api/skin/questions`);
   if (!response.ok) {
@@ -45,10 +41,6 @@ export const getSkinQuestions = async (): Promise<SkinQuestion[]> => {
   return json.data ?? json;
 };
 
-/**
- * POST /api/skin/diagnose
- * 설문 답변으로 피부 진단 (인증 불필요, 로그인 시 자동 저장)
- */
 export const diagnoseSkin = async (body: SkinDiagnoseBody): Promise<SkinDiagnoseResult> => {
   const token = await getToken();
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -67,10 +59,6 @@ export const diagnoseSkin = async (body: SkinDiagnoseBody): Promise<SkinDiagnose
   return json.data ?? json;
 };
 
-/**
- * GET /api/skin/result
- * 최근 진단 결과 조회 (인증 필요)
- */
 export const getSkinResult = async (): Promise<SkinResultResponse> => {
   const token = await getToken();
   if (!token) throw new Error('로그인이 필요합니다.');

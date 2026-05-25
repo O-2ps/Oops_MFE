@@ -7,10 +7,8 @@ export interface HistoryItem {
   type: 'skin' | 'personal';
   label: string;
   created_at: string;
-  // skin
   skinType?: string;
   skinAge?: number;
-  // personal
   personalType?: string;
   subType?: string;
 }

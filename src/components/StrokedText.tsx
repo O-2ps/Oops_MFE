@@ -25,16 +25,14 @@ export default function StrokedText({ children, strokeColor, strokeWidth, style,
   return (
     <View style={style}>
       <View>
-        {/* Base text to reserve space */}
-        <Text 
-          style={[flattenedStyle, { opacity: 0 }]} 
+        <Text
+          style={[flattenedStyle, { opacity: 0 }]}
           numberOfLines={numberOfLines}
           ellipsizeMode="tail"
         >
           {children}
         </Text>
-        
-        {/* Stroke layers */}
+
         {offsets.map((offset, index) => (
           <Text 
             key={index} 
@@ -54,10 +52,9 @@ export default function StrokedText({ children, strokeColor, strokeWidth, style,
             {children}
           </Text>
         ))}
-        
-        {/* Main text layer */}
-        <Text 
-          style={[flattenedStyle, { position: 'absolute', top: 0, left: 0, zIndex: 2 }]} 
+
+        <Text
+          style={[flattenedStyle, { position: 'absolute', top: 0, left: 0, zIndex: 2 }]}
           numberOfLines={numberOfLines}
           ellipsizeMode="tail"
         >

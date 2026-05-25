@@ -18,7 +18,6 @@ export default function FaceGuide({ width: w, height: h }: FaceGuideProps) {
   return (
     <View style={{ width: w, height: h }}>
       <Svg width={w} height={h} style={StyleSheet.absoluteFill}>
-        {/* 얼굴 윤곽 */}
         <Ellipse
           cx={cx}
           cy={cy}
@@ -29,7 +28,6 @@ export default function FaceGuide({ width: w, height: h }: FaceGuideProps) {
           strokeDasharray="10,5"
           fill="rgba(255,140,182,0.06)"
         />
-        {/* 왼쪽 눈 */}
         <Ellipse
           cx={cx - rx * 0.40}
           cy={cy - ry * 0.22}
@@ -40,7 +38,6 @@ export default function FaceGuide({ width: w, height: h }: FaceGuideProps) {
           fill="none"
           opacity={0.55}
         />
-        {/* 오른쪽 눈 */}
         <Ellipse
           cx={cx + rx * 0.40}
           cy={cy - ry * 0.22}
@@ -51,7 +48,6 @@ export default function FaceGuide({ width: w, height: h }: FaceGuideProps) {
           fill="none"
           opacity={0.55}
         />
-        {/* 코 중심선 */}
         <Line
           x1={cx}
           y1={cy - ry * 0.65}

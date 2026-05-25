@@ -166,7 +166,6 @@ export default function ResultScreen() {
   const highlightColor = isSkin ? '#81D4FA' : '#FF8A65';
   const buttonText = isSkin ? '[ 어울리는 피부 화장품 추천 ]' : '[ 어울리는 화장품 보러가기 ]';
 
-  // 실제 이미지 색상이 있으면 그것으로 계산, 없으면 시즌 기본값 사용
   const seasonStats = (!isSkin && extractedColors && extractedColors.length > 0)
     ? (computeImageColorStats(extractedColors, type) ?? getDefaultSeasonStats(type))
     : getDefaultSeasonStats(type);
@@ -178,7 +177,6 @@ export default function ResultScreen() {
         : `[Oops] 내 퍼스널컬러 분석 결과\n${analysisTitle}\n\n앱에서 내 컬러에 맞는 화장품을 추천받아보세요!`;
       await Share.share({ message: msg });
     } catch {
-      // 공유 취소 시 무시
     }
   }, [isSkin, skinTypeLabel, skinAge, analysisTitle]);
 

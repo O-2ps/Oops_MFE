@@ -6,7 +6,6 @@ export const useHomeAnimations = () => {
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Floating animation
     Animated.loop(
       Animated.sequence([
         Animated.timing(floatAnim, {
@@ -24,7 +23,6 @@ export const useHomeAnimations = () => {
       ])
     ).start();
 
-    // Rotation animation
     Animated.loop(
       Animated.timing(rotateAnim, {
         toValue: 1,

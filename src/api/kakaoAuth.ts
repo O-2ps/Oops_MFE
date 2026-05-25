@@ -2,10 +2,6 @@ import { login, logout, getProfile, KakaoOAuthToken, KakaoProfile } from '@react
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
-/**
- * 카카오 로그인을 실행하고 백엔드 서버에 토큰을 전송합니다.
- * @returns {Promise<{token: KakaoOAuthToken, user: any} | null>} 성공 시 토큰과 백엔드 유저 정보
- */
 export const loginWithKakao = async (): Promise<any | null> => {
   try {
     const token = await login();
@@ -40,9 +36,6 @@ export const loginWithKakao = async (): Promise<any | null> => {
   }
 };
 
-/**
- * 카카오 로그아웃을 실행합니다.
- */
 export const logoutWithKakao = async (): Promise<string | null> => {
   try {
     const message = await logout();
@@ -52,9 +45,6 @@ export const logoutWithKakao = async (): Promise<string | null> => {
   }
 };
 
-/**
- * 로그인된 사용자의 카카오 프로필 정보를 가져옵니다.
- */
 export const getKakaoProfile = async (): Promise<KakaoProfile | null> => {
   try {
     const profile = await getProfile();
