@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Animated,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as S from './style';
@@ -36,10 +37,13 @@ const SKIN_NAMES: Record<string, string> = {
 
 interface WeatherData {
   temp: number;
+  feelsLike: number;
   humidity: number;
   uvIndex: number;
   weatherCode: number;
   cityName: string;
+  pm10: number | null;
+  pm25: number | null;
 }
 
 interface BeautyTip {
@@ -84,24 +88,76 @@ function getUVColor(uv: number): string {
   return '#B71C1C';
 }
 
+function getAQILabel(pm10: number): string {
+  if (pm10 < 30) return '좋음';
+  if (pm10 < 80) return '보통';
+  if (pm10 < 150) return '나쁨';
+  return '매우나쁨';
+}
+
+function getAQIColor(pm10: number): string {
+  if (pm10 < 30) return '#4CAF50';
+  if (pm10 < 80) return '#FF9800';
+  if (pm10 < 150) return '#F44336';
+  return '#9C27B0';
+}
+
+function getAQIEmoji(pm10: number): string {
+  if (pm10 < 30) return '😊';
+  if (pm10 < 80) return '😐';
+  if (pm10 < 150) return '😷';
+  return '🚫';
+}
+
+function getPM25Label(pm25: number): string {
+  if (pm25 < 15) return '좋음';
+  if (pm25 < 35) return '보통';
+  if (pm25 < 75) return '나쁨';
+  return '매우나쁨';
+}
+
+function getPM25Color(pm25: number): string {
+  if (pm25 < 15) return '#4CAF50';
+  if (pm25 < 35) return '#FF9800';
+  if (pm25 < 75) return '#F44336';
+  return '#9C27B0';
+}
+
 async function fetchWeatherData(): Promise<WeatherData> {
   const geoRes = await fetch('https://ipapi.co/json/');
   if (!geoRes.ok) throw new Error('위치 정보를 가져올 수 없어요');
   const geo = await geoRes.json();
   const { latitude, longitude, city } = geo;
 
-  const weatherRes = await fetch(
-    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weathercode&daily=uv_index_max&timezone=auto&forecast_days=1`
-  );
+  const [weatherRes, aqRes] = await Promise.all([
+    fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weathercode&daily=uv_index_max&timezone=auto&forecast_days=1`
+    ),
+    fetch(
+      `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=pm10,pm2_5&timezone=auto`
+    ).catch(() => null),
+  ]);
+
   if (!weatherRes.ok) throw new Error('날씨 정보를 가져올 수 없어요');
   const weather = await weatherRes.json();
 
+  let pm10: number | null = null;
+  let pm25: number | null = null;
+  if (aqRes?.ok) {
+    const aq = await aqRes.json();
+    pm10 = aq.current?.pm10 != null ? Math.round(aq.current.pm10) : null;
+    pm25 = aq.current?.pm2_5 != null ? Math.round(aq.current.pm2_5) : null;
+  }
+
   return {
     temp: Math.round(weather.current.temperature_2m ?? 20),
+    feelsLike: Math.round(weather.current.apparent_temperature ?? weather.current.temperature_2m ?? 20),
     humidity: Math.round(weather.current.relative_humidity_2m ?? 60),
     uvIndex: Math.round(weather.daily?.uv_index_max?.[0] ?? 3),
     weatherCode: weather.current.weathercode ?? 0,
     cityName: city ?? '내 위치',
+    pm10,
+    pm25,
   };
 }
 
@@ -110,13 +166,15 @@ function generateBeautyTips(
   skinType: string | null,
   colorSeason: string | null
 ): BeautyTip[] {
-  const { temp, humidity, uvIndex, weatherCode } = weather;
+  const { temp, humidity, uvIndex, weatherCode, pm10, pm25 } = weather;
   const isHot = temp >= 26;
   const isCold = temp < 14;
   const isHumid = humidity >= 68;
   const isDry = humidity < 42;
   const isHighUV = uvIndex >= 6;
   const isRaining = weatherCode >= 51 && weatherCode <= 99;
+  const isHighDust = pm10 != null && pm10 >= 80;
+  const isHighFine = pm25 != null && pm25 >= 35;
 
   const tips: BeautyTip[] = [];
 
@@ -144,6 +202,12 @@ function generateBeautyTips(
     tips.push({ icon: '✨', category: '피부관리', tip: isHot ? '좋은 피부 컨디션! 더운 날엔 가벼운 로션으로 충분해요. 선크림만 잊지 마세요.' : '균형 잡힌 피부를 유지해줘요. 기초케어를 꼼꼼히 해주면 더 빛나요!' });
   } else {
     tips.push({ icon: '💆', category: '기초케어', tip: isDry ? '건조한 날씨에는 수분 보습에 신경 써주세요!' : '피부 타입에 맞는 기초케어를 꼼꼼히 챙겨주세요.' });
+  }
+
+  if (isHighDust) {
+    tips.push({ icon: '😷', category: '미세먼지 대처', tip: `미세먼지 나쁨(${pm10}μg/㎥)! 외출 시 마스크 필수. 귀가 후 이중 클렌징으로 모공 속 먼지를 제거하고, 피부 장벽 강화 세럼을 사용하세요.` });
+  } else if (isHighFine && !isHighDust) {
+    tips.push({ icon: '🌫️', category: '초미세먼지 대처', tip: `초미세먼지 주의(${pm25}μg/㎥)! 가벼운 메이크업으로 피부 모공 부담을 줄이고, 외출 후엔 이중 세안으로 초미세먼지를 깨끗이 제거하세요.` });
   }
 
   if (isHighUV) {
@@ -192,7 +256,49 @@ function generateBeautyTips(
     }
   }
 
-  return tips.slice(0, 4);
+  return tips;
+}
+
+function ExpandableTipCard({ tip, index }: { tip: BeautyTip; index: number }) {
+  const [expanded, setExpanded] = useState(false);
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  const toggle = () => {
+    Animated.timing(rotateAnim, {
+      toValue: expanded ? 0 : 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+    setExpanded(prev => !prev);
+  };
+
+  const rotate = rotateAnim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '180deg'] });
+
+  return (
+    <TouchableOpacity
+      style={styles.tipCard}
+      onPress={toggle}
+      activeOpacity={0.85}
+    >
+      <View style={styles.tipHeader}>
+        <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tipIcon}>{tip.icon}</StrokedText>
+        <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.tipCategory}>{tip.category}</StrokedText>
+        <Animated.Text style={[styles.tipChevron, { transform: [{ rotate }] }]}>▼</Animated.Text>
+      </View>
+      {expanded && (
+        <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tipText}>{tip.tip}</StrokedText>
+      )}
+    </TouchableOpacity>
+  );
+}
+
+function AQIGaugeBar({ value, max, color }: { value: number; max: number; color: string }) {
+  const pct = Math.min(value / max, 1);
+  return (
+    <View style={styles.aqiBar}>
+      <View style={[styles.aqiBarFill, { width: `${pct * 100}%`, backgroundColor: color }]} />
+    </View>
+  );
 }
 
 export default function WeatherBeautyScreen() {
@@ -267,11 +373,6 @@ export default function WeatherBeautyScreen() {
                 <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.badgeValue}>{skinDisplay}</StrokedText>
               </View>
             )}
-            {!seasonDisplay && !skinDisplay && (
-              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.noProfileText}>
-                분석 결과 없음 (일반 팁 제공)
-              </StrokedText>
-            )}
           </View>
         )}
 
@@ -311,7 +412,12 @@ export default function WeatherBeautyScreen() {
                   <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.weatherStatValue}>
                     {weather.temp}°
                   </StrokedText>
-                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.weatherStatLabel}>기온</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.weatherStatLabel}>
+                    기온
+                  </StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.feelsLikeText}>
+                    체감 {weather.feelsLike}°
+                  </StrokedText>
                 </View>
                 <View style={styles.weatherStatDivider} />
                 <View style={styles.weatherStat}>
@@ -332,18 +438,64 @@ export default function WeatherBeautyScreen() {
               </View>
             </View>
 
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.tipsTitle}>
-              오늘의 맞춤 뷰티 팁
-            </StrokedText>
+            {(weather.pm10 != null || weather.pm25 != null) && (
+              <View style={styles.aqiCard}>
+                <View style={styles.aqiTitleRow}>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.aqiTitle}>
+                    대기질 현황
+                  </StrokedText>
+                  {weather.pm10 != null && (
+                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.aqiEmoji}>
+                      {getAQIEmoji(weather.pm10)}
+                    </StrokedText>
+                  )}
+                </View>
+                {weather.pm10 != null && (
+                  <View style={styles.aqiRow}>
+                    <View style={styles.aqiLabelGroup}>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.aqiLabel}>미세먼지</StrokedText>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={[styles.aqiValue, { color: getAQIColor(weather.pm10) }]}>
+                        {weather.pm10} μg/㎥
+                      </StrokedText>
+                    </View>
+                    <View style={styles.aqiRightGroup}>
+                      <AQIGaugeBar value={weather.pm10} max={200} color={getAQIColor(weather.pm10)} />
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={[styles.aqiGradeText, { color: getAQIColor(weather.pm10) }]}>
+                        {getAQILabel(weather.pm10)}
+                      </StrokedText>
+                    </View>
+                  </View>
+                )}
+                {weather.pm25 != null && (
+                  <View style={styles.aqiRow}>
+                    <View style={styles.aqiLabelGroup}>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.aqiLabel}>초미세먼지</StrokedText>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={[styles.aqiValue, { color: getPM25Color(weather.pm25) }]}>
+                        {weather.pm25} μg/㎥
+                      </StrokedText>
+                    </View>
+                    <View style={styles.aqiRightGroup}>
+                      <AQIGaugeBar value={weather.pm25} max={100} color={getPM25Color(weather.pm25)} />
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={[styles.aqiGradeText, { color: getPM25Color(weather.pm25) }]}>
+                        {getPM25Label(weather.pm25)}
+                      </StrokedText>
+                    </View>
+                  </View>
+                )}
+              </View>
+            )}
+
+            <View style={styles.tipsTitleRow}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.tipsTitle}>
+                오늘의 맞춤 뷰티 팁
+              </StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tipsTap}>
+                탭해서 내용 보기
+              </StrokedText>
+            </View>
 
             {tips.map((tip, i) => (
-              <View key={i} style={styles.tipCard}>
-                <View style={styles.tipHeader}>
-                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tipIcon}>{tip.icon}</StrokedText>
-                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.tipCategory}>{tip.category}</StrokedText>
-                </View>
-                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tipText}>{tip.tip}</StrokedText>
-              </View>
+              <ExpandableTipCard key={i} tip={tip} index={i} />
             ))}
 
             {!colorSeason && !skinType && (
@@ -437,11 +589,6 @@ const styles = StyleSheet.create({
     height: 32,
     backgroundColor: '#DDDDDD',
   },
-  noProfileText: {
-    fontSize: 12,
-    color: '#999999',
-    fontFamily: FONTS.PIXEL,
-  },
   loadingBox: {
     alignItems: 'center',
     marginVertical: 40,
@@ -484,7 +631,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.85)',
     borderRadius: 16,
     padding: 20,
-    marginBottom: 24,
+    marginBottom: 14,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
@@ -514,7 +661,7 @@ const styles = StyleSheet.create({
   },
   weatherStat: {
     alignItems: 'center',
-    gap: 4,
+    gap: 2,
   },
   weatherStatValue: {
     fontSize: 28,
@@ -526,26 +673,103 @@ const styles = StyleSheet.create({
     color: '#777777',
     fontFamily: FONTS.PIXEL,
   },
+  feelsLikeText: {
+    fontSize: 10,
+    color: '#AAAAAA',
+    fontFamily: FONTS.PIXEL,
+    marginTop: 1,
+  },
   weatherStatDivider: {
     width: 1,
-    height: 40,
+    height: 50,
     backgroundColor: '#E0E0E0',
+  },
+  aqiCard: {
+    width: width * 0.88,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    gap: 12,
+  },
+  aqiTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  aqiTitle: {
+    fontSize: 14,
+    color: '#444444',
+    fontFamily: FONTS.PIXEL,
+  },
+  aqiEmoji: {
+    fontSize: 18,
+  },
+  aqiRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  aqiLabelGroup: {
+    width: 80,
+    gap: 2,
+  },
+  aqiLabel: {
+    fontSize: 11,
+    color: '#666666',
+    fontFamily: FONTS.PIXEL,
+  },
+  aqiValue: {
+    fontSize: 10,
+    fontFamily: FONTS.PIXEL,
+  },
+  aqiRightGroup: {
+    flex: 1,
+    gap: 4,
+  },
+  aqiBar: {
+    height: 8,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  aqiBarFill: {
+    height: '100%',
+    borderRadius: 4,
+  },
+  aqiGradeText: {
+    fontSize: 10,
+    fontFamily: FONTS.PIXEL,
+    textAlign: 'right',
+  },
+  tipsTitleRow: {
+    width: width * 0.88,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
   tipsTitle: {
     fontSize: 18,
     color: '#333333',
     fontFamily: FONTS.PIXEL,
-    marginBottom: 12,
-    alignSelf: 'flex-start',
-    paddingHorizontal: 24,
+  },
+  tipsTap: {
+    fontSize: 10,
+    color: '#AAAAAA',
+    fontFamily: FONTS.PIXEL,
   },
   tipCard: {
     width: width * 0.88,
     backgroundColor: 'rgba(255,255,255,0.8)',
     borderRadius: 12,
     padding: 16,
-    marginBottom: 12,
-    gap: 8,
+    marginBottom: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
@@ -566,19 +790,25 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: COLORS.PRIMARY,
     fontFamily: FONTS.PIXEL,
+    flex: 1,
+  },
+  tipChevron: {
+    fontSize: 11,
+    color: '#AAAAAA',
   },
   tipText: {
     fontSize: 13,
     color: '#444444',
     fontFamily: FONTS.PIXEL,
     lineHeight: 22,
+    marginTop: 10,
   },
   analysisHint: {
     backgroundColor: 'rgba(198,235,141,0.3)',
     borderRadius: 12,
     padding: 16,
     marginTop: 8,
-    marginHorizontal: 24,
+    width: width * 0.88,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: 'rgba(198,235,141,0.6)',
