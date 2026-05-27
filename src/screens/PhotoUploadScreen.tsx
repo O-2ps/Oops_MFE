@@ -12,6 +12,7 @@ import { COLORS, FONTS } from '../constants/theme';
 import { RootStackParamList } from '../types/navigation';
 import { analyzePersonalColor } from '../api/personalColor';
 import { extractHexColors } from '../utils/colorAnalysis';
+import { applySkinToneCorrection } from '../utils/skinToneCorrection';
 
 const { width, height } = Dimensions.get('window');
 
@@ -61,7 +62,8 @@ export default function PhotoUploadScreen() {
   const extractColors = async (uri: string) => {
     try {
       const colorResult = await ImageColors.getColors(uri, { fallback: '#D4A574', cache: false });
-      const hexColors = extractHexColors(colorResult);
+      const rawColors = extractHexColors(colorResult);
+      const hexColors = applySkinToneCorrection(rawColors);
       extractedColorsRef.current = hexColors;
 
       const primary = hexColors[0] ?? '#D4A574';
