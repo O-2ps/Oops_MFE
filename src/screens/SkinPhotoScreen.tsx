@@ -6,7 +6,6 @@ import * as ImagePicker from 'expo-image-picker';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
-import FaceGuide from '../components/FaceGuide';
 import { COLORS, FONTS } from '../constants/theme';
 import { RootStackParamList } from '../types/navigation';
 
@@ -81,7 +80,9 @@ export default function SkinPhotoScreen() {
           {imageUri ? (
             <Image source={{ uri: imageUri }} style={styles.imagePreview} />
           ) : (
-            <FaceGuide width={width * 0.7} height={width * 0.7 * (4 / 3)} />
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.placeholder}>
+              사진을 촬영하거나{'\n'}갤러리에서 선택해주세요
+            </StrokedText>
           )}
         </View>
 
@@ -138,6 +139,13 @@ const styles = StyleSheet.create({
   imagePreview: {
     width: '100%',
     height: '100%',
+  },
+  placeholder: {
+    fontSize: 14,
+    color: COLORS.TEXT_MID,
+    fontFamily: FONTS.PIXEL,
+    textAlign: 'center',
+    lineHeight: 24,
   },
   buttonRow: {
     flexDirection: 'row',

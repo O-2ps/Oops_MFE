@@ -25,6 +25,12 @@
       "expo-dev-client",
       "expo-font",
       [
+        "expo-camera",
+        {
+          "cameraPermission": "피부 분석을 위해 카메라 접근이 필요합니다."
+        }
+      ],
+      [
         "@react-native-seoul/kakao-login",
         {
           "kakaoAppKey": "eef0bfabb75f20a8ac23794eb41718a3",

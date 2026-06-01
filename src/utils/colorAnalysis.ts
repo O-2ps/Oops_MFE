@@ -142,11 +142,34 @@ export function getSeasonStats(season: string): ImageColorStats {
   }
 }
 
+function skinLikeScore(hex: string): number {
+  const { h, s, l } = hexToHSL(hex);
+  const hNorm = h >= 340 ? h - 360 : h;
+
+  // Hue: 10-35도 범위, 22도 중심
+  let hueScore = -100;
+  if (hNorm >= 10 && hNorm <= 35) hueScore = -(Math.abs(hNorm - 22) * 2);
+  else if ((hNorm >= 5 && hNorm < 10) || (hNorm > 35 && hNorm <= 45)) hueScore = -40;
+
+  // Saturation: 25-55% 범위, 35% 중심 (밝은 피부일수록 채도 낮음)
+  let satScore = -100;
+  if (s >= 25 && s <= 55) satScore = -(Math.abs(s - 35) * 1.5);
+  else if ((s >= 18 && s < 25) || (s > 55 && s <= 65)) satScore = -30;
+
+  // Lightness: 밝을수록 높은 점수 (탁한 색 방지) — 65% 중심, 50-82% 범위
+  let lightScore = -100;
+  if (l >= 50 && l <= 82) lightScore = -(Math.abs(l - 65) * 0.8);
+  else if ((l >= 40 && l < 50) || (l > 82 && l <= 88)) lightScore = -20;
+
+  return (hueScore * 3) + (satScore * 2) + lightScore;
+}
+
 export function extractHexColors(colorResult: any): string[] {
+  if (!colorResult) return [];
+
   const colors: string[] = [];
-  if (!colorResult) return colors;
   if (colorResult.platform === 'ios') {
-    ['background', 'primary', 'secondary', 'detail'].forEach(k => {
+    ['primary', 'secondary', 'detail'].forEach(k => {
       if (colorResult[k]) colors.push(colorResult[k]);
     });
   } else if (colorResult.platform === 'android') {
@@ -158,5 +181,19 @@ export function extractHexColors(colorResult: any): string[] {
       if (colorResult[k]) colors.push(colorResult[k]);
     });
   }
-  return colors.filter(c => typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
+
+  const validHex = colors.filter(c => typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
+  if (validHex.length === 0) return [];
+
+  // 피부톤 범위 필터: H 10-45° 또는 345-360°, S 18-65%, L 45-85%
+  // L 하한을 45로 올려서 탁하고 어두운 색 제거
+  const skinTones = validHex.filter(hex => {
+    const { h, s, l } = hexToHSL(hex);
+    return ((h >= 10 && h <= 45) || (h >= 345 && h <= 360)) && s >= 18 && s <= 65 && l >= 45 && l <= 85;
+  });
+
+  if (skinTones.length === 0) return [];
+
+  skinTones.sort((a, b) => skinLikeScore(b) - skinLikeScore(a));
+  return [skinTones[0]];
 }

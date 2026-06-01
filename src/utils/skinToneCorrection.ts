@@ -40,13 +40,17 @@ function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
 }
 
 /**
- * 해당 색상이 피부톤 범위에 속하는지 판별.
- * Hue 0–45°(warm red/orange), Saturation 12–70%, Lightness 20–88%
+ * 엄격한 피부톤 범위 판별 (HSV 기준)
+ * Hue: 10-35°, Saturation: 20-60%, Lightness: 30-75%
  */
 function isSkinTone(hex: string): boolean {
   const [r, g, b] = hexToRgb(hex);
   const [h, s, l] = rgbToHsl(r, g, b);
-  return (h <= 45 || h >= 340) && s >= 12 && s <= 70 && l >= 20 && l <= 88;
+  // 핵심: 10-35도와 345-360도 범위만 피부톤
+  const hueInRange = (h >= 10 && h <= 35) || (h >= 345 && h <= 360);
+  const satInRange = s >= 20 && s <= 60;
+  const lightInRange = l >= 30 && l <= 75;
+  return hueInRange && satInRange && lightInRange;
 }
 
 /**

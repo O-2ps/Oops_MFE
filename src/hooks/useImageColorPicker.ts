@@ -3,7 +3,6 @@ import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import ImageColors from 'react-native-image-colors';
 import { extractHexColors } from '../utils/colorAnalysis';
-import { applySkinToneCorrection } from '../utils/skinToneCorrection';
 
 const PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
   mediaTypes: ['images'],
@@ -43,7 +42,6 @@ export function useImageColorPicker(): ImageColorPickerState & ImageColorPickerA
   const [dominantColor, setDominantColor] = useState<string | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
 
-  // ref로 최신 색상값을 컴포넌트 외부에서도 접근 가능하게 유지
   const correctedColorsRef = useRef<string[]>([]);
   correctedColorsRef.current = correctedColors;
 
@@ -51,11 +49,9 @@ export function useImageColorPicker(): ImageColorPickerState & ImageColorPickerA
     setIsExtracting(true);
     try {
       const colorResult = await ImageColors.getColors(uri, { fallback: '#D4A574', cache: false });
-      const raw = extractHexColors(colorResult);
-      const corrected = applySkinToneCorrection(raw);
-
-      setCorrectedColors(corrected);
-      setDominantColor(corrected[0] ?? '#D4A574');
+      const extracted = extractHexColors(colorResult);
+      setCorrectedColors(extracted);
+      setDominantColor(extracted[0] ?? '#D4A574');
     } catch {
       setDominantColor('#D4A574');
     } finally {
@@ -65,7 +61,7 @@ export function useImageColorPicker(): ImageColorPickerState & ImageColorPickerA
 
   const handleResult = async (result: ImagePicker.ImagePickerResult) => {
     if (result.canceled || !result.assets?.length) return;
-    const uri = result.assets[0].uri;
+    const { uri } = result.assets[0];
     setImageUri(uri);
     setCorrectedColors([]);
     setDominantColor(null);
