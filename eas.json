@@ -11,10 +11,5 @@
       "distribution": "internal"
     },
     "production": {}
-  },
-  "update": {
-    "production": {
-      "channel": "production"
-    }
   }
 }

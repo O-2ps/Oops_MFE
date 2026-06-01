@@ -8,7 +8,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.oops.mfe"
+      "bundleIdentifier": "com.oops.mfe",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.oops.mfe",
@@ -19,6 +22,7 @@
       "favicon": "./icons/logo.svg"
     },
     "plugins": [
+      "expo-dev-client",
       "expo-font",
       [
         "@react-native-seoul/kakao-login",
@@ -27,6 +31,11 @@
           "overrideKotlinVersion": "1.9.0"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "13639715-2425-43b8-8cff-5200c23ae62a"
+      }
+    }
   }
 }
