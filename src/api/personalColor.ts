@@ -1,5 +1,6 @@
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 import { getToken } from '../utils/tokenStorage';
+
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 export interface SeasonInfo {
   season: string;

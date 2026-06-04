@@ -17,19 +17,12 @@ export default function SkinPhotoScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [imageUri, setImageUri] = useState<string | null>(null);
 
-  const requestPermissions = async () => {
-    const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
-    const mediaStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (cameraStatus.status !== 'granted' || mediaStatus.status !== 'granted') {
-      Alert.alert('권한 필요', '카메라 및 갤러리 접근 권한이 필요합니다.');
-      return false;
-    }
-    return true;
-  };
-
   const handleTakePhoto = async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('권한 필요', '카메라 접근 권한이 필요합니다.');
+      return;
+    }
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ['images'],
       allowsEditing: true,
@@ -42,8 +35,11 @@ export default function SkinPhotoScreen() {
   };
 
   const handlePickImage = async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('권한 필요', '갤러리 접근 권한이 필요합니다.');
+      return;
+    }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true,

@@ -17,7 +17,6 @@ import ResultScreen from './src/screens/ResultScreen';
 import SurveyScreen from './src/screens/SurveyScreen';
 import ColorMatchScreen from './src/screens/ColorMatchScreen';
 import WeatherBeautyScreen from './src/screens/WeatherBeautyScreen';
-import BG from './assets/icons/BG.svg';
 import * as S from './src/screens/style';
 import StrokedText from './src/components/StrokedText';
 import { RootStackParamList } from './src/types/navigation';
