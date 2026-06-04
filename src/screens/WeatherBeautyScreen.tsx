@@ -17,7 +17,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { getSavedColorResult, getSavedSkinResult } from '../utils/analysisStorage';
 import { WeatherData, fetchWeatherData } from '../api/weatherApi';
-import { generateBeautyTips } from '../utils/beautyTips';
+import { generateBeautyTips, BeautyTip } from '../utils/beautyTips';
 import {
   getWeatherEmoji, getWeatherDesc,
   getUVLabel, getUVColor,
