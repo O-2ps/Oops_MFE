@@ -9,13 +9,13 @@
     "icon": "./assets/images/icon.png",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.oops.mfe",
+      "bundleIdentifier": "com.oops.beauty",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.oops.mfe",
+      "package": "com.oops.beauty",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
