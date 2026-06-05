@@ -59,7 +59,7 @@ export default function LastCheckScreen() {
           </StrokedText>
         </S.InstructionContainer>
 
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: 40 }]}>
           <S.FooterAction onPress={handleStart}>
             <StrokedText strokeColor={COLORS.WHITE} strokeWidth={2} style={styles.footerText}>
               [ 분석 시작하기 ]

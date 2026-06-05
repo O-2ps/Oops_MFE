@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { View, ActivityIndicator, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import LandingScreen from './src/screens/LandingScreen';
 import HomeScreen from './src/screens/HomeScreen';
@@ -37,54 +38,35 @@ const MyTheme = {
 
 const NAV_ORDER: (keyof RootStackParamList)[] = ['Home', 'Skin', 'MyPage'];
 
-export default function App() {
-  const navigationRef = useNavigationContainerRef<RootStackParamList>();
-  const [currentRoute, setCurrentRoute] = useState<string>('Landing');
-  const [animationType, setAnimationType] = useState<'slide_from_right' | 'slide_from_left' | 'fade'>('fade');
-  const [hideArrows, setHideArrows] = useState(false);
-
-  const [fontsLoaded, fontError] = useFonts({
-    [FONTS.PIXEL]: require('./assets/fonts/DOSIyagiBoldface.ttf'),
-  });
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded || fontError) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
-  const handleNavigate = (direction: 'next' | 'prev') => {
-    const currentIndex = NAV_ORDER.indexOf(currentRoute as any);
-    if (currentIndex === -1) return;
-
-    let nextIndex;
-    if (direction === 'next') {
-      nextIndex = (currentIndex + 1) % NAV_ORDER.length;
-    } else {
-      nextIndex = (currentIndex - 1 + NAV_ORDER.length) % NAV_ORDER.length;
-    }
-    setAnimationType('fade');
-
-    const nextRoute = NAV_ORDER[nextIndex];
-    setTimeout(() => {
-      navigationRef.navigate(nextRoute as any);
-    }, 0);
-  };
-
-  if (!fontsLoaded && !fontError) {
-    return (
-      <S.Container style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.WHITE }}>
-        <ActivityIndicator size="large" color={COLORS.SECONDARY} />
-      </S.Container>
-    );
-  }
-
-  const showArrows = NAV_ORDER.includes(currentRoute as any) && !hideArrows;
+function AppInner({
+  onLayout,
+  navigationRef,
+  animationType,
+  setAnimationType,
+  currentRoute,
+  setCurrentRoute,
+  hideArrows,
+  setHideArrows,
+  handleNavigate,
+  showArrows,
+}: {
+  onLayout: () => void;
+  navigationRef: any;
+  animationType: 'slide_from_right' | 'slide_from_left' | 'fade';
+  setAnimationType: (v: 'slide_from_right' | 'slide_from_left' | 'fade') => void;
+  currentRoute: string;
+  setCurrentRoute: (v: string) => void;
+  hideArrows: boolean;
+  setHideArrows: (v: boolean) => void;
+  handleNavigate: (direction: 'next' | 'prev') => void;
+  showArrows: boolean;
+}) {
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.WHITE }} onLayout={onLayoutRootView}>
+    <View style={{ flex: 1, backgroundColor: COLORS.WHITE }} onLayout={onLayout}>
       <View style={{ flex: 1 }}>
-        <S.GreenBox />
+        <S.GreenBox style={{ height: Math.max(insets.top, 20), minHeight: 20 }} />
         <View style={{ flex: 1, position: 'relative' }}>
           <NavigationContainer
             ref={navigationRef}
@@ -134,10 +116,74 @@ export default function App() {
             </View>
           )}
         </View>
-        <S.GreenBox />
+        <S.GreenBox style={{ height: Math.max(insets.bottom, 20), minHeight: 20 }} />
       </View>
       <StatusBar style="auto" />
     </View>
+  );
+}
+
+export default function App() {
+  const navigationRef = useNavigationContainerRef<RootStackParamList>();
+  const [currentRoute, setCurrentRoute] = useState<string>('Landing');
+  const [animationType, setAnimationType] = useState<'slide_from_right' | 'slide_from_left' | 'fade'>('fade');
+  const [hideArrows, setHideArrows] = useState(false);
+
+  const [fontsLoaded, fontError] = useFonts({
+    [FONTS.PIXEL]: require('./assets/fonts/DOSIyagiBoldface.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded || fontError) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
+
+  const handleNavigate = (direction: 'next' | 'prev') => {
+    const currentIndex = NAV_ORDER.indexOf(currentRoute as any);
+    if (currentIndex === -1) return;
+
+    let nextIndex;
+    if (direction === 'next') {
+      nextIndex = (currentIndex + 1) % NAV_ORDER.length;
+    } else {
+      nextIndex = (currentIndex - 1 + NAV_ORDER.length) % NAV_ORDER.length;
+    }
+    setAnimationType('fade');
+
+    const nextRoute = NAV_ORDER[nextIndex];
+    setTimeout(() => {
+      navigationRef.navigate(nextRoute as any);
+    }, 0);
+  };
+
+  if (!fontsLoaded && !fontError) {
+    return (
+      <SafeAreaProvider>
+        <S.Container style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.WHITE }}>
+          <ActivityIndicator size="large" color={COLORS.SECONDARY} />
+        </S.Container>
+      </SafeAreaProvider>
+    );
+  }
+
+  const showArrows = NAV_ORDER.includes(currentRoute as any) && !hideArrows;
+
+  return (
+    <SafeAreaProvider>
+      <AppInner
+        onLayout={onLayoutRootView}
+        navigationRef={navigationRef}
+        animationType={animationType}
+        setAnimationType={setAnimationType}
+        currentRoute={currentRoute}
+        setCurrentRoute={setCurrentRoute}
+        hideArrows={hideArrows}
+        setHideArrows={setHideArrows}
+        handleNavigate={handleNavigate}
+        showArrows={showArrows}
+      />
+    </SafeAreaProvider>
   );
 }
 

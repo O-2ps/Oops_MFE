@@ -116,7 +116,7 @@ export default function LandingScreen() {
           </StrokedText>
         </S.CenterSection>
 
-        <S.ButtonSection>
+        <S.ButtonSection style={{ paddingBottom: 40 }}>
           <S.LoginButton onPress={handleKakaoLogin}>
             <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.buttonText}>
               [ 카카오톡 로그인 ]
@@ -135,13 +135,13 @@ export default function LandingScreen() {
 
 const styles = StyleSheet.create({
   noticeText: {
-    marginTop: 90,
     paddingHorizontal: 20,
     textAlign: 'center',
     fontSize: 14,
     color: COLORS.PRIMARY,
     fontFamily: FONTS.PIXEL,
     zIndex: 10,
+    marginBottom: 10,
   },
   logoContainer: {
     marginBottom: 25,

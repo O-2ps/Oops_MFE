@@ -23,7 +23,6 @@ export const MainContent = styled.View`
   align-items: center; 
   justify-content: center;
   width: 100%;
-  padding-bottom: 30px;
 `;
 
 interface StarProps {
@@ -62,7 +61,6 @@ export const CenterSection = styled.View`
   align-items: center;
   width: 100%;
   padding-horizontal: 20px;
-  margin-top: -50px; 
 `;
 
 export const Logo = styled.View`
@@ -86,7 +84,6 @@ export const SubTitle = styled.Text`
 
 export const ButtonSection = styled.View`
   padding-horizontal: 20px;
-  padding-bottom: 60px;
   gap: 15px;
   width: 100%;
   align-items: center;

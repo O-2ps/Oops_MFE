@@ -43,7 +43,10 @@ export default function HomeScreen() {
           </Animated.View>
         </S.WheelSection>
 
-        <S.FooterAction onPress={handleStartAnalysis}>
+        <S.FooterAction
+          onPress={handleStartAnalysis}
+          style={{ paddingBottom: 40 }}
+        >
           <StrokedText strokeColor={COLORS.WHITE} strokeWidth={2} style={styles.footerText}>
             [ 분석 시작하기 ]
           </StrokedText>
