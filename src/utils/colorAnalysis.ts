@@ -166,15 +166,15 @@ export function extractHexColors(colorResult: any): string[] {
 
   const colors: string[] = [];
   if (colorResult.platform === 'ios') {
-    ['primary', 'secondary', 'detail'].forEach(k => {
+    ['primary', 'secondary', 'detail', 'background'].forEach(k => {
       if (colorResult[k]) colors.push(colorResult[k]);
     });
   } else if (colorResult.platform === 'android') {
-    ['dominant', 'vibrant', 'lightVibrant', 'muted', 'lightMuted'].forEach(k => {
+    ['dominant', 'vibrant', 'lightVibrant', 'muted', 'lightMuted', 'darkMuted'].forEach(k => {
       if (colorResult[k]) colors.push(colorResult[k]);
     });
   } else {
-    ['dominant', 'vibrant', 'average'].forEach(k => {
+    ['dominant', 'vibrant', 'average', 'muted'].forEach(k => {
       if (colorResult[k]) colors.push(colorResult[k]);
     });
   }
@@ -182,13 +182,26 @@ export function extractHexColors(colorResult: any): string[] {
   const validHex = colors.filter(c => typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
   if (validHex.length === 0) return [];
 
+  // 한국인/아시아인 피부톤 범위로 확장
+  // Hue: 5-50° (핑크-베이지-오렌지), 340-360° (붉은빛 포함)
+  // Sat: 12-70% (밝은 핑크빛 피부 포함)
+  // Lightness: 35-92% (어두운 피부~밝은 피부 모두 포함)
   const skinTones = validHex.filter(hex => {
     const { h, s, l } = hexToHSL(hex);
-    return ((h >= 10 && h <= 45) || (h >= 345 && h <= 360)) && s >= 18 && s <= 65 && l >= 45 && l <= 85;
+    const hueOk = (h >= 5 && h <= 50) || (h >= 340 && h <= 360);
+    const satOk = s >= 12 && s <= 70;
+    const lightOk = l >= 35 && l <= 92;
+    return hueOk && satOk && lightOk;
   });
 
-  if (skinTones.length === 0) return [];
+  if (skinTones.length > 0) {
+    // 피부톤 범위 내에서 가장 피부에 가까운 색상 반환
+    skinTones.sort((a, b) => skinLikeScore(b) - skinLikeScore(a));
+    return [skinTones[0]];
+  }
 
-  skinTones.sort((a, b) => skinLikeScore(b) - skinLikeScore(a));
-  return [skinTones[0]];
+  // 피부톤 범위 필터 통과한 색상이 없으면, 전체에서 skinLikeScore 가장 높은 것 반환
+  // (배경/머리카락이 dominant인 경우 최선의 근사값 사용)
+  const sorted = [...validHex].sort((a, b) => skinLikeScore(b) - skinLikeScore(a));
+  return [sorted[0]];
 }
