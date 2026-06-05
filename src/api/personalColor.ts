@@ -1,4 +1,5 @@
 import { getToken } from '../utils/tokenStorage';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
@@ -24,9 +25,22 @@ export const fetchSeasons = async (): Promise<SeasonInfo[]> => {
 };
 
 export const analyzePersonalColor = async (imageUri: string): Promise<any> => {
+  // Vercel 서버리스 함수의 4.5MB 제한을 초과하지 않도록 업로드 전 이미지 리사이즈/압축
+  let uploadUri = imageUri;
+  try {
+    const compressed = await manipulateAsync(
+      imageUri,
+      [{ resize: { width: 1024 } }],
+      { compress: 0.7, format: SaveFormat.JPEG }
+    );
+    uploadUri = compressed.uri;
+  } catch {
+    // 압축 실패 시 원본 URI 사용
+  }
+
   const formData = new FormData();
   formData.append('image', {
-    uri: imageUri,
+    uri: uploadUri,
     name: 'photo.jpg',
     type: 'image/jpeg',
   } as any);
