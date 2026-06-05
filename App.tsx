@@ -40,7 +40,7 @@ const NAV_ORDER: (keyof RootStackParamList)[] = ['Home', 'Skin', 'MyPage'];
 export default function App() {
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
   const [currentRoute, setCurrentRoute] = useState<string>('Landing');
-  const [animationType, setAnimationType] = useState<'slide_from_right' | 'slide_from_left'>('slide_from_right');
+  const [animationType, setAnimationType] = useState<'slide_from_right' | 'slide_from_left' | 'fade'>('fade');
   const [hideArrows, setHideArrows] = useState(false);
 
   const [fontsLoaded, fontError] = useFonts({
@@ -60,11 +60,10 @@ export default function App() {
     let nextIndex;
     if (direction === 'next') {
       nextIndex = (currentIndex + 1) % NAV_ORDER.length;
-      setAnimationType('slide_from_right');
     } else {
       nextIndex = (currentIndex - 1 + NAV_ORDER.length) % NAV_ORDER.length;
-      setAnimationType('slide_from_left');
     }
+    setAnimationType('fade');
 
     const nextRoute = NAV_ORDER[nextIndex];
     setTimeout(() => {
