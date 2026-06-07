@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet, View, Dimensions, TouchableOpacity,
-  Animated, ActivityIndicator, Alert,
+  ActivityIndicator, Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as S from './style';
@@ -45,9 +45,6 @@ export default function SurveyScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fadeAnim = useRef(new Animated.Value(1)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
-
   useEffect(() => {
     getSkinQuestions()
       .then(setQuestions)
@@ -68,19 +65,8 @@ export default function SurveyScreen() {
   }, []);
 
   const animateTransition = useCallback((callback: () => void) => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 0, duration: 180, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: -18, duration: 180, useNativeDriver: true }),
-    ]).start(() => {
-      callback();
-      slideAnim.setValue(18);
-      Animated.parallel([
-        Animated.timing(fadeAnim, { toValue: 1, duration: 260, useNativeDriver: true }),
-        Animated.timing(slideAnim, { toValue: 0, duration: 260, useNativeDriver: true }),
-      ]).start();
-    });
-  }, [fadeAnim, slideAnim]);
-
+    callback();
+  }, []);
 
   const handleOptionSelect = async (questionId: string, value: string) => {
     const newAnswers = { ...answers, [questionId]: value };
@@ -174,7 +160,7 @@ export default function SurveyScreen() {
         <View style={[styles.progressFill, { width: `${((step + 1) / questions.length) * 100}%` }]} />
       </View>
 
-      <Animated.View style={[styles.inner, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+      <View style={styles.inner}>
         <View style={{ marginBottom: 10 }}>
           <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.qNumber}>
             Q{step + 1} / {questions.length}
@@ -202,7 +188,7 @@ export default function SurveyScreen() {
             </TouchableOpacity>
           ))}
         </View>
-      </Animated.View>
+      </View>
     </S.Container>
   );
 }

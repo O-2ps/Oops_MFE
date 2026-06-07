@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Alert, Animated, Dimensions, View, StyleSheet } from 'react-native';
+import React from 'react';
+import { Alert, Dimensions, View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
@@ -21,46 +21,16 @@ interface StarItemProps {
   right: number;
   size: number;
   rotate: string;
-  delay: number;
-  duration?: number;
 }
 
-function AnimatedStar({ top, right, size, rotate, delay, duration = 6000 }: StarItemProps) {
-  const floatAnim = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(floatAnim, {
-          toValue: 1,
-          duration,
-          delay,
-          useNativeDriver: true,
-        }),
-        Animated.timing(floatAnim, {
-          toValue: 0,
-          duration,
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    animation.start();
-    return () => animation.stop();
-  }, [floatAnim, delay, duration]);
-
-  const translateY = floatAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -15],
-  });
-
+function StaticStar({ top, right, size, rotate }: StarItemProps) {
   return (
     <S.StarContainer
       $top={top}
       $right={right}
       $size={size}
       $rotate={rotate}
-      as={Animated.View}
-      style={{ transform: [{ translateY }, { rotate }] }}
+      style={{ transform: [{ rotate }] }}
       pointerEvents="none"
     >
       <Star width={size} height={size} fill="#FFD1E3" />
@@ -96,12 +66,12 @@ export default function LandingScreen() {
         <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
       </View>
       <S.MainContent>
-        <AnimatedStar top={-height * 0.18} right={width * 0.78} size={width * 1.0} rotate="18deg" delay={0} duration={8200} />
-        <AnimatedStar top={height * 0.12} right={width * 0.38} size={width * 0.55} rotate="-6deg" delay={900} duration={7600} />
-        <AnimatedStar top={height * 0.32} right={width * 0.82} size={width * 0.7} rotate="10deg" delay={1800} duration={8800} />
-        <AnimatedStar top={height * 0.48} right={width * 0.45} size={width * 0.6} rotate="0deg" delay={2700} duration={7900} />
-        <AnimatedStar top={height * 0.64} right={width * 0.18} size={width * 0.85} rotate="-14deg" delay={3600} duration={9100} />
-        <AnimatedStar top={height * 0.84} right={-width * 0.08} size={width * 1.05} rotate="14deg" delay={4500} duration={8600} />
+        <StaticStar top={-height * 0.18} right={width * 0.78} size={width * 1.0} rotate="18deg" />
+        <StaticStar top={height * 0.12} right={width * 0.38} size={width * 0.55} rotate="-6deg" />
+        <StaticStar top={height * 0.32} right={width * 0.82} size={width * 0.7} rotate="10deg" />
+        <StaticStar top={height * 0.48} right={width * 0.45} size={width * 0.6} rotate="0deg" />
+        <StaticStar top={height * 0.64} right={width * 0.18} size={width * 0.85} rotate="-14deg" />
+        <StaticStar top={height * 0.84} right={-width * 0.08} size={width * 1.05} rotate="14deg" />
 
         <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.noticeText}>
           마이페이지는 로그인 후 이용 가능합니다.

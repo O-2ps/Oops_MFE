@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Image, Animated, Text, Linking } from 'react-native';
+import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Image, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
@@ -7,7 +7,6 @@ import HomeSvg from '../../assets/icons/home.svg';
 import MyPageSvg from '../../assets/icons/mypage.svg';
 import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
-import { useHomeAnimations } from '../hooks/useHomeAnimations';
 import { RootStackParamList } from '../types/navigation';
 import { COLORS, FONTS } from '../constants/theme';
 import { getKakaoProfile } from '../api/kakaoAuth';
@@ -36,8 +35,6 @@ export default function MyPageScreen() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [wishlist, setWishlist] = useState<CrawledProduct[]>([]);
-  const { floatAnim } = useHomeAnimations();
-
   useEffect(() => {
     const checkLoginStatus = async () => {
       const token = await getToken();
@@ -129,9 +126,9 @@ export default function MyPageScreen() {
           </S.Header>
 
           <S.WheelSection>
-            <Animated.View style={{ transform: [{ translateY: floatAnim }] }}>
+            <View>
               <MyPageSvg width={width * 0.7} height={width * 0.7} />
-            </Animated.View>
+            </View>
           </S.WheelSection>
 
           <S.FooterAction onPress={isLoggedIn ? handleEnter : undefined}>

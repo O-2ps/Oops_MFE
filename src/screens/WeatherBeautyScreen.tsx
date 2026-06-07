@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Animated,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as S from './style';
@@ -45,29 +44,17 @@ const SKIN_NAMES: Record<string, string> = {
 
 function ExpandableTipCard({ tip, index }: { tip: BeautyTip; index: number }) {
   const [expanded, setExpanded] = useState(false);
-  const rotateAnim = useRef(new Animated.Value(0)).current;
-
-  const toggle = () => {
-    Animated.timing(rotateAnim, {
-      toValue: expanded ? 0 : 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-    setExpanded(prev => !prev);
-  };
-
-  const rotate = rotateAnim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '180deg'] });
 
   return (
     <TouchableOpacity
       style={styles.tipCard}
-      onPress={toggle}
+      onPress={() => setExpanded(prev => !prev)}
       activeOpacity={0.85}
     >
       <View style={styles.tipHeader}>
         <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tipIcon}>{tip.icon}</StrokedText>
         <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.tipCategory}>{tip.category}</StrokedText>
-        <Animated.Text style={[styles.tipChevron, { transform: [{ rotate }] }]}>▼</Animated.Text>
+        <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0} style={[styles.tipChevron, expanded && { transform: [{ rotate: '180deg' }] }]}>▼</StrokedText>
       </View>
       {expanded && (
         <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tipText}>{tip.tip}</StrokedText>
