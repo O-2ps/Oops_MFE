@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
     color: COLORS.PRIMARY,
     fontFamily: FONTS.PIXEL,
     zIndex: 10,
+    marginTop: 20,
     marginBottom: 10,
   },
   logoContainer: {

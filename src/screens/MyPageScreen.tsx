@@ -116,26 +116,28 @@ export default function MyPageScreen() {
               </TouchableOpacity>
             </View>
           )}
-          <S.Header>
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.stepText}>
-              3.
-            </StrokedText>
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.introTitleText}>
-              마이페이지
-            </StrokedText>
-          </S.Header>
+          <View style={{ marginTop: -80 }}>
+            <S.Header>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.stepText}>
+                3.
+              </StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.introTitleText}>
+                마이페이지
+              </StrokedText>
+            </S.Header>
 
-          <S.WheelSection>
-            <View>
-              <MyPageSvg width={width * 0.7} height={width * 0.7} />
-            </View>
-          </S.WheelSection>
+            <S.WheelSection>
+              <View>
+                <MyPageSvg width={width * 0.7} height={width * 0.7} />
+              </View>
+            </S.WheelSection>
 
-          <S.FooterAction onPress={isLoggedIn ? handleEnter : undefined}>
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.introFooterText}>
-              {isLoggedIn ? '[ 들어가기 ]' : '[ 로그인을 하지 않았습니다. ]'}
-            </StrokedText>
-          </S.FooterAction>
+            <S.FooterAction onPress={isLoggedIn ? handleEnter : undefined}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.introFooterText}>
+                {isLoggedIn ? '[ 들어가기 ]' : '[ 로그인을 하지 않았습니다. ]'}
+              </StrokedText>
+            </S.FooterAction>
+          </View>
         </S.MainContent>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
