@@ -51,8 +51,9 @@ export default function LandingScreen() {
         }
         navigation.navigate('Home');
       }
-    } catch {
-      Alert.alert('로그인 실패', '카카오 로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } catch (err: any) {
+      console.error('[KakaoLogin] 오류:', err?.code, err?.message, err);
+      Alert.alert('로그인 실패', `카카오 로그인 중 오류가 발생했습니다.\n(${err?.code ?? err?.message ?? '알 수 없는 오류'})`);
     }
   };
 

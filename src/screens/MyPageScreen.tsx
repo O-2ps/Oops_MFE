@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Image, Text, Linking } from 'react-native';
+import { Animated, Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Image, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
@@ -7,6 +7,7 @@ import HomeSvg from '../../assets/icons/home.svg';
 import MyPageSvg from '../../assets/icons/mypage.svg';
 import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
+import { useHomeAnimations } from '../hooks/useHomeAnimations';
 import { RootStackParamList } from '../types/navigation';
 import { COLORS, FONTS } from '../constants/theme';
 import { getKakaoProfile } from '../api/kakaoAuth';
@@ -35,6 +36,8 @@ export default function MyPageScreen() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [wishlist, setWishlist] = useState<CrawledProduct[]>([]);
+  const { floatAnim } = useHomeAnimations();
+
   useEffect(() => {
     const checkLoginStatus = async () => {
       const token = await getToken();
@@ -116,28 +119,26 @@ export default function MyPageScreen() {
               </TouchableOpacity>
             </View>
           )}
-          <View style={{ marginTop: -80 }}>
-            <S.Header>
-              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.stepText}>
-                3.
-              </StrokedText>
-              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.introTitleText}>
-                마이페이지
-              </StrokedText>
-            </S.Header>
+          <S.Header>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.stepText}>
+              3.
+            </StrokedText>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.introTitleText}>
+              마이페이지
+            </StrokedText>
+          </S.Header>
 
-            <S.WheelSection>
-              <View>
-                <MyPageSvg width={width * 0.7} height={width * 0.7} />
-              </View>
-            </S.WheelSection>
+          <S.WheelSection>
+            <Animated.View style={{ transform: [{ translateY: floatAnim }] }}>
+              <MyPageSvg width={width * 0.7} height={width * 0.7} />
+            </Animated.View>
+          </S.WheelSection>
 
-            <S.FooterAction onPress={isLoggedIn ? handleEnter : undefined}>
-              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.introFooterText}>
-                {isLoggedIn ? '[ 들어가기 ]' : '[ 로그인을 하지 않았습니다. ]'}
-              </StrokedText>
-            </S.FooterAction>
-          </View>
+          <S.FooterAction onPress={isLoggedIn ? handleEnter : undefined}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.introFooterText}>
+              {isLoggedIn ? '[ 들어가기 ]' : '[ 로그인을 하지 않았습니다. ]'}
+            </StrokedText>
+          </S.FooterAction>
         </S.MainContent>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>

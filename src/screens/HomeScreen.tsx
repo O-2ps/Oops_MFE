@@ -1,11 +1,12 @@
 import React from 'react';
-import { Dimensions, View, StyleSheet } from 'react-native';
+import { Animated, Dimensions, View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
 import ColorsSvg from '../../assets/icons/colors.svg';
 import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
+import { useHomeAnimations } from '../hooks/useHomeAnimations';
 import { RootStackParamList } from '../types/navigation';
 import { COLORS, FONTS } from '../constants/theme';
 
@@ -15,6 +16,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const { floatAnim, spin } = useHomeAnimations();
 
   const handleStartAnalysis = () => {
     navigation.navigate('LastCheck', { from: 'color' });
@@ -36,9 +38,9 @@ export default function HomeScreen() {
         </S.Header>
 
         <S.WheelSection>
-          <View>
+          <Animated.View style={{ transform: [{ translateY: floatAnim }, { rotate: spin }] }}>
             <ColorsSvg width={width * 0.7} height={width * 0.7} />
-          </View>
+          </Animated.View>
         </S.WheelSection>
 
         <S.FooterAction
