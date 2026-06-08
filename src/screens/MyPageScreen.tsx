@@ -5,7 +5,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
 import HomeSvg from '../../assets/icons/home.svg';
 import MyPageSvg from '../../assets/icons/mypage.svg';
-import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
 import { useHomeAnimations } from '../hooks/useHomeAnimations';
 import { RootStackParamList } from '../types/navigation';
@@ -15,8 +14,9 @@ import { getToken } from '../utils/tokenStorage';
 import { getUserHistory, HistoryItem } from '../api/userApi';
 import { CrawledProduct } from '../utils/productRecommend';
 import { getWishlist, removeFromWishlist } from '../utils/wishlistStorage';
+import { carouselRef } from '../utils/carouselRef';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'MyPage'>;
 
@@ -71,7 +71,7 @@ export default function MyPageScreen() {
   }, []);
 
   const handleHome = () => {
-    navigation.navigate('Home');
+    carouselRef.navigate?.(0, 'prev');
   };
 
   useEffect(() => {
@@ -103,11 +103,7 @@ export default function MyPageScreen() {
   }, [navigation]);
 
   return (
-    <S.Container>
-      <View style={StyleSheet.absoluteFill}>
-        <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
-      </View>
-
+    <S.Container style={{ backgroundColor: 'transparent' }}>
       {!isEntered ? (
         <S.MainContent>
           {!isLoggedIn && (
