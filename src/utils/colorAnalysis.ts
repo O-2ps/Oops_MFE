@@ -161,6 +161,27 @@ function skinLikeScore(hex: string): number {
   return (hueScore * 3) + (satScore * 2) + lightScore;
 }
 
+export function extractAllHexColors(colorResult: any): string[] {
+  if (!colorResult) return [];
+
+  const colors: string[] = [];
+  if (colorResult.platform === 'ios') {
+    ['primary', 'secondary', 'detail', 'background'].forEach(k => {
+      if (colorResult[k]) colors.push(colorResult[k]);
+    });
+  } else if (colorResult.platform === 'android') {
+    ['dominant', 'vibrant', 'lightVibrant', 'muted', 'lightMuted', 'darkMuted'].forEach(k => {
+      if (colorResult[k]) colors.push(colorResult[k]);
+    });
+  } else {
+    ['dominant', 'vibrant', 'average', 'muted'].forEach(k => {
+      if (colorResult[k]) colors.push(colorResult[k]);
+    });
+  }
+
+  return colors.filter(c => typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
+}
+
 export function extractHexColors(colorResult: any): string[] {
   if (!colorResult) return [];
 

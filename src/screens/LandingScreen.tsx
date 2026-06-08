@@ -89,12 +89,12 @@ export default function LandingScreen() {
 
         <S.ButtonSection style={{ paddingBottom: 40 }}>
           <S.LoginButton onPress={handleKakaoLogin}>
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.buttonText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.buttonText} numberOfLines={1}>
               [ 카카오톡 로그인 ]
             </StrokedText>
           </S.LoginButton>
           <S.LoginButton onPress={handleGuestLogin}>
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.buttonText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.buttonText} numberOfLines={1}>
               [ 비회원 로그인 ]
             </StrokedText>
           </S.LoginButton>

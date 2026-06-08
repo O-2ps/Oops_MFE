@@ -20,7 +20,7 @@ import { COLORS, FONTS } from '../constants/theme';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { getSavedColorResult } from '../utils/analysisStorage';
-import { hexToHSL, scoreColorForSeason, extractHexColors } from '../utils/colorAnalysis';
+import { hexToHSL, scoreColorForSeason, extractAllHexColors } from '../utils/colorAnalysis';
 
 const { width, height } = Dimensions.get('window');
 
@@ -99,7 +99,7 @@ export default function ColorMatchScreen() {
       setIsExtracting(true);
       try {
         const colorResult = await ImageColors.getColors(uri, { fallback: '#888888', cache: false });
-        const colors = extractHexColors(colorResult);
+        const colors = extractAllHexColors(colorResult);
         setExtractedColors(colors);
         if (savedSeason && colors.length > 0) {
           const scores = colors.map((c: string) => scoreColorForSeason(c, savedSeason));
@@ -137,7 +137,7 @@ export default function ColorMatchScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.backText}>← 뒤로</StrokedText>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.backText} numberOfLines={1}>← 뒤로</StrokedText>
         </TouchableOpacity>
 
         <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={3} style={styles.title}>
@@ -241,20 +241,20 @@ export default function ColorMatchScreen() {
         <View style={styles.actions}>
           {imageUri && (
             <TouchableOpacity onPress={reset} style={styles.resetBtn} activeOpacity={0.7}>
-              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.resetText}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.resetText} numberOfLines={1}>
                 [ 다른 사진 분석하기 ]
               </StrokedText>
             </TouchableOpacity>
           )}
           {!imageUri && (
             <TouchableOpacity onPress={pickImage} style={styles.resetBtn} activeOpacity={0.7}>
-              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.resetText}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.resetText} numberOfLines={1}>
                 [ 사진 선택하기 ]
               </StrokedText>
             </TouchableOpacity>
           )}
           <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={{ top: 10, bottom: 10, left: 20, right: 20 }}>
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.goBackText}>뒤로가기</StrokedText>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.goBackText} numberOfLines={1}>뒤로가기</StrokedText>
           </TouchableOpacity>
         </View>
       </ScrollView>

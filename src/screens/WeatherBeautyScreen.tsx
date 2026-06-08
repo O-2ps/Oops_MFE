@@ -119,7 +119,7 @@ export default function WeatherBeautyScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.backText}>← 뒤로</StrokedText>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.backText} numberOfLines={1}>← 뒤로</StrokedText>
         </TouchableOpacity>
 
         <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={3} style={styles.title}>
@@ -162,7 +162,7 @@ export default function WeatherBeautyScreen() {
               {error}
             </StrokedText>
             <TouchableOpacity onPress={loadWeather} style={styles.retryBtn}>
-              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.retryText}>다시 시도</StrokedText>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.retryText} numberOfLines={1}>다시 시도</StrokedText>
             </TouchableOpacity>
           </View>
         )}
@@ -282,13 +282,13 @@ export default function WeatherBeautyScreen() {
         <View style={styles.actions}>
           {!loading && (
             <TouchableOpacity onPress={loadWeather} style={styles.refreshBtn} activeOpacity={0.7}>
-              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.refreshText}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.refreshText} numberOfLines={1}>
                 [ 새로고침 ]
               </StrokedText>
             </TouchableOpacity>
           )}
           <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={{ top: 10, bottom: 10, left: 20, right: 20 }}>
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.goBackText}>뒤로가기</StrokedText>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.goBackText} numberOfLines={1}>뒤로가기</StrokedText>
           </TouchableOpacity>
         </View>
       </ScrollView>

@@ -40,7 +40,7 @@ export default function SkinScreen() {
         </S.WheelSection>
 
         <S.FooterAction onPress={handleStartAnalysis}>
-          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.footerText}>
+          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.footerText} numberOfLines={1}>
             [ 분석 시작하기 ]
           </StrokedText>
         </S.FooterAction>

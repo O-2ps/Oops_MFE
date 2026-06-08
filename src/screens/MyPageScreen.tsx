@@ -109,7 +109,7 @@ export default function MyPageScreen() {
           {!isLoggedIn && (
             <View style={styles.loginPromptContainer}>
               <TouchableOpacity onPress={() => navigation.navigate('Landing')}>
-                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.loginPromptText}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.loginPromptText} numberOfLines={1}>
                   * 로그인 페이지로 이동하기
                 </StrokedText>
               </TouchableOpacity>
@@ -131,7 +131,7 @@ export default function MyPageScreen() {
           </S.WheelSection>
 
           <S.FooterAction onPress={isLoggedIn ? handleEnter : undefined}>
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.introFooterText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.introFooterText} numberOfLines={1}>
               {isLoggedIn ? '[ 들어가기 ]' : '[ 로그인을 하지 않았습니다. ]'}
             </StrokedText>
           </S.FooterAction>
@@ -170,7 +170,7 @@ export default function MyPageScreen() {
               >
                 <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.toolEmoji}>🎨</StrokedText>
                 <View style={styles.toolTextContainer}>
-                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.toolTitle}>컬러 매칭 스캐너</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.toolTitle} numberOfLines={1}>컬러 매칭 스캐너</StrokedText>
                   <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.3} style={styles.toolDesc}>
                     아이템 사진으로 내 퍼스널컬러 매칭
                   </StrokedText>
@@ -183,7 +183,7 @@ export default function MyPageScreen() {
               >
                 <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.toolEmoji}>🌤️</StrokedText>
                 <View style={styles.toolTextContainer}>
-                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.toolTitle}>날씨 맞춤 뷰티 루틴</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.toolTitle} numberOfLines={1}>날씨 맞춤 뷰티 루틴</StrokedText>
                   <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.3} style={styles.toolDesc}>
                     오늘 날씨로 맞춤 뷰티 팁
                   </StrokedText>

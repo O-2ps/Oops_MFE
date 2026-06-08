@@ -17,6 +17,7 @@ import ResultScreen from './src/screens/ResultScreen';
 import SurveyScreen from './src/screens/SurveyScreen';
 import ColorMatchScreen from './src/screens/ColorMatchScreen';
 import WeatherBeautyScreen from './src/screens/WeatherBeautyScreen';
+import HomeScreen from './src/screens/HomeScreen';
 import * as S from './src/screens/style';
 import StrokedText from './src/components/StrokedText';
 import { RootStackParamList } from './src/types/navigation';
@@ -66,7 +67,7 @@ function AppInner({
       <View style={{ flex: 1 }}>
         <S.GreenBox style={{ height: Math.max(insets.top, 20), minHeight: 20 }} />
         <View style={{ flex: 1, position: 'relative' }}>
-          {currentRoute === 'MainCarousel' && (
+          {(currentRoute === 'MainCarousel' || currentRoute === 'Home') && (
             <View style={StyleSheet.absoluteFill} pointerEvents="none">
               <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
             </View>
@@ -99,6 +100,7 @@ function AppInner({
               <Stack.Screen name="Survey" component={SurveyScreen} />
               <Stack.Screen name="ColorMatch" component={ColorMatchScreen} />
               <Stack.Screen name="WeatherBeauty" component={WeatherBeautyScreen} />
+              <Stack.Screen name="Home" component={HomeScreen} />
             </Stack.Navigator>
           </NavigationContainer>
 

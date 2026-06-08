@@ -188,7 +188,7 @@ export default function ResultScreen() {
     }
   };
 
-  const handleHome = () => navigation.navigate('Home');
+  const handleHome = () => navigation.navigate('MainCarousel');
 
   const handleShowProducts = () => {
     setDisplayedProducts(sampleProducts(productPool, 8));
@@ -437,7 +437,7 @@ export default function ResultScreen() {
               >
                 <View pointerEvents="none" style={{ alignItems: 'center', width: '100%' }}>
                   <S.FooterAction>
-                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={5} style={styles.footerText}>
+                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={5} style={styles.footerText} numberOfLines={1}>
                       {buttonText}
                     </StrokedText>
                   </S.FooterAction>
@@ -452,7 +452,7 @@ export default function ResultScreen() {
                     activeOpacity={0.7}
                   >
                     <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.smartToolIcon}>🎨</StrokedText>
-                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.smartToolText}>컬러 스캐너</StrokedText>
+                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.smartToolText} numberOfLines={1}>컬러 스캐너</StrokedText>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
@@ -461,7 +461,7 @@ export default function ResultScreen() {
                   activeOpacity={0.7}
                 >
                   <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.smartToolIcon}>🌤️</StrokedText>
-                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.smartToolText}>날씨 뷰티</StrokedText>
+                  <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.smartToolText} numberOfLines={1}>날씨 뷰티</StrokedText>
                 </TouchableOpacity>
               </View>
 

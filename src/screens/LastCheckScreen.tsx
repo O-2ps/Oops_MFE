@@ -61,7 +61,7 @@ export default function LastCheckScreen() {
 
         <View style={[styles.footer, { paddingBottom: 40 }]}>
           <S.FooterAction onPress={handleStart}>
-            <StrokedText strokeColor={COLORS.WHITE} strokeWidth={2} style={styles.footerText}>
+            <StrokedText strokeColor={COLORS.WHITE} strokeWidth={2} style={styles.footerText} numberOfLines={1}>
               [ 분석 시작하기 ]
             </StrokedText>
           </S.FooterAction>

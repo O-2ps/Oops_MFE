@@ -93,12 +93,12 @@ export default function PhotoUploadScreen() {
 
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.actionButton} onPress={pickFromCamera}>
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.actionButtonText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.actionButtonText} numberOfLines={1}>
               사진 촬영
             </StrokedText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton} onPress={pickFromGallery}>
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.actionButtonText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1.5} style={styles.actionButtonText} numberOfLines={1}>
               갤러리 선택
             </StrokedText>
           </TouchableOpacity>
@@ -106,7 +106,7 @@ export default function PhotoUploadScreen() {
 
         <View style={{ marginTop: 50, alignItems: 'center' }}>
           <S.FooterAction onPress={handleStartAnalysis} style={{ opacity: imageUri ? 1 : 0.5 }}>
-            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.footerText}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.footerText} numberOfLines={1}>
               [ 분석 시작하기 ]
             </StrokedText>
           </S.FooterAction>

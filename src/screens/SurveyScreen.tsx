@@ -151,7 +151,7 @@ export default function SurveyScreen() {
                 }}
               >
                 <View style={[styles.optionDot, { backgroundColor: COLORS.PRIMARY }]} />
-                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.optionLabel}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.optionLabel} numberOfLines={1}>
                   {opt.label}
                 </StrokedText>
               </TouchableOpacity>
@@ -196,7 +196,7 @@ export default function SurveyScreen() {
                 onPress={() => handleOptionSelect(currentQ.id, opt.value)}
               >
                 <View style={[styles.optionDot, { backgroundColor: opt.color }]} />
-                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.optionLabel}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.optionLabel} numberOfLines={1}>
                   {opt.label}
                 </StrokedText>
               </TouchableOpacity>
