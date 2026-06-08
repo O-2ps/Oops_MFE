@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './style';
 import MaskSvg from '../../assets/icons/mask.svg';
-import BG from '../../assets/icons/BG.svg';
 import StrokedText from '../components/StrokedText';
 import { useHomeAnimations } from '../hooks/useHomeAnimations';
 import { RootStackParamList } from '../types/navigation';
@@ -23,10 +22,7 @@ export default function SkinScreen() {
   };
 
   return (
-    <S.Container>
-      <View style={StyleSheet.absoluteFill}>
-        <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
-      </View>
+    <S.Container style={{ backgroundColor: 'transparent' }}>
       <S.MainContent>
         <S.Header>
           <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.stepText}>

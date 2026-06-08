@@ -6,11 +6,10 @@ import * as SplashScreen from 'expo-splash-screen';
 import { View, ActivityIndicator, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import BG from './assets/icons/BG.svg';
 
 import LandingScreen from './src/screens/LandingScreen';
-import HomeScreen from './src/screens/HomeScreen';
-import SkinScreen from './src/screens/SkinScreen';
-import MyPageScreen from './src/screens/MyPageScreen';
+import MainCarouselScreen from './src/screens/MainCarouselScreen';
 import LastCheckScreen from './src/screens/LastCheckScreen';
 import PhotoUploadScreen from './src/screens/PhotoUploadScreen';
 import SkinPhotoScreen from './src/screens/SkinPhotoScreen';
@@ -22,6 +21,7 @@ import * as S from './src/screens/style';
 import StrokedText from './src/components/StrokedText';
 import { RootStackParamList } from './src/types/navigation';
 import { COLORS, FONTS } from './src/constants/theme';
+import { carouselRef } from './src/utils/carouselRef';
 
 const { width, height } = Dimensions.get('window');
 SplashScreen.preventAutoHideAsync();
@@ -36,13 +36,12 @@ const MyTheme = {
   },
 };
 
-const NAV_ORDER: (keyof RootStackParamList)[] = ['Home', 'Skin', 'MyPage'];
+const MAIN_SCREEN_COUNT = 3;
 
 function AppInner({
   onLayout,
   navigationRef,
   animationType,
-  setAnimationType,
   currentRoute,
   setCurrentRoute,
   hideArrows,
@@ -53,7 +52,6 @@ function AppInner({
   onLayout: () => void;
   navigationRef: any;
   animationType: 'slide_from_right' | 'slide_from_left' | 'none';
-  setAnimationType: (v: 'slide_from_right' | 'slide_from_left' | 'none') => void;
   currentRoute: string;
   setCurrentRoute: (v: string) => void;
   hideArrows: boolean;
@@ -68,6 +66,11 @@ function AppInner({
       <View style={{ flex: 1 }}>
         <S.GreenBox style={{ height: Math.max(insets.top, 20), minHeight: 20 }} />
         <View style={{ flex: 1, position: 'relative' }}>
+          {currentRoute === 'MainCarousel' && (
+            <View style={StyleSheet.absoluteFill} pointerEvents="none">
+              <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
+            </View>
+          )}
           <NavigationContainer
             ref={navigationRef}
             theme={MyTheme}
@@ -83,14 +86,12 @@ function AppInner({
               initialRouteName="Landing"
               screenOptions={{
                 headerShown: false,
-                contentStyle: { backgroundColor: COLORS.BACKGROUND },
+                contentStyle: { backgroundColor: 'transparent' },
                 animation: animationType,
               }}
             >
               <Stack.Screen name="Landing" component={LandingScreen} />
-              <Stack.Screen name="Home" component={HomeScreen} />
-              <Stack.Screen name="Skin" component={SkinScreen} />
-              <Stack.Screen name="MyPage" component={MyPageScreen} />
+              <Stack.Screen name="MainCarousel" component={MainCarouselScreen} />
               <Stack.Screen name="LastCheck" component={LastCheckScreen} />
               <Stack.Screen name="PhotoUpload" component={PhotoUploadScreen} />
               <Stack.Screen name="SkinPhoto" component={SkinPhotoScreen} />
@@ -126,8 +127,9 @@ function AppInner({
 export default function App() {
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
   const [currentRoute, setCurrentRoute] = useState<string>('Landing');
-  const [animationType, setAnimationType] = useState<'slide_from_right' | 'slide_from_left' | 'none'>('none');
+  const [animationType] = useState<'slide_from_right' | 'slide_from_left' | 'none'>('none');
   const [hideArrows, setHideArrows] = useState(false);
+  const [mainIndex, setMainIndex] = useState(0);
 
   const [fontsLoaded, fontError] = useFonts({
     [FONTS.PIXEL]: require('./assets/fonts/DOSIyagiBoldface.ttf'),
@@ -140,21 +142,14 @@ export default function App() {
   }, [fontsLoaded, fontError]);
 
   const handleNavigate = (direction: 'next' | 'prev') => {
-    const currentIndex = NAV_ORDER.indexOf(currentRoute as any);
-    if (currentIndex === -1) return;
-
-    let nextIndex;
+    let nextIdx: number;
     if (direction === 'next') {
-      nextIndex = (currentIndex + 1) % NAV_ORDER.length;
+      nextIdx = (mainIndex + 1) % MAIN_SCREEN_COUNT;
     } else {
-      nextIndex = (currentIndex - 1 + NAV_ORDER.length) % NAV_ORDER.length;
+      nextIdx = (mainIndex - 1 + MAIN_SCREEN_COUNT) % MAIN_SCREEN_COUNT;
     }
-    setAnimationType('none');
-
-    const nextRoute = NAV_ORDER[nextIndex];
-    setTimeout(() => {
-      navigationRef.navigate(nextRoute as any);
-    }, 0);
+    setMainIndex(nextIdx);
+    carouselRef.navigate?.(nextIdx, direction);
   };
 
   if (!fontsLoaded && !fontError) {
@@ -167,7 +162,7 @@ export default function App() {
     );
   }
 
-  const showArrows = NAV_ORDER.includes(currentRoute as any) && !hideArrows;
+  const showArrows = currentRoute === 'MainCarousel' && !hideArrows;
 
   return (
     <SafeAreaProvider>
@@ -175,7 +170,6 @@ export default function App() {
         onLayout={onLayoutRootView}
         navigationRef={navigationRef}
         animationType={animationType}
-        setAnimationType={setAnimationType}
         currentRoute={currentRoute}
         setCurrentRoute={setCurrentRoute}
         hideArrows={hideArrows}

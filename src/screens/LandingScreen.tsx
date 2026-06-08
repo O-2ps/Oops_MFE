@@ -49,7 +49,7 @@ export default function LandingScreen() {
         if (token) {
           await saveToken(token);
         }
-        navigation.navigate('Home');
+        navigation.navigate('MainCarousel');
       }
     } catch (err: any) {
       console.error('[KakaoLogin] 오류:', err?.code, err?.message, err);
@@ -58,7 +58,7 @@ export default function LandingScreen() {
   };
 
   const handleGuestLogin = () => {
-    navigation.navigate('Home');
+    navigation.navigate('MainCarousel');
   };
 
   return (

@@ -3,6 +3,7 @@ export type RootStackParamList = {
   Home: undefined;
   Skin: undefined;
   MyPage: undefined;
+  MainCarousel: undefined;
   LastCheck: { from: string };
   PhotoUpload: undefined;
   SkinPhoto: undefined;
