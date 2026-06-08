@@ -8,14 +8,14 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_API_BASE_URL": "https://oops-be.vercel.app",
-        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "40df0a445004e2606fd3229d6b656b6a"
+        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "eef0bfabb75f20a8ac23794eb41718a3"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_API_BASE_URL": "https://oops-be.vercel.app",
-        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "40df0a445004e2606fd3229d6b656b6a"
+        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "eef0bfabb75f20a8ac23794eb41718a3"
       }
     },
     "production": {
@@ -24,7 +24,7 @@
       },
       "env": {
         "EXPO_PUBLIC_API_BASE_URL": "https://oops-be.vercel.app",
-        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "40df0a445004e2606fd3229d6b656b6a"
+        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "eef0bfabb75f20a8ac23794eb41718a3"
       }
     },
     "production_apk": {
@@ -33,7 +33,7 @@
       },
       "env": {
         "EXPO_PUBLIC_API_BASE_URL": "https://oops-be.vercel.app",
-        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "40df0a445004e2606fd3229d6b656b6a"
+        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "eef0bfabb75f20a8ac23794eb41718a3"
       }
     }
   }
