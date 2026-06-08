@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   StyleSheet, View, Dimensions, TouchableOpacity,
-  ActivityIndicator, Alert,
+  ActivityIndicator, Alert, Animated,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as S from './style';
@@ -44,6 +44,7 @@ export default function SurveyScreen() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const slideAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     getSkinQuestions()
@@ -65,8 +66,20 @@ export default function SurveyScreen() {
   }, []);
 
   const animateTransition = useCallback((callback: () => void) => {
-    callback();
-  }, []);
+    Animated.timing(slideAnim, {
+      toValue: -width,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      slideAnim.setValue(width);
+      callback();
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    });
+  }, [slideAnim]);
 
   const handleOptionSelect = async (questionId: string, value: string) => {
     const newAnswers = { ...answers, [questionId]: value };
@@ -167,27 +180,29 @@ export default function SurveyScreen() {
           </StrokedText>
         </View>
 
-        <View style={styles.questionBox}>
-          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.questionText}>
-            {currentQ?.question ?? ''}
-          </StrokedText>
-        </View>
+        <Animated.View style={{ width: '100%', transform: [{ translateX: slideAnim }] }}>
+          <View style={styles.questionBox}>
+            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.questionText}>
+              {currentQ?.question ?? ''}
+            </StrokedText>
+          </View>
 
-        <View style={styles.optionsContainer}>
-          {OPTIONS.map((opt) => (
-            <TouchableOpacity
-              key={opt.value}
-              style={[styles.optionCard, { borderColor: opt.color }]}
-              activeOpacity={0.7}
-              onPress={() => handleOptionSelect(currentQ.id, opt.value)}
-            >
-              <View style={[styles.optionDot, { backgroundColor: opt.color }]} />
-              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.optionLabel}>
-                {opt.label}
-              </StrokedText>
-            </TouchableOpacity>
-          ))}
-        </View>
+          <View style={styles.optionsContainer}>
+            {OPTIONS.map((opt) => (
+              <TouchableOpacity
+                key={opt.value}
+                style={[styles.optionCard, { borderColor: opt.color }]}
+                activeOpacity={0.7}
+                onPress={() => handleOptionSelect(currentQ.id, opt.value)}
+              >
+                <View style={[styles.optionDot, { backgroundColor: opt.color }]} />
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.optionLabel}>
+                  {opt.label}
+                </StrokedText>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Animated.View>
       </View>
     </S.Container>
   );
@@ -226,6 +241,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 40,
     paddingBottom: 60,
+    overflow: 'hidden',
   },
   qNumber: {
     fontSize: 22,
