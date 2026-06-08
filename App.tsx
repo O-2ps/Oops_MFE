@@ -52,8 +52,8 @@ function AppInner({
 }: {
   onLayout: () => void;
   navigationRef: any;
-  animationType: 'slide_from_right' | 'slide_from_left' | 'fade';
-  setAnimationType: (v: 'slide_from_right' | 'slide_from_left' | 'fade') => void;
+  animationType: 'slide_from_right' | 'slide_from_left' | 'none';
+  setAnimationType: (v: 'slide_from_right' | 'slide_from_left' | 'none') => void;
   currentRoute: string;
   setCurrentRoute: (v: string) => void;
   hideArrows: boolean;
@@ -126,7 +126,7 @@ function AppInner({
 export default function App() {
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
   const [currentRoute, setCurrentRoute] = useState<string>('Landing');
-  const [animationType, setAnimationType] = useState<'slide_from_right' | 'slide_from_left' | 'fade'>('fade');
+  const [animationType, setAnimationType] = useState<'slide_from_right' | 'slide_from_left' | 'none'>('none');
   const [hideArrows, setHideArrows] = useState(false);
 
   const [fontsLoaded, fontError] = useFonts({
@@ -149,7 +149,7 @@ export default function App() {
     } else {
       nextIndex = (currentIndex - 1 + NAV_ORDER.length) % NAV_ORDER.length;
     }
-    setAnimationType('fade');
+    setAnimationType('none');
 
     const nextRoute = NAV_ORDER[nextIndex];
     setTimeout(() => {
