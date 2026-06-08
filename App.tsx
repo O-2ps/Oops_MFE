@@ -43,9 +43,7 @@ function AppInner({
   onLayout,
   navigationRef,
   animationType,
-  currentRoute,
   setCurrentRoute,
-  hideArrows,
   setHideArrows,
   handleNavigate,
   showArrows,
@@ -53,9 +51,7 @@ function AppInner({
   onLayout: () => void;
   navigationRef: any;
   animationType: 'slide_from_right' | 'slide_from_left' | 'none';
-  currentRoute: string;
   setCurrentRoute: (v: string) => void;
-  hideArrows: boolean;
   setHideArrows: (v: boolean) => void;
   handleNavigate: (direction: 'next' | 'prev') => void;
   showArrows: boolean;
@@ -67,11 +63,9 @@ function AppInner({
       <View style={{ flex: 1 }}>
         <S.GreenBox style={{ height: Math.max(insets.top, 20), minHeight: 20 }} />
         <View style={{ flex: 1, position: 'relative' }}>
-          {(currentRoute === 'MainCarousel' || currentRoute === 'Home') && (
-            <View style={StyleSheet.absoluteFill} pointerEvents="none">
-              <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
-            </View>
-          )}
+          <View style={StyleSheet.absoluteFill} pointerEvents="none">
+            <BG width={width} height={height} preserveAspectRatio="xMidYMid slice" />
+          </View>
           <NavigationContainer
             ref={navigationRef}
             theme={MyTheme}
@@ -172,9 +166,7 @@ export default function App() {
         onLayout={onLayoutRootView}
         navigationRef={navigationRef}
         animationType={animationType}
-        currentRoute={currentRoute}
         setCurrentRoute={setCurrentRoute}
-        hideArrows={hideArrows}
         setHideArrows={setHideArrows}
         handleNavigate={handleNavigate}
         showArrows={showArrows}

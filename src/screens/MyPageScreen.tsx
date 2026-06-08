@@ -71,6 +71,7 @@ export default function MyPageScreen() {
   }, []);
 
   const handleHome = () => {
+    setIsEntered(false);
     carouselRef.navigate?.(0, 'prev');
   };
 
