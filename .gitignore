@@ -40,3 +40,6 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Release keystore (민감 정보)
+android/app/release.keystore
