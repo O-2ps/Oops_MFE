@@ -1,9 +1,21 @@
-name: Android Release APK (원스토어)
+name: Android Release Build (원스토어)
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      build_type:
+        description: '빌드 타입'
+        required: true
+        default: 'apk'
+        type: choice
+        options:
+          - apk
+          - aab
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
@@ -28,11 +40,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Expo Prebuild (android 폴더 생성)
+        run: npx expo prebuild --platform android --no-install
+
       - name: Decode keystore
         run: |
+          mkdir -p android/app
           echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
 
       - name: Build Release APK
+        if: ${{ github.event_name == 'push' || github.event.inputs.build_type == 'apk' }}
         env:
           KEYSTORE_PATH: release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -45,9 +62,32 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon
 
+      - name: Build Release AAB
+        if: ${{ github.event.inputs.build_type == 'aab' }}
+        env:
+          KEYSTORE_PATH: release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          EXPO_PUBLIC_API_BASE_URL: https://oops-be.vercel.app
+          EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.KAKAO_NATIVE_APP_KEY }}
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew bundleRelease --no-daemon
+
       - name: Upload APK
+        if: ${{ github.event_name == 'push' || github.event.inputs.build_type == 'apk' }}
         uses: actions/upload-artifact@v4
         with:
           name: oops-release-apk
           path: android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 30
+
+      - name: Upload AAB
+        if: ${{ github.event.inputs.build_type == 'aab' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: oops-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
           retention-days: 30
