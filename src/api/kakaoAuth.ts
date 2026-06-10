@@ -1,10 +1,10 @@
-import { login, logout, getProfile, KakaoOAuthToken, KakaoProfile } from '@react-native-seoul/kakao-login';
+import { login, loginWithKakaoAccount, logout, getProfile, KakaoOAuthToken, KakaoProfile } from '@react-native-seoul/kakao-login';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 export const loginWithKakao = async (): Promise<any | null> => {
   try {
-    const token = await login();
+    const token = await loginWithKakaoAccount();
 
     if (!token) return null;
 
