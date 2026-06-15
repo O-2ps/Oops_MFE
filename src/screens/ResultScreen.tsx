@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator, Text, Share } from 'react-native';
+import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator, Text, Share, Alert } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
@@ -16,9 +16,10 @@ import { RootStackParamList } from '../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import { fetchSeasons, SeasonInfo } from '../api/personalColor';
-import { CrawledProduct, getProductPool, sampleProducts, SEASON_COLOR_PALETTE } from '../utils/productRecommend';
+import { CrawledProduct, getProductPool, getProductSections, ProductSection, sampleProducts, SEASON_COLOR_PALETTE } from '../utils/productRecommend';
 import { getWishlist, toggleWishlist } from '../utils/wishlistStorage';
-import { saveColorResult, saveSkinResult } from '../utils/analysisStorage';
+import { saveColorResult, saveSkinResult, saveToLocalHistory } from '../utils/analysisStorage';
+import { getShadeAdvice } from '../api/colorAdvice';
 import { computeImageColorStats, getSeasonStats as getDefaultSeasonStats } from '../utils/colorAnalysis';
 
 const { width, height } = Dimensions.get('window');
@@ -92,9 +93,11 @@ export default function ResultScreen() {
   const { type, subType, analysisData, extractedColors } = route.params || { type: 'spring', subType: undefined, analysisData: null, extractedColors: undefined };
   const [showProducts, setShowProducts] = useState(false);
   const [seasonInfo, setSeasonInfo] = useState<SeasonInfo | null>(null);
-  const [displayedProducts, setDisplayedProducts] = useState<CrawledProduct[]>([]);
+  const [sectionSamples, setSectionSamples] = useState<Record<string, CrawledProduct[]>>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [wishlistedIds, setWishlistedIds] = useState<Set<string>>(new Set());
+  const [shadeAdvice, setShadeAdvice] = useState<Record<string, string>>({});
+  const [loadingAdvice, setLoadingAdvice] = useState<Set<string>>(new Set());
 
   const isSkin = type === 'skin';
 
@@ -103,6 +106,45 @@ export default function ResultScreen() {
   const skinTypeKey: string = skinData?.skinType ?? 'dry';
 
   const productPool = getProductPool(type, type === 'skin' ? skinTypeKey : subType);
+  const productSections: ProductSection[] = getProductSections(type, type === 'skin' ? skinTypeKey : subType);
+
+  // 섹션별 팔레트 엔트리를 컴포넌트 레벨에서 미리 계산 (Hermes 클로저 버그 방지)
+  const CATEGORY_PALETTE_LABEL: Record<string, string> = {
+    '메이크업 > 립메이크업': '립',
+    '메이크업 > 아이메이크업': '아이',
+    '메이크업 > 베이스메이크업': '베이스',
+  };
+  const sectionPaletteMap = React.useMemo(() => {
+    const map: Record<string, { label: string; chips: { name: string; hex: string }[] } | null> = {};
+    for (const section of productSections) {
+      const palLabel = CATEGORY_PALETTE_LABEL[section.key];
+      map[section.key] = palLabel && !isSkin
+        ? (SEASON_COLOR_PALETTE[type]?.find(c => c.label === palLabel) ?? null)
+        : null;
+    }
+    return map;
+  }, [productSections, type, isSkin]);
+
+  const handleShadeAdvice = useCallback(async (product: CrawledProduct, paletteColors: string[], category?: string) => {
+    if (shadeAdvice[product.goodsNo] || loadingAdvice.has(product.goodsNo)) return;
+    setLoadingAdvice(prev => new Set(prev).add(product.goodsNo));
+    try {
+      const advice = await getShadeAdvice(product.name, type, paletteColors, category, product.goodsNo);
+      setShadeAdvice(prev => ({ ...prev, [product.goodsNo]: advice }));
+    } catch (e) {
+      // API 크레딧 고갈 등 오류 발생 시 알림창 띄우지 않고 UI로만 표시
+      console.warn('Shade advice error:', e);
+      setShadeAdvice(prev => ({ ...prev, [product.goodsNo]: '추천을 가져오지 못했어요.' }));
+    } finally {
+      setLoadingAdvice(prev => { const s = new Set(prev); s.delete(product.goodsNo); return s; });
+    }
+  }, [shadeAdvice, loadingAdvice, type]);
+
+  const buildSamples = useCallback((sections: ProductSection[]) => {
+    const map: Record<string, CrawledProduct[]> = {};
+    for (const s of sections) map[s.key] = sampleProducts(s.products, 3);
+    return map;
+  }, []);
 
   useEffect(() => {
     if (showProducts) {
@@ -125,10 +167,10 @@ export default function ResultScreen() {
   const refreshProducts = useCallback(() => {
     setIsRefreshing(true);
     setTimeout(() => {
-      setDisplayedProducts(sampleProducts(productPool, 6));
+      setSectionSamples(buildSamples(productSections));
       setIsRefreshing(false);
     }, 300);
-  }, [productPool]);
+  }, [productSections, buildSamples]);
 
   useEffect(() => {
     if (type !== 'skin') {
@@ -140,8 +182,10 @@ export default function ResultScreen() {
         })
         .catch(() => {});
       saveColorResult(type, subType);
+      saveToLocalHistory({ type: 'personal', label: subType ?? type, personalType: type, subType });
     } else {
       saveSkinResult(skinTypeKey, skinTypeLabel);
+      saveToLocalHistory({ type: 'skin', label: skinTypeLabel, skinType: skinTypeKey });
     }
   }, [type, subType]);
   const skinAge: number | null = skinData?.skinAge ?? skinData?.age ?? 16;
@@ -191,7 +235,7 @@ export default function ResultScreen() {
   const handleHome = () => navigation.navigate('MainCarousel');
 
   const handleShowProducts = () => {
-    setDisplayedProducts(sampleProducts(productPool, 8));
+    setSectionSamples(buildSamples(productSections));
     setShowProducts(true);
   };
 
@@ -268,55 +312,81 @@ export default function ResultScreen() {
             </View>
           )}
 
-          <View style={styles.productGrid}>
-            {displayedProducts.map((item) => (
-              <TouchableOpacity
-                key={item.goodsNo}
-                style={styles.productCard}
-                activeOpacity={0.75}
-                onPress={() => {
-                  Linking.openURL(
-                    `https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=${item.goodsNo}`
-                  );
-                }}
-              >
-                <View style={styles.productImageContainer}>
-                  <Image
-                    source={{ uri: item.imageUrl }}
-                    style={styles.productImage}
-                    resizeMode="cover"
-                  />
-                  <TouchableOpacity
-                    style={styles.wishlistButton}
-                    onPress={(e) => { e.stopPropagation(); handleToggleWishlist(item); }}
-                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  >
-                    <Text style={styles.wishlistIcon}>
-                      {wishlistedIds.has(item.goodsNo) ? '♥' : '♡'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.productBrand} numberOfLines={1}>
-                  {item.brand}
+          {productSections.map((section) => {
+            const items = sectionSamples[section.key] ?? [];
+            if (items.length === 0) return null;
+            return (
+              <View key={section.key} style={styles.categorySection}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.categorySectionTitle}>
+                  {section.label}
                 </StrokedText>
-                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.productTitle} numberOfLines={2}>
-                  {item.name}
-                </StrokedText>
-                <View style={styles.tagRow}>
-                  <View style={styles.priceTag}>
-                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
-                  </View>
-                  {item.orgPrice !== item.price && (
-                    <View style={[styles.priceTag, styles.orgPriceTag]}>
-                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={[styles.tagText, styles.orgPriceText]}>
-                        {item.orgPrice}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
+                  {items.map((item) => (
+                    <TouchableOpacity
+                      key={item.goodsNo}
+                      style={styles.productCard}
+                      activeOpacity={0.75}
+                      onPress={() => Linking.openURL(
+                        `https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=${item.goodsNo}`
+                      )}
+                    >
+                      <View style={styles.productImageContainer}>
+                        <Image source={{ uri: item.imageUrl }} style={styles.productImage} resizeMode="cover" />
+                        <TouchableOpacity
+                          style={styles.wishlistButton}
+                          onPress={(e) => { e.stopPropagation(); handleToggleWishlist(item); }}
+                          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        >
+                          <Text style={styles.wishlistIcon}>
+                            {wishlistedIds.has(item.goodsNo) ? '♥' : '♡'}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.productBrand} numberOfLines={1}>
+                        {item.brand}
                       </StrokedText>
-                    </View>
-                  )}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.productTitle} numberOfLines={2}>
+                        {item.name}
+                      </StrokedText>
+                      <View style={styles.tagRow}>
+                        <View style={styles.priceTag}>
+                          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
+                        </View>
+                        {item.orgPrice !== item.price && (
+                          <View style={[styles.priceTag, styles.orgPriceTag]}>
+                            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={[styles.tagText, styles.orgPriceText]}>
+                              {item.orgPrice}
+                            </StrokedText>
+                          </View>
+                        )}
+                      </View>
+                      {sectionPaletteMap[section.key] && (
+                        shadeAdvice[item.goodsNo] ? (
+                          <View style={styles.shadeAdviceBox}>
+                            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.3} style={styles.shadeAdviceText}>
+                              {shadeAdvice[item.goodsNo]}
+                            </StrokedText>
+                          </View>
+                        ) : (
+                          <TouchableOpacity
+                            style={styles.shadeAdviceBtn}
+                            onPress={() => handleShadeAdvice(item, (sectionPaletteMap[section.key]?.chips ?? []).map(c => c.name), section.key)}
+                          >
+                            {loadingAdvice.has(item.goodsNo)
+                              ? <ActivityIndicator size="small" color={COLORS.PRIMARY} />
+                              : <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.shadeAdviceBtnText}>
+                                  ✦ 색상 추천 받기
+                                </StrokedText>
+                            }
+                          </TouchableOpacity>
+                        )
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            );
+          })}
         </ScrollView>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 50 }}>
@@ -518,9 +588,54 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     justifyContent: 'space-between',
   },
+  categorySection: {
+    marginBottom: 24,
+  },
+  categorySectionTitle: {
+    fontSize: 16,
+    color: '#333333',
+    fontFamily: FONTS.PIXEL,
+    paddingHorizontal: 20,
+    marginBottom: 12,
+  },
+  horizontalList: {
+    paddingHorizontal: 20,
+    gap: 12,
+  },
   productCard: {
-    width: (width - 55) / 2,
-    marginBottom: 25,
+    width: 140,
+    marginBottom: 8,
+  },
+  shadeAdviceBtn: {
+    marginTop: 8,
+    backgroundColor: 'rgba(255,140,182,0.15)',
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,140,182,0.4)',
+    minHeight: 30,
+    justifyContent: 'center',
+  },
+  shadeAdviceBtnText: {
+    fontSize: 10,
+    color: COLORS.PRIMARY,
+    fontFamily: FONTS.PIXEL,
+  },
+  shadeAdviceBox: {
+    marginTop: 8,
+    backgroundColor: 'rgba(255,140,182,0.1)',
+    borderRadius: 6,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,140,182,0.3)',
+  },
+  shadeAdviceText: {
+    fontSize: 10,
+    color: '#444444',
+    fontFamily: FONTS.PIXEL,
+    lineHeight: 15,
   },
   productImageContainer: {
     width: '100%',

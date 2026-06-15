@@ -40,6 +40,64 @@ export function getProductPool(type: string, subType?: string): CrawledProduct[]
   return pool.length > 0 ? pool : filterByPrefix(type);
 }
 
+const CATEGORY_LABEL: Record<string, string> = {
+  '메이크업 > 립메이크업': '립 메이크업',
+  '메이크업 > 아이메이크업': '아이 메이크업',
+  '메이크업 > 베이스메이크업': '베이스 메이크업',
+  '스킨케어 > 스킨/토너': '스킨/토너',
+  '스킨케어 > 에센스/세럼/앰플': '세럼/앰플',
+  '스킨케어 > 크림': '크림',
+  '스킨케어 > 로션': '로션',
+  '스킨케어 > 스킨케어세트': '스킨케어 세트',
+};
+
+const PERSONAL_COLOR_ORDER = [
+  '메이크업 > 립메이크업',
+  '메이크업 > 아이메이크업',
+  '메이크업 > 베이스메이크업',
+  '스킨케어 > 세럼/앰플',
+  '스킨케어 > 크림',
+];
+
+const SKIN_ORDER = [
+  '스킨케어 > 스킨/토너',
+  '스킨케어 > 에센스/세럼/앰플',
+  '스킨케어 > 크림',
+  '스킨케어 > 로션',
+  '스킨케어 > 스킨케어세트',
+  '메이크업 > 베이스메이크업',
+];
+
+export interface ProductSection {
+  key: string;
+  label: string;
+  products: CrawledProduct[];
+}
+
+export function getProductSections(type: string, subType?: string): ProductSection[] {
+  const pool = getProductPool(type, type === 'skin' ? subType : subType);
+  const order = type === 'skin' ? SKIN_ORDER : PERSONAL_COLOR_ORDER;
+  const sections: ProductSection[] = [];
+
+  for (const cat of order) {
+    const products = pool.filter(p => p.category === cat);
+    if (products.length > 0) {
+      sections.push({ key: cat, label: CATEGORY_LABEL[cat] ?? cat, products });
+    }
+  }
+
+  // order에 없는 카테고리도 있으면 추가
+  const seen = new Set(order);
+  const extra = pool.filter(p => !seen.has(p.category));
+  const extraCats = [...new Set(extra.map(p => p.category))];
+  for (const cat of extraCats) {
+    const products = pool.filter(p => p.category === cat);
+    sections.push({ key: cat, label: CATEGORY_LABEL[cat] ?? cat, products });
+  }
+
+  return sections;
+}
+
 export function sampleProducts(pool: CrawledProduct[], n: number): CrawledProduct[] {
   const arr = [...pool];
   for (let i = arr.length - 1; i > 0; i--) {

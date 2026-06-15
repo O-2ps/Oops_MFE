@@ -18,7 +18,8 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'PhotoUpload
 export default function PhotoUploadScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
-  const { imageUri, correctedColors, dominantColor, isExtracting, pickFromCamera, pickFromGallery } =
+
+  const { imageUri, correctedColors, dominantColor, isExtracting, isRemovingBg, pickFromCamera, pickFromGallery } =
     useImageColorPicker();
 
   const handleStartAnalysis = async () => {
@@ -78,9 +79,12 @@ export default function PhotoUploadScreen() {
           ) : (
             <FaceGuide width={width * 0.7} height={width * 0.7 * (4 / 3)} />
           )}
-          {isExtracting && (
+          {(isRemovingBg || isExtracting) && (
             <View style={styles.extractingOverlay}>
               <ActivityIndicator size="small" color={COLORS.OFF_WHITE} />
+              <StrokedText strokeColor="#333" strokeWidth={1} style={styles.overlayText}>
+                {isRemovingBg ? '배경 제거 중...' : '색상 분석 중...'}
+              </StrokedText>
             </View>
           )}
         </View>
@@ -141,7 +145,7 @@ const styles = StyleSheet.create({
   imagePreviewContainer: {
     width: width * 0.7,
     height: width * 0.7 * (4 / 3),
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     borderWidth: 3,
     borderColor: '#fafafa',
@@ -156,9 +160,15 @@ const styles = StyleSheet.create({
   },
   extractingOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.25)',
+    backgroundColor: 'rgba(0,0,0,0.35)',
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 8,
+  },
+  overlayText: {
+    fontSize: 13,
+    color: COLORS.OFF_WHITE,
+    fontFamily: FONTS.PIXEL,
   },
   swatchRow: {
     flexDirection: 'row',
