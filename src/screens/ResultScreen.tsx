@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator, Text, Share } from 'react-native';
+import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator, Text, Share, Alert } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import * as S from './style';
 import BG from '../../assets/icons/BG.svg';
@@ -19,6 +19,7 @@ import { fetchSeasons, SeasonInfo } from '../api/personalColor';
 import { CrawledProduct, getProductPool, getProductSections, ProductSection, sampleProducts, SEASON_COLOR_PALETTE } from '../utils/productRecommend';
 import { getWishlist, toggleWishlist } from '../utils/wishlistStorage';
 import { saveColorResult, saveSkinResult, saveToLocalHistory } from '../utils/analysisStorage';
+import { getShadeAdvice } from '../api/colorAdvice';
 import { computeImageColorStats, getSeasonStats as getDefaultSeasonStats } from '../utils/colorAnalysis';
 
 const { width, height } = Dimensions.get('window');
@@ -95,6 +96,8 @@ export default function ResultScreen() {
   const [sectionSamples, setSectionSamples] = useState<Record<string, CrawledProduct[]>>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [wishlistedIds, setWishlistedIds] = useState<Set<string>>(new Set());
+  const [shadeAdvice, setShadeAdvice] = useState<Record<string, string>>({});
+  const [loadingAdvice, setLoadingAdvice] = useState<Set<string>>(new Set());
 
   const isSkin = type === 'skin';
 
@@ -104,6 +107,38 @@ export default function ResultScreen() {
 
   const productPool = getProductPool(type, type === 'skin' ? skinTypeKey : subType);
   const productSections: ProductSection[] = getProductSections(type, type === 'skin' ? skinTypeKey : subType);
+
+  // 섹션별 팔레트 엔트리를 컴포넌트 레벨에서 미리 계산 (Hermes 클로저 버그 방지)
+  const CATEGORY_PALETTE_LABEL: Record<string, string> = {
+    '메이크업 > 립메이크업': '립',
+    '메이크업 > 아이메이크업': '아이',
+    '메이크업 > 베이스메이크업': '베이스',
+  };
+  const sectionPaletteMap = React.useMemo(() => {
+    const map: Record<string, { label: string; chips: { name: string; hex: string }[] } | null> = {};
+    for (const section of productSections) {
+      const palLabel = CATEGORY_PALETTE_LABEL[section.key];
+      map[section.key] = palLabel && !isSkin
+        ? (SEASON_COLOR_PALETTE[type]?.find(c => c.label === palLabel) ?? null)
+        : null;
+    }
+    return map;
+  }, [productSections, type, isSkin]);
+
+  const handleShadeAdvice = useCallback(async (product: CrawledProduct, paletteColors: string[], category?: string) => {
+    if (shadeAdvice[product.goodsNo] || loadingAdvice.has(product.goodsNo)) return;
+    setLoadingAdvice(prev => new Set(prev).add(product.goodsNo));
+    try {
+      const advice = await getShadeAdvice(product.name, type, paletteColors, category, product.goodsNo);
+      setShadeAdvice(prev => ({ ...prev, [product.goodsNo]: advice }));
+    } catch (e) {
+      // API 크레딧 고갈 등 오류 발생 시 알림창 띄우지 않고 UI로만 표시
+      console.warn('Shade advice error:', e);
+      setShadeAdvice(prev => ({ ...prev, [product.goodsNo]: '추천을 가져오지 못했어요.' }));
+    } finally {
+      setLoadingAdvice(prev => { const s = new Set(prev); s.delete(product.goodsNo); return s; });
+    }
+  }, [shadeAdvice, loadingAdvice, type]);
 
   const buildSamples = useCallback((sections: ProductSection[]) => {
     const map: Record<string, CrawledProduct[]> = {};
@@ -325,6 +360,27 @@ export default function ResultScreen() {
                           </View>
                         )}
                       </View>
+                      {sectionPaletteMap[section.key] && (
+                        shadeAdvice[item.goodsNo] ? (
+                          <View style={styles.shadeAdviceBox}>
+                            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.3} style={styles.shadeAdviceText}>
+                              {shadeAdvice[item.goodsNo]}
+                            </StrokedText>
+                          </View>
+                        ) : (
+                          <TouchableOpacity
+                            style={styles.shadeAdviceBtn}
+                            onPress={() => handleShadeAdvice(item, (sectionPaletteMap[section.key]?.chips ?? []).map(c => c.name), section.key)}
+                          >
+                            {loadingAdvice.has(item.goodsNo)
+                              ? <ActivityIndicator size="small" color={COLORS.PRIMARY} />
+                              : <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.shadeAdviceBtnText}>
+                                  ✦ 색상 추천 받기
+                                </StrokedText>
+                            }
+                          </TouchableOpacity>
+                        )
+                      )}
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
@@ -549,6 +605,37 @@ const styles = StyleSheet.create({
   productCard: {
     width: 140,
     marginBottom: 8,
+  },
+  shadeAdviceBtn: {
+    marginTop: 8,
+    backgroundColor: 'rgba(255,140,182,0.15)',
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,140,182,0.4)',
+    minHeight: 30,
+    justifyContent: 'center',
+  },
+  shadeAdviceBtnText: {
+    fontSize: 10,
+    color: COLORS.PRIMARY,
+    fontFamily: FONTS.PIXEL,
+  },
+  shadeAdviceBox: {
+    marginTop: 8,
+    backgroundColor: 'rgba(255,140,182,0.1)',
+    borderRadius: 6,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,140,182,0.3)',
+  },
+  shadeAdviceText: {
+    fontSize: 10,
+    color: '#444444',
+    fontFamily: FONTS.PIXEL,
+    lineHeight: 15,
   },
   productImageContainer: {
     width: '100%',

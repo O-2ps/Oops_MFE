@@ -133,7 +133,7 @@ export default function MyPageScreen() {
           </S.FooterAction>
         </S.MainContent>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100, alignItems: 'center' }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
           <View style={styles.header}>
             <TouchableOpacity onPress={handleHome}>
               <HomeSvg width={28} height={28} fill="#333333" />
@@ -298,24 +298,24 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     marginBottom: 20,
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   greetingSection: {
     paddingHorizontal: 20,
     marginBottom: 30,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     width: '100%',
   },
   greetText: {
     fontSize: 22,
     color: '#333333',
     fontFamily: FONTS.PIXEL,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   nicknameRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     marginTop: 3,
   },
   nicknameSticker: {
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
   section: {
     paddingHorizontal: 20,
     marginBottom: 25,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     width: '100%',
   },
   sectionTitle: {
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     color: '#333333',
     fontFamily: FONTS.PIXEL,
     marginBottom: 12,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   listContainer: {
     gap: 8,
@@ -345,14 +345,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 18,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     width: '100%',
   },
   listItemText: {
     fontSize: 14,
     color: '#666666',
     fontFamily: FONTS.PIXEL,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   wishlistGrid: {
     gap: 10,

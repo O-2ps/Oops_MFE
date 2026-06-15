@@ -36,6 +36,7 @@
     "@types/react": "~19.1.0",
     "@types/styled-components": "^5.1.36",
     "@types/styled-components-react-native": "^5.2.5",
+    "puppeteer": "^25.1.0",
     "react-native-svg-transformer": "^1.5.3",
     "typescript": "~5.9.2"
   },
