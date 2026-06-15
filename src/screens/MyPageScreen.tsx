@@ -92,16 +92,18 @@ export default function MyPageScreen() {
       .slice(0, 10);
   }, [history]);
 
-  const handleHistoryPress = useCallback((item: HistoryItem) => {
+  const handleHistoryPress = useCallback((item: HistoryItem | LocalHistoryItem) => {
     if (item.type === 'skin') {
       navigation.navigate('Result', {
         type: 'skin',
         analysisData: { skinType: item.skinType, skinTypeLabel: item.label, skinAge: item.skinAge },
+        createdAt: item.created_at,
       });
     } else {
       navigation.navigate('Result', {
         type: item.personalType ?? 'spring',
         subType: item.subType,
+        createdAt: item.created_at,
       });
     }
   }, [navigation]);

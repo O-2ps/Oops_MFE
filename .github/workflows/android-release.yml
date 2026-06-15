@@ -1,4 +1,4 @@
-name: Android Release Build (원스토어)
+name: Android Release Build
 
 on:
   push:
@@ -13,12 +13,6 @@ on:
         options:
           - apk
           - aab
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
@@ -43,12 +37,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Expo Prebuild (android 폴더 생성)
-        run: npx expo prebuild --platform android --no-install
-
       - name: Decode keystore
         run: |
-          mkdir -p android/app
           echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
 
       - name: Build Release APK
@@ -59,11 +49,13 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           EXPO_PUBLIC_API_BASE_URL: https://oops-be.vercel.app
-          EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.KAKAO_NATIVE_APP_KEY }}
+          EXPO_PUBLIC_SUPABASE_URL: https://olwnbfrepldwkahizrct.supabase.co
+          EXPO_PUBLIC_SUPABASE_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_KEY }}
+          EXPO_PUBLIC_GROQ_API_KEY: ${{ secrets.EXPO_PUBLIC_GROQ_API_KEY }}
+          EXPO_PUBLIC_HF_TOKEN: ${{ secrets.EXPO_PUBLIC_HF_TOKEN }}
+          EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: eef0bfabb75f20a8ac23794eb41718a3
         run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon
+          cd android && chmod +x gradlew && ./gradlew assembleRelease --no-daemon
 
       - name: Build Release AAB
         if: ${{ github.event.inputs.build_type == 'aab' }}
@@ -73,11 +65,13 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           EXPO_PUBLIC_API_BASE_URL: https://oops-be.vercel.app
-          EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.KAKAO_NATIVE_APP_KEY }}
+          EXPO_PUBLIC_SUPABASE_URL: https://olwnbfrepldwkahizrct.supabase.co
+          EXPO_PUBLIC_SUPABASE_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_KEY }}
+          EXPO_PUBLIC_GROQ_API_KEY: ${{ secrets.EXPO_PUBLIC_GROQ_API_KEY }}
+          EXPO_PUBLIC_HF_TOKEN: ${{ secrets.EXPO_PUBLIC_HF_TOKEN }}
+          EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: eef0bfabb75f20a8ac23794eb41718a3
         run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew bundleRelease --no-daemon
+          cd android && chmod +x gradlew && ./gradlew bundleRelease --no-daemon
 
       - name: Upload APK
         if: ${{ github.event_name == 'push' || github.event.inputs.build_type == 'apk' }}

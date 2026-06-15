@@ -7,7 +7,7 @@ export type RootStackParamList = {
   LastCheck: { from: string };
   PhotoUpload: undefined;
   SkinPhoto: undefined;
-  Result: { type: string; subType?: string; analysisData?: any; extractedColors?: string[] };
+  Result: { type: string; subType?: string; analysisData?: any; extractedColors?: string[]; createdAt?: string };
   Survey: undefined;
   ColorMatch: undefined;
   WeatherBeauty: undefined;

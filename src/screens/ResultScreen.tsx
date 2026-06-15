@@ -91,7 +91,9 @@ function GradientBar({ leftLabel, rightLabel, fillRatio, gradientColors, style }
 export default function ResultScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteProp<RootStackParamList, 'Result'>>();
-  const { type, subType, analysisData, extractedColors } = route.params || { type: 'spring', subType: undefined, analysisData: null, extractedColors: undefined };
+  const { type, subType, analysisData, extractedColors, createdAt } = route.params || { type: 'spring', subType: undefined, analysisData: null, extractedColors: undefined, createdAt: undefined };
+  const displayDate = createdAt ? new Date(createdAt) : new Date();
+  const formattedDate = `${String(displayDate.getFullYear()).slice(2)}.${String(displayDate.getMonth() + 1).padStart(2, '0')}.${String(displayDate.getDate()).padStart(2, '0')}.`;
   const [showProducts, setShowProducts] = useState(false);
   const [seasonInfo, setSeasonInfo] = useState<SeasonInfo | null>(null);
   const [sectionSamples, setSectionSamples] = useState<Record<string, CrawledProduct[]>>({});
@@ -403,6 +405,9 @@ export default function ResultScreen() {
             )}
 
             <View style={styles.topAction}>
+              <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.dateText}>
+                {formattedDate}
+              </StrokedText>
               <TouchableOpacity style={{ padding: 5 }} onPress={handleShare}>
                 <DownloadSvg width={18} height={18} fill="#666666" />
               </TouchableOpacity>
@@ -707,9 +712,15 @@ const styles = StyleSheet.create({
   topAction: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
     marginBottom: 10,
+  },
+  dateText: {
+    fontSize: 12,
+    color: '#A0A0A0',
+    fontFamily: FONTS.PIXEL,
   },
   imageContainer: {
     marginTop: 0,
