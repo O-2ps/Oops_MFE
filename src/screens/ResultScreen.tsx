@@ -19,6 +19,7 @@ import { fetchSeasons, SeasonInfo } from '../api/personalColor';
 import { CrawledProduct, getProductPool, getProductSections, ProductSection, sampleProducts, SEASON_COLOR_PALETTE } from '../utils/productRecommend';
 import { getWishlist, toggleWishlist } from '../utils/wishlistStorage';
 import { saveColorResult, saveSkinResult, saveToLocalHistory } from '../utils/analysisStorage';
+import { savePersonalResult, saveSkinAnalysisResult } from '../api/userApi';
 import { getShadeAdvice } from '../api/colorAdvice';
 import { computeImageColorStats, getSeasonStats as getDefaultSeasonStats } from '../utils/colorAnalysis';
 
@@ -183,9 +184,11 @@ export default function ResultScreen() {
         .catch(() => {});
       saveColorResult(type, subType);
       saveToLocalHistory({ type: 'personal', label: subType ?? type, personalType: type, subType });
+      savePersonalResult(type, subType).catch(() => {});
     } else {
       saveSkinResult(skinTypeKey, skinTypeLabel);
       saveToLocalHistory({ type: 'skin', label: skinTypeLabel, skinType: skinTypeKey });
+      saveSkinAnalysisResult(skinTypeKey, skinData?.skinAge ?? skinData?.age ?? null).catch(() => {});
     }
   }, [type, subType]);
   const skinAge: number | null = skinData?.skinAge ?? skinData?.age ?? 16;

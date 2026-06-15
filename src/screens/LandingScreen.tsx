@@ -19,7 +19,7 @@ import Logo from '../../assets/icons/logo.svg';
 import Star from '../../assets/icons/star.svg';
 import StrokedText from '../components/StrokedText';
 import { emailLogin, emailSignup } from '../api/emailAuth';
-import { saveToken, saveNickname } from '../utils/tokenStorage';
+import { saveToken, saveNickname, saveCharacterId } from '../utils/tokenStorage';
 import { RootStackParamList } from '../types/navigation';
 import { COLORS, FONTS } from '../constants/theme';
 
@@ -155,6 +155,7 @@ export default function LandingScreen() {
 
       await saveToken(result.token);
       await saveNickname(result.nickname);
+      if (result.characterId) await saveCharacterId(result.characterId);
       navigation.navigate('MainCarousel');
     } catch (err: any) {
       Alert.alert(

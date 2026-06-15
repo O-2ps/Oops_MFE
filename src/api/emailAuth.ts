@@ -39,6 +39,7 @@ async function restInsert(path: string, body: object): Promise<void> {
 interface AuthResult {
   token: string;
   nickname: string;
+  characterId: number | null;
 }
 
 export async function emailSignup(
@@ -71,16 +72,20 @@ export async function emailLogin(
 ): Promise<AuthResult> {
   const data = await authFetch('/auth/v1/token?grant_type=password', { email, password });
 
-  // character 테이블에서 닉네임 조회
+  // character 테이블에서 id, 닉네임 조회
   let nickname = email.split('@')[0];
+  let characterId: number | null = null;
   if (KEY) {
     const res = await fetch(
-      `${BASE}/rest/v1/character?email=eq.${encodeURIComponent(email)}&select=nickname&limit=1`,
+      `${BASE}/rest/v1/character?email=eq.${encodeURIComponent(email)}&select=id,nickname&limit=1`,
       { headers },
     );
-    const rows: { nickname: string }[] = res.ok ? await res.json() : [];
-    if (rows[0]?.nickname) nickname = rows[0].nickname;
+    const rows: { id: number; nickname: string }[] = res.ok ? await res.json() : [];
+    if (rows[0]) {
+      nickname = rows[0].nickname;
+      characterId = rows[0].id;
+    }
   }
 
-  return { token: data.access_token, nickname };
+  return { token: data.access_token, nickname, characterId };
 }
