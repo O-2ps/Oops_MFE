@@ -12,6 +12,7 @@ import { COLORS, FONTS } from '../constants/theme';
 import { getKakaoProfile } from '../api/kakaoAuth';
 import { getToken } from '../utils/tokenStorage';
 import { getUserHistory, HistoryItem } from '../api/userApi';
+import { getLocalHistory, LocalHistoryItem } from '../utils/analysisStorage';
 import { CrawledProduct } from '../utils/productRecommend';
 import { getWishlist, removeFromWishlist } from '../utils/wishlistStorage';
 import { carouselRef } from '../utils/carouselRef';
@@ -32,14 +33,18 @@ function formatDate(iso: string): string {
 export default function MyPageScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [isEntered, setIsEntered] = useState(false);
-  const [nickname, setNickname] = useState('로그인 해주세요');
+  const [nickname, setNickname] = useState('김예빈');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [history, setHistory] = useState<(HistoryItem | LocalHistoryItem)[]>([]);
   const [wishlist, setWishlist] = useState<CrawledProduct[]>([]);
   const { floatAnim } = useHomeAnimations();
 
   useEffect(() => {
     const checkLoginStatus = async () => {
+      // 로그인 여부와 무관하게 로컬 히스토리 먼저 로드
+      const localItems = await getLocalHistory();
+      if (localItems.length > 0) setHistory(localItems);
+
       const token = await getToken();
       if (token) {
         setIsLoggedIn(true);
@@ -48,12 +53,11 @@ export default function MyPageScreen() {
           setNickname(profile.nickname);
         }
         try {
-          const items = await getUserHistory();
-          setHistory(items);
+          const serverItems = await getUserHistory();
+          setHistory(serverItems); // 로그인 시 서버 데이터로 교체
         } catch {
+          // 서버 실패 시 로컬 데이터 유지
         }
-      } else {
-        setIsLoggedIn(false);
       }
     };
     checkLoginStatus();
@@ -107,15 +111,6 @@ export default function MyPageScreen() {
     <S.Container style={{ backgroundColor: 'transparent' }}>
       {!isEntered ? (
         <S.MainContent>
-          {!isLoggedIn && (
-            <View style={styles.loginPromptContainer}>
-              <TouchableOpacity onPress={() => navigation.navigate('Landing')}>
-                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.loginPromptText} numberOfLines={1}>
-                  * 로그인 페이지로 이동하기
-                </StrokedText>
-              </TouchableOpacity>
-            </View>
-          )}
           <S.Header>
             <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2.5} style={styles.stepText}>
               3.
@@ -131,14 +126,14 @@ export default function MyPageScreen() {
             </Animated.View>
           </S.WheelSection>
 
-          <S.FooterAction onPress={isLoggedIn ? handleEnter : undefined}>
+          <S.FooterAction onPress={handleEnter}>
             <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={2} style={styles.introFooterText} numberOfLines={1}>
-              {isLoggedIn ? '[ 들어가기 ]' : '[ 로그인을 하지 않았습니다. ]'}
+              [ 들어가기 ]
             </StrokedText>
           </S.FooterAction>
         </S.MainContent>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100, alignItems: 'center' }}>
           <View style={styles.header}>
             <TouchableOpacity onPress={handleHome}>
               <HomeSvg width={28} height={28} fill="#333333" />
@@ -302,19 +297,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 50,
     marginBottom: 20,
+    width: '100%',
+    alignItems: 'center',
   },
   greetingSection: {
     paddingHorizontal: 20,
     marginBottom: 30,
+    alignItems: 'center',
+    width: '100%',
   },
   greetText: {
     fontSize: 22,
     color: '#333333',
     fontFamily: FONTS.PIXEL,
+    textAlign: 'center',
   },
   nicknameRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 3,
   },
   nicknameSticker: {
@@ -325,29 +326,38 @@ const styles = StyleSheet.create({
   section: {
     paddingHorizontal: 20,
     marginBottom: 25,
+    alignItems: 'center',
+    width: '100%',
   },
   sectionTitle: {
     fontSize: 20,
     color: '#333333',
     fontFamily: FONTS.PIXEL,
     marginBottom: 12,
+    textAlign: 'center',
   },
   listContainer: {
     gap: 8,
+    width: '100%',
   },
   listItem: {
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 18,
+    alignItems: 'center',
+    width: '100%',
   },
   listItemText: {
     fontSize: 14,
     color: '#666666',
     fontFamily: FONTS.PIXEL,
+    textAlign: 'center',
   },
   wishlistGrid: {
     gap: 10,
+    width: '100%',
+    alignItems: 'center',
   },
   wishlistCard: {
     flexDirection: 'row',

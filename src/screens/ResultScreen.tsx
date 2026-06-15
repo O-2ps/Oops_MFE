@@ -16,9 +16,9 @@ import { RootStackParamList } from '../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import { fetchSeasons, SeasonInfo } from '../api/personalColor';
-import { CrawledProduct, getProductPool, sampleProducts, SEASON_COLOR_PALETTE } from '../utils/productRecommend';
+import { CrawledProduct, getProductPool, getProductSections, ProductSection, sampleProducts, SEASON_COLOR_PALETTE } from '../utils/productRecommend';
 import { getWishlist, toggleWishlist } from '../utils/wishlistStorage';
-import { saveColorResult, saveSkinResult } from '../utils/analysisStorage';
+import { saveColorResult, saveSkinResult, saveToLocalHistory } from '../utils/analysisStorage';
 import { computeImageColorStats, getSeasonStats as getDefaultSeasonStats } from '../utils/colorAnalysis';
 
 const { width, height } = Dimensions.get('window');
@@ -92,7 +92,7 @@ export default function ResultScreen() {
   const { type, subType, analysisData, extractedColors } = route.params || { type: 'spring', subType: undefined, analysisData: null, extractedColors: undefined };
   const [showProducts, setShowProducts] = useState(false);
   const [seasonInfo, setSeasonInfo] = useState<SeasonInfo | null>(null);
-  const [displayedProducts, setDisplayedProducts] = useState<CrawledProduct[]>([]);
+  const [sectionSamples, setSectionSamples] = useState<Record<string, CrawledProduct[]>>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [wishlistedIds, setWishlistedIds] = useState<Set<string>>(new Set());
 
@@ -103,6 +103,13 @@ export default function ResultScreen() {
   const skinTypeKey: string = skinData?.skinType ?? 'dry';
 
   const productPool = getProductPool(type, type === 'skin' ? skinTypeKey : subType);
+  const productSections: ProductSection[] = getProductSections(type, type === 'skin' ? skinTypeKey : subType);
+
+  const buildSamples = useCallback((sections: ProductSection[]) => {
+    const map: Record<string, CrawledProduct[]> = {};
+    for (const s of sections) map[s.key] = sampleProducts(s.products, 3);
+    return map;
+  }, []);
 
   useEffect(() => {
     if (showProducts) {
@@ -125,10 +132,10 @@ export default function ResultScreen() {
   const refreshProducts = useCallback(() => {
     setIsRefreshing(true);
     setTimeout(() => {
-      setDisplayedProducts(sampleProducts(productPool, 6));
+      setSectionSamples(buildSamples(productSections));
       setIsRefreshing(false);
     }, 300);
-  }, [productPool]);
+  }, [productSections, buildSamples]);
 
   useEffect(() => {
     if (type !== 'skin') {
@@ -140,8 +147,10 @@ export default function ResultScreen() {
         })
         .catch(() => {});
       saveColorResult(type, subType);
+      saveToLocalHistory({ type: 'personal', label: subType ?? type, personalType: type, subType });
     } else {
       saveSkinResult(skinTypeKey, skinTypeLabel);
+      saveToLocalHistory({ type: 'skin', label: skinTypeLabel, skinType: skinTypeKey });
     }
   }, [type, subType]);
   const skinAge: number | null = skinData?.skinAge ?? skinData?.age ?? 16;
@@ -191,7 +200,7 @@ export default function ResultScreen() {
   const handleHome = () => navigation.navigate('MainCarousel');
 
   const handleShowProducts = () => {
-    setDisplayedProducts(sampleProducts(productPool, 8));
+    setSectionSamples(buildSamples(productSections));
     setShowProducts(true);
   };
 
@@ -268,55 +277,60 @@ export default function ResultScreen() {
             </View>
           )}
 
-          <View style={styles.productGrid}>
-            {displayedProducts.map((item) => (
-              <TouchableOpacity
-                key={item.goodsNo}
-                style={styles.productCard}
-                activeOpacity={0.75}
-                onPress={() => {
-                  Linking.openURL(
-                    `https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=${item.goodsNo}`
-                  );
-                }}
-              >
-                <View style={styles.productImageContainer}>
-                  <Image
-                    source={{ uri: item.imageUrl }}
-                    style={styles.productImage}
-                    resizeMode="cover"
-                  />
-                  <TouchableOpacity
-                    style={styles.wishlistButton}
-                    onPress={(e) => { e.stopPropagation(); handleToggleWishlist(item); }}
-                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  >
-                    <Text style={styles.wishlistIcon}>
-                      {wishlistedIds.has(item.goodsNo) ? '♥' : '♡'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.productBrand} numberOfLines={1}>
-                  {item.brand}
+          {productSections.map((section) => {
+            const items = sectionSamples[section.key] ?? [];
+            if (items.length === 0) return null;
+            return (
+              <View key={section.key} style={styles.categorySection}>
+                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={1} style={styles.categorySectionTitle}>
+                  {section.label}
                 </StrokedText>
-                <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.productTitle} numberOfLines={2}>
-                  {item.name}
-                </StrokedText>
-                <View style={styles.tagRow}>
-                  <View style={styles.priceTag}>
-                    <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
-                  </View>
-                  {item.orgPrice !== item.price && (
-                    <View style={[styles.priceTag, styles.orgPriceTag]}>
-                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={[styles.tagText, styles.orgPriceText]}>
-                        {item.orgPrice}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
+                  {items.map((item) => (
+                    <TouchableOpacity
+                      key={item.goodsNo}
+                      style={styles.productCard}
+                      activeOpacity={0.75}
+                      onPress={() => Linking.openURL(
+                        `https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=${item.goodsNo}`
+                      )}
+                    >
+                      <View style={styles.productImageContainer}>
+                        <Image source={{ uri: item.imageUrl }} style={styles.productImage} resizeMode="cover" />
+                        <TouchableOpacity
+                          style={styles.wishlistButton}
+                          onPress={(e) => { e.stopPropagation(); handleToggleWishlist(item); }}
+                          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        >
+                          <Text style={styles.wishlistIcon}>
+                            {wishlistedIds.has(item.goodsNo) ? '♥' : '♡'}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.productBrand} numberOfLines={1}>
+                        {item.brand}
                       </StrokedText>
-                    </View>
-                  )}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+                      <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.productTitle} numberOfLines={2}>
+                        {item.name}
+                      </StrokedText>
+                      <View style={styles.tagRow}>
+                        <View style={styles.priceTag}>
+                          <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={styles.tagText}>{item.price}</StrokedText>
+                        </View>
+                        {item.orgPrice !== item.price && (
+                          <View style={[styles.priceTag, styles.orgPriceTag]}>
+                            <StrokedText strokeColor={COLORS.OFF_WHITE} strokeWidth={0.5} style={[styles.tagText, styles.orgPriceText]}>
+                              {item.orgPrice}
+                            </StrokedText>
+                          </View>
+                        )}
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            );
+          })}
         </ScrollView>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 50 }}>
@@ -518,9 +532,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     justifyContent: 'space-between',
   },
+  categorySection: {
+    marginBottom: 24,
+  },
+  categorySectionTitle: {
+    fontSize: 16,
+    color: '#333333',
+    fontFamily: FONTS.PIXEL,
+    paddingHorizontal: 20,
+    marginBottom: 12,
+  },
+  horizontalList: {
+    paddingHorizontal: 20,
+    gap: 12,
+  },
   productCard: {
-    width: (width - 55) / 2,
-    marginBottom: 25,
+    width: 140,
+    marginBottom: 8,
   },
   productImageContainer: {
     width: '100%',

@@ -2,6 +2,42 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const KEY_COLOR = 'oops_last_color_result';
 const KEY_SKIN = 'oops_last_skin_result';
+const KEY_HISTORY = 'oops_local_history';
+const MAX_HISTORY = 20;
+
+export interface LocalHistoryItem {
+  id: string;
+  type: 'skin' | 'personal';
+  label: string;
+  created_at: string;
+  skinType?: string;
+  skinAge?: number;
+  personalType?: string;
+  subType?: string;
+}
+
+export async function saveToLocalHistory(item: Omit<LocalHistoryItem, 'id' | 'created_at'>): Promise<void> {
+  try {
+    const existing = await getLocalHistory();
+    const newItem: LocalHistoryItem = {
+      ...item,
+      id: Date.now().toString(),
+      created_at: new Date().toISOString(),
+    };
+    const updated = [newItem, ...existing].slice(0, MAX_HISTORY);
+    await AsyncStorage.setItem(KEY_HISTORY, JSON.stringify(updated));
+  } catch {}
+}
+
+export async function getLocalHistory(): Promise<LocalHistoryItem[]> {
+  try {
+    const raw = await AsyncStorage.getItem(KEY_HISTORY);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
 
 export interface SavedColorResult {
   type: string;

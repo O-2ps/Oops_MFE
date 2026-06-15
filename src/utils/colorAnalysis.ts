@@ -151,12 +151,13 @@ function skinLikeScore(hex: string): number {
   else if ((hNorm >= 5 && hNorm < 10) || (hNorm > 35 && hNorm <= 45)) hueScore = -40;
 
   let satScore = -100;
-  if (s >= 25 && s <= 55) satScore = -(Math.abs(s - 35) * 1.5);
-  else if ((s >= 18 && s < 25) || (s > 55 && s <= 65)) satScore = -30;
+  if (s >= 20 && s <= 50) satScore = -(Math.abs(s - 32) * 1.5);
+  else if ((s >= 14 && s < 20) || (s > 50 && s <= 62)) satScore = -30;
 
+  // 피부는 밝아야 함: L 55~85 범위에서 최고점
   let lightScore = -100;
-  if (l >= 50 && l <= 82) lightScore = -(Math.abs(l - 65) * 0.8);
-  else if ((l >= 40 && l < 50) || (l > 82 && l <= 88)) lightScore = -20;
+  if (l >= 55 && l <= 85) lightScore = -(Math.abs(l - 68) * 0.8);
+  else if ((l >= 45 && l < 55) || (l > 85 && l <= 90)) lightScore = -20;
 
   return (hueScore * 3) + (satScore * 2) + lightScore;
 }
@@ -203,26 +204,26 @@ export function extractHexColors(colorResult: any): string[] {
   const validHex = colors.filter(c => typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
   if (validHex.length === 0) return [];
 
-  // 한국인/아시아인 피부톤 범위로 확장
-  // Hue: 5-50° (핑크-베이지-오렌지), 340-360° (붉은빛 포함)
-  // Sat: 12-70% (밝은 핑크빛 피부 포함)
-  // Lightness: 35-92% (어두운 피부~밝은 피부 모두 포함)
+  // 피부톤 필터 (명도 45% 이상 — 어두운 머리카락/눈썹 색 원천 차단)
+  // Hue: 5-50° (핑크-베이지-오렌지), 340-360° (붉은빛)
+  // Sat: 10-65%
+  // Lightness: 45-92% (L<45 는 머리카락/그림자로 간주)
   const skinTones = validHex.filter(hex => {
     const { h, s, l } = hexToHSL(hex);
     const hueOk = (h >= 5 && h <= 50) || (h >= 340 && h <= 360);
-    const satOk = s >= 12 && s <= 70;
-    const lightOk = l >= 35 && l <= 92;
+    const satOk = s >= 10 && s <= 65;
+    const lightOk = l >= 45 && l <= 92;   // 45%로 상향 — 어두운 색 배제
     return hueOk && satOk && lightOk;
   });
 
   if (skinTones.length > 0) {
-    // 피부톤 범위 내에서 가장 피부에 가까운 색상 반환
     skinTones.sort((a, b) => skinLikeScore(b) - skinLikeScore(a));
     return [skinTones[0]];
   }
 
-  // 피부톤 범위 필터 통과한 색상이 없으면, 전체에서 skinLikeScore 가장 높은 것 반환
-  // (배경/머리카락이 dominant인 경우 최선의 근사값 사용)
-  const sorted = [...validHex].sort((a, b) => skinLikeScore(b) - skinLikeScore(a));
+  // 피부톤 필터 통과 색이 없으면: 전체에서 가장 밝고 피부에 가까운 색 반환
+  const lightFirst = [...validHex].filter(hex => hexToHSL(hex).l >= 40);
+  const pool = lightFirst.length > 0 ? lightFirst : validHex;
+  const sorted = [...pool].sort((a, b) => skinLikeScore(b) - skinLikeScore(a));
   return [sorted[0]];
 }
