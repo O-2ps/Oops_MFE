@@ -9,8 +9,7 @@ import StrokedText from '../components/StrokedText';
 import { useHomeAnimations } from '../hooks/useHomeAnimations';
 import { RootStackParamList } from '../types/navigation';
 import { COLORS, FONTS } from '../constants/theme';
-import { getKakaoProfile } from '../api/kakaoAuth';
-import { getToken } from '../utils/tokenStorage';
+import { getToken, getNickname } from '../utils/tokenStorage';
 import { getUserHistory, HistoryItem } from '../api/userApi';
 import { getLocalHistory, LocalHistoryItem } from '../utils/analysisStorage';
 import { CrawledProduct } from '../utils/productRecommend';
@@ -48,9 +47,9 @@ export default function MyPageScreen() {
       const token = await getToken();
       if (token) {
         setIsLoggedIn(true);
-        const profile = await getKakaoProfile();
-        if (profile && profile.nickname) {
-          setNickname(profile.nickname);
+        const savedNickname = await getNickname();
+        if (savedNickname) {
+          setNickname(savedNickname);
         }
         try {
           const serverItems = await getUserHistory();
