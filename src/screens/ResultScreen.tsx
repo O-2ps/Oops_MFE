@@ -177,10 +177,12 @@ export default function ResultScreen() {
 
   useEffect(() => {
     if (type !== 'skin') {
+      setSeasonInfo(null);
       fetchSeasons()
         .then(seasons => {
-          const found = seasons.find(s => s.season === type && (!subType || s.subType === subType))
-            ?? seasons.find(s => s.season === type);
+          const found = subType
+            ? (seasons.find(s => s.season === type && s.subType === subType) ?? seasons.find(s => s.season === type))
+            : seasons.find(s => s.season === type);
           if (found) setSeasonInfo(found);
         })
         .catch(() => {});
